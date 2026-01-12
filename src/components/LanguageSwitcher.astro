@@ -1,0 +1,25 @@
+---
+import type { Language } from '@/i18n/translations';
+
+interface Props {
+  lang: Language;
+}
+
+const { lang } = Astro.props;
+---
+
+<div class="fixed bottom-6 right-6 z-50 flex items-center gap-2 bg-dark-blue-800/95 backdrop-blur-sm border border-dark-blue-600 rounded-full px-3 py-2 shadow-lg">
+  <a 
+    href="/" 
+    class={`text-sm px-3 py-1.5 rounded-full transition-all ${lang === 'en' ? 'bg-purple-600 text-white' : 'text-gray-400 hover:text-white hover:bg-dark-blue-700'}`}
+  >
+    EN
+  </a>
+  <a 
+    href="/fr" 
+    class={`text-sm px-3 py-1.5 rounded-full transition-all ${lang === 'fr' ? 'bg-purple-600 text-white' : 'text-gray-400 hover:text-white hover:bg-dark-blue-700'}`}
+  >
+    FR
+  </a>
+</div>
+

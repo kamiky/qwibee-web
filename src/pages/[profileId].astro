@@ -1,0 +1,177 @@
+---
+import Layout from "@/layouts/Layout.astro";
+import Header from "@/components/Header.astro";
+import Footer from "@/components/Footer.astro";
+import LanguageSwitcher from "@/components/LanguageSwitcher.astro";
+import { useTranslations } from "@/i18n/translations";
+import { profiles } from "@/data/profiles";
+
+const { profileId } = Astro.params;
+const lang = "en";
+const t = useTranslations(lang);
+
+// Get profile data
+const profile = profiles[profileId || ""];
+
+// Return 404 if profile not found
+if (!profile) {
+  return Astro.redirect("/404");
+}
+
+// Format price helper
+const formatPrice = (cents: number) => `$${(cents / 100).toFixed(2)}`;
+---
+
+<Layout
+  title={`${profile.displayName[lang]} - WatchMeFans`}
+  description={profile.bio[lang]}
+  lang={lang}
+>
+  <Header lang={lang} />
+  <LanguageSwitcher lang={lang} />
+
+  <main class="pt-24 pb-12">
+    <div class="max-w-6xl mx-auto px-6">
+      <!-- Profile Header -->
+      <section class="mb-12">
+        <div class="flex items-start gap-8 mb-8">
+          <!-- Avatar -->
+          <div
+            class="w-32 h-32 rounded-full overflow-hidden bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center flex-shrink-0"
+          >
+            {
+              profile.avatar ? (
+                <img
+                  src={profile.avatar}
+                  alt={profile.displayName[lang]}
+                  class="w-full h-full object-cover"
+                />
+              ) : (
+                <div class="text-6xl">👤</div>
+              )
+            }
+          </div>
+
+          <!-- Profile Info -->
+          <div class="flex-1">
+            <h1
+              class="text-4xl sm:text-5xl font-extrabold mb-4 bg-gradient-to-r from-purple-500 via-pink-500 to-purple-600 bg-clip-text text-transparent"
+            >
+              {profile.displayName[lang]}
+            </h1>
+            <p class="text-xl text-gray-300 mb-6">
+              {profile.bio[lang]}
+            </p>
+
+            <!-- Membership Option -->
+            {
+              profile.membershipPrice && (
+                <div class="bg-gradient-to-r from-purple-500/20 to-pink-500/20 border border-purple-500/50 rounded-xl p-6 mb-4">
+                  <div class="flex items-center justify-between">
+                    <div>
+                      <h3 class="text-2xl font-bold text-white mb-2">
+                        {t.profile.membership}
+                      </h3>
+                      <p class="text-gray-300">
+                        Access all videos for{" "}
+                        <span class="text-purple-400 font-bold text-xl">
+                          {formatPrice(profile.membershipPrice)}
+                          {t.profile.perMonth}
+                        </span>
+                      </p>
+                    </div>
+                    <button class="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white font-bold py-3 px-8 rounded-full transition-all transform hover:scale-105 shadow-lg">
+                      {t.profile.subscribeCta}
+                    </button>
+                  </div>
+                </div>
+              )
+            }
+          </div>
+        </div>
+      </section>
+
+      <!-- Videos Grid -->
+      <section>
+        <h2 class="text-3xl font-bold mb-8 text-white">
+          {t.profile.videos}
+        </h2>
+        <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {
+            profile.videos.map((video) => (
+              <div class="bg-gray-800/50 backdrop-blur-sm border border-gray-700 rounded-xl overflow-hidden hover:border-purple-500/50 transition-all group">
+                {/* Video Preview */}
+                <div class="aspect-video bg-gradient-to-br from-purple-500/20 to-pink-500/20 relative">
+                  <video
+                    class="w-full h-full object-cover"
+                    preload="metadata"
+                    poster={video.thumbnail}
+                  >
+                    <source
+                      src={`/videos/${profile.id}/${video.filename}#t=0.1`}
+                      type="video/mp4"
+                    />
+                  </video>
+                  <div class="absolute inset-0 bg-black/50 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                    <svg
+                      class="w-16 h-16 text-white"
+                      fill="currentColor"
+                      viewBox="0 0 20 20"
+                    >
+                      <path d="M6.3 2.841A1.5 1.5 0 004 4.11V15.89a1.5 1.5 0 002.3 1.269l9.344-5.89a1.5 1.5 0 000-2.538L6.3 2.84z" />
+                    </svg>
+                  </div>
+                  {video.duration && (
+                    <div class="absolute bottom-2 right-2 bg-black/80 text-white text-xs px-2 py-1 rounded">
+                      {video.duration}
+                    </div>
+                  )}
+                </div>
+
+                {/* Video Info */}
+                <div class="p-4">
+                  <h3 class="text-lg font-bold text-white mb-2 line-clamp-1">
+                    {video.title[lang]}
+                  </h3>
+                  <p class="text-sm text-gray-400 mb-4 line-clamp-2">
+                    {video.description[lang]}
+                  </p>
+
+                  <div class="flex items-center justify-between">
+                    <span class="text-purple-400 font-bold text-lg">
+                      {formatPrice(video.price)}
+                    </span>
+                    <button class="bg-purple-600 hover:bg-purple-700 text-white font-semibold py-2 px-4 rounded-lg transition-all">
+                      {t.profile.buyVideo}
+                    </button>
+                  </div>
+                </div>
+              </div>
+            ))
+          }
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <Footer lang={lang} />
+
+  <script>
+    // Add smooth scroll behavior
+    document.querySelectorAll('a[href^="#"]').forEach((anchor) => {
+      anchor.addEventListener("click", (e) => {
+        e.preventDefault();
+        const href = anchor.getAttribute("href");
+        if (href) {
+          const target = document.querySelector(href);
+          if (target) {
+            target.scrollIntoView({
+              behavior: "smooth",
+              block: "start",
+            });
+          }
+        }
+      });
+    });
+  </script>
+</Layout>

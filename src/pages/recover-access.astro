@@ -1,0 +1,251 @@
+---
+import Layout from "@/layouts/Layout.astro";
+import Header from "@/components/Header.astro";
+import Footer from "@/components/Footer.astro";
+import { useTranslations } from "@/i18n/translations";
+
+const lang = "en";
+const t = useTranslations(lang);
+---
+
+<Layout 
+  title={t.seo.recoverAccess.title} 
+  description={t.seo.recoverAccess.description}
+  lang={lang}
+>
+  <Header lang={lang} />
+
+  <main class="pt-24 pb-12">
+    <div class="max-w-2xl mx-auto px-6">
+      <!-- Header -->
+      <div class="text-center mb-12">
+        <h1 class="text-5xl font-extrabold mb-4">
+          <span
+            class="bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent"
+          >
+            {t.recoverAccess.title}
+          </span>
+        </h1>
+        <p class="text-xl text-gray-300">
+          {t.recoverAccess.subtitle}
+        </p>
+      </div>
+
+      <!-- Recovery Form -->
+      <div class="bg-dark-blue-800 rounded-2xl p-8 border border-dark-blue-600">
+        <div id="form-container">
+          <div class="mb-6">
+            <label for="email" class="block text-lg font-medium mb-2">
+              {t.recoverAccess.form.emailLabel}
+            </label>
+            <input
+              type="email"
+              id="email"
+              name="email"
+              placeholder={t.recoverAccess.form.emailPlaceholder}
+              class="w-full px-4 py-3 rounded-lg bg-dark-blue-700 border border-dark-blue-600 focus:border-purple-500 focus:outline-none text-white"
+              required
+            />
+            <p class="text-sm text-gray-400 mt-2">
+              {t.recoverAccess.form.emailHelp}
+            </p>
+          </div>
+
+          <button
+            id="recover-btn"
+            class="w-full bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white font-bold py-3 px-6 rounded-lg transition-colors"
+          >
+            <span id="recover-btn-text"
+              >{t.recoverAccess.form.submitButton}</span
+            >
+          </button>
+        </div>
+
+        <!-- Success Message (hidden by default) -->
+        <div id="success-container" class="hidden">
+          <div class="text-center mb-6">
+            <div class="text-6xl mb-4">{t.recoverAccess.success.icon}</div>
+            <h2 class="text-2xl font-bold text-green-400 mb-2">
+              {t.recoverAccess.success.title}
+            </h2>
+            <p class="text-gray-300 mb-4">
+              {t.recoverAccess.success.message}
+              <strong id="recovered-email" class="text-white"></strong>
+            </p>
+            <p class="text-gray-400 text-sm">
+              {t.recoverAccess.success.info}
+            </p>
+          </div>
+
+          <div
+            class="bg-blue-900/20 border border-blue-500/30 rounded-lg p-6 mb-4"
+          >
+            <h3 class="text-lg font-bold text-blue-400 mb-3">
+              {t.recoverAccess.success.nextSteps.title}
+            </h3>
+            <ul class="space-y-2 text-gray-300">
+              <li class="flex items-start gap-2">
+                <span class="text-purple-400 mt-1">1.</span>
+                <span>{t.recoverAccess.success.nextSteps.step1}</span>
+              </li>
+              <li class="flex items-start gap-2">
+                <span class="text-purple-400 mt-1">2.</span>
+                <span>{t.recoverAccess.success.nextSteps.step2}</span>
+              </li>
+              <li class="flex items-start gap-2">
+                <span class="text-purple-400 mt-1">3.</span>
+                <span>{t.recoverAccess.success.nextSteps.step3}</span>
+              </li>
+            </ul>
+          </div>
+
+          <div
+            class="bg-yellow-900/20 border border-yellow-500/30 rounded-lg p-4"
+          >
+            <p class="text-sm text-yellow-400 mb-2">
+              <strong>{t.recoverAccess.success.important.title}</strong>
+            </p>
+            <p class="text-sm text-gray-300">
+              {t.recoverAccess.success.important.message}
+            </p>
+          </div>
+        </div>
+
+        <!-- Error Message (hidden by default) -->
+        <div id="error-container" class="hidden mt-4">
+          <div
+            class="bg-red-900/20 border border-red-500/30 rounded-lg p-4 text-red-400"
+          >
+            <p class="font-medium mb-1">{t.recoverAccess.error.title}</p>
+            <p class="text-sm" id="error-message"></p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Help Section -->
+      <div
+        class="mt-8 bg-dark-blue-800/50 rounded-xl p-6 border border-dark-blue-600"
+      >
+        <h3 class="text-lg font-bold mb-3">{t.recoverAccess.help.title}</h3>
+        <ul class="space-y-2 text-gray-300">
+          <li class="flex items-start gap-2">
+            <span class="text-purple-400 mt-1">•</span>
+            <span>{t.recoverAccess.help.tip1}</span>
+          </li>
+          <li class="flex items-start gap-2">
+            <span class="text-purple-400 mt-1">•</span>
+            <span>{t.recoverAccess.help.tip2}</span>
+          </li>
+          <li class="flex items-start gap-2">
+            <span class="text-purple-400 mt-1">•</span>
+            <span>{t.recoverAccess.help.tip3}</span>
+          </li>
+          <li class="flex items-start gap-2">
+            <span class="text-purple-400 mt-1">•</span>
+            <span
+              >{t.recoverAccess.help.tip4}
+              <a
+                href="/contact"
+                class="text-purple-400 hover:text-purple-300 underline"
+                >{t.recoverAccess.help.contactSupport}</a
+              ></span
+            >
+          </li>
+        </ul>
+      </div>
+
+      <!-- Back Link -->
+      <div class="text-center mt-8">
+        <a
+          href="/apps/animated-wallpapers"
+          class="text-purple-400 hover:text-purple-300 transition-colors"
+        >
+          {t.recoverAccess.backLink}
+        </a>
+      </div>
+    </div>
+  </main>
+
+  <Footer lang={lang} />
+
+  <script define:vars={{ t }}>
+    const recoverBtn = document.getElementById("recover-btn");
+    const recoverBtnText = document.getElementById("recover-btn-text");
+    const emailInput = document.getElementById("email");
+    const formContainer = document.getElementById("form-container");
+    const successContainer = document.getElementById("success-container");
+    const errorContainer = document.getElementById("error-container");
+    const errorMessage = document.getElementById("error-message");
+
+    if (recoverBtn && emailInput) {
+      recoverBtn.addEventListener("click", async () => {
+        const email = emailInput.value.trim();
+
+        // Validate email
+        if (!email || !email.includes("@")) {
+          showError("Please enter a valid email address");
+          return;
+        }
+
+        try {
+          // Disable button
+          recoverBtn.setAttribute("disabled", "true");
+          if (recoverBtnText)
+            recoverBtnText.textContent = t.recoverAccess.form.submitting;
+
+          // Hide previous errors
+          if (errorContainer) errorContainer.classList.add("hidden");
+
+          // Call recovery API
+          const response = await fetch("/api/stripe/recover-access", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ email }),
+          });
+
+          const data = await response.json();
+
+          if (!response.ok) {
+            throw new Error(data.error || "Failed to recover access");
+          }
+
+          console.log("✓ Magic link email sent successfully");
+
+          // Show success message
+          if (formContainer) formContainer.classList.add("hidden");
+          if (successContainer) successContainer.classList.remove("hidden");
+
+          // Fill in email
+          const recoveredEmailEl = document.getElementById("recovered-email");
+          if (recoveredEmailEl) {
+            recoveredEmailEl.textContent = email;
+          }
+        } catch (error) {
+          console.error("Recovery error:", error);
+          showError(error.message || "Failed to recover access");
+
+          // Re-enable button
+          recoverBtn.removeAttribute("disabled");
+          if (recoverBtnText)
+            recoverBtnText.textContent = t.recoverAccess.form.submitButton;
+        }
+      });
+
+      // Allow Enter key to submit
+      emailInput.addEventListener("keypress", (e) => {
+        if (e.key === "Enter") {
+          recoverBtn.click();
+        }
+      });
+    }
+
+    function showError(message) {
+      if (errorContainer && errorMessage) {
+        errorMessage.textContent = message;
+        errorContainer.classList.remove("hidden");
+      }
+    }
+  </script>
+</Layout>

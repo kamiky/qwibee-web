@@ -1,0 +1,152 @@
+{
+  "nav": {
+    "home": "Accueil",
+    "creators": "Créateurs",
+    "contact": "Contact"
+  },
+  "hero": {
+    "title": "Contenu Vidéo Premium",
+    "subtitle": "Vidéos exclusives de vos créateurs préférés",
+    "cta": "Parcourir les Créateurs"
+  },
+  "sections": {
+    "creators": {
+      "title": "Créateurs en Vedette",
+      "subtitle": "Soutenez les créateurs et accédez à du contenu exclusif"
+    },
+    "howItWorks": {
+      "title": "Comment ça Marche",
+      "step1Title": "Choisir un Créateur",
+      "step1Desc": "Parcourez les profils et trouvez le contenu que vous aimez",
+      "step2Title": "S'abonner ou Acheter",
+      "step2Desc": "Obtenez un abonnement ou achetez des vidéos individuellement",
+      "step3Title": "Profiter du Contenu",
+      "step3Desc": "Regardez des vidéos exclusives à tout moment, n'importe où"
+    }
+  },
+  "contact": {
+    "title": "Contactez-nous",
+    "subtitle": "Des questions ou envie de devenir créateur ?",
+    "form": {
+      "name": "Nom",
+      "namePlaceholder": "Votre nom",
+      "email": "Email",
+      "emailPlaceholder": "email@exemple.com",
+      "message": "Message",
+      "messagePlaceholder": "Comment pouvons-nous vous aider ?",
+      "submit": "Envoyer le message",
+      "sending": "Envoi en cours..."
+    },
+    "messages": {
+      "successTitle": "✓ Message envoyé avec succès !",
+      "successSubtitle": "Nous vous répondrons bientôt.",
+      "errorTitle": "✗ Échec de l'envoi du message",
+      "errorDefault": "Veuillez réessayer plus tard.",
+      "errorNetwork": "Erreur réseau. Veuillez vérifier votre connexion et réessayer."
+    }
+  },
+  "profile": {
+    "membership": "Abonnement Mensuel",
+    "perMonth": "/mois",
+    "subscribeCta": "S'abonner Maintenant",
+    "videos": "Vidéos",
+    "buyVideo": "Acheter la Vidéo",
+    "watchNow": "Regarder Maintenant"
+  },
+  "footer": {
+    "tagline": "Contenu premium de créateurs que vous aimez."
+  },
+  "recoverAccess": {
+    "title": "Récupérer votre Accès",
+    "subtitle": "Vous avez perdu votre accès ? Entrez votre email pour récupérer votre contenu.",
+    "form": {
+      "emailLabel": "Adresse email",
+      "emailPlaceholder": "vous@exemple.com",
+      "emailHelp": "Entrez l'email que vous avez utilisé lors de l'achat",
+      "submitButton": "Récupérer l'accès",
+      "submitting": "Récupération..."
+    },
+    "success": {
+      "icon": "📧",
+      "title": "Vérifiez votre email !",
+      "message": "Nous avons envoyé un lien magique à",
+      "info": "Cliquez sur le lien dans votre email pour accéder en toute sécurité à votre contenu.",
+      "nextSteps": {
+        "title": "Que faire ensuite :",
+        "step1": "Vérifiez votre boîte de réception pour notre message",
+        "step2": "Cliquez sur le bouton \"Accéder à mon contenu\" dans l'email",
+        "step3": "Vous serez redirigé et votre accès sera restauré"
+      },
+      "important": {
+        "title": "⏱️ Important :",
+        "message": "Le lien magique expire dans 1 heure pour des raisons de sécurité. Si vous ne voyez pas l'email, vérifiez votre dossier spam ou demandez un nouveau lien."
+      }
+    },
+    "error": {
+      "title": "⚠️ Échec de la récupération"
+    },
+    "help": {
+      "title": "Besoin d'aide ?",
+      "tip1": "Assurez-vous d'utiliser le même email que celui utilisé pour le paiement",
+      "tip2": "Vérifiez votre dossier spam pour la confirmation d'achat",
+      "tip3": "Le traitement des achats peut prendre quelques minutes",
+      "tip4": "Toujours des problèmes ?",
+      "contactSupport": "Contacter le support"
+    },
+    "backLink": "← Retour à l'accueil"
+  },
+  "verifyAccess": {
+    "loading": {
+      "title": "Vérification de votre accès",
+      "subtitle": "Veuillez patienter pendant que nous vérifions votre lien magique..."
+    },
+    "success": {
+      "icon": "✅",
+      "title": "Accès restauré !",
+      "subtitle": "Votre accès a été vérifié avec succès.",
+      "info": "Vous pouvez maintenant accéder à tout votre contenu.",
+      "purchaseDate": "Date d'achat :",
+      "email": "Email :",
+      "viewButton": "Voir le contenu",
+      "nextSteps": {
+        "title": "✨ Et maintenant ?",
+        "tip1": "Votre accès a été sauvegardé dans ce navigateur",
+        "tip2": "Vous pouvez regarder n'importe quelle vidéo sans limite",
+        "tip3": "Accès perdu à nouveau ? Utilisez simplement la page de récupération"
+      }
+    },
+    "error": {
+      "icon": "⚠️",
+      "title": "Échec de la vérification",
+      "subtitle": "Nous n'avons pas pu vérifier votre lien magique.",
+      "errorLabel": "Erreur :",
+      "requestNewLink": "Demander un nouveau lien",
+      "contactSupport": "Contacter le support",
+      "commonIssues": {
+        "title": "Problèmes courants :",
+        "issue1": "Les liens magiques expirent après 1 heure pour des raisons de sécurité",
+        "issue2": "Chaque lien ne peut être utilisé qu'une seule fois",
+        "issue3": "Assurez-vous de cliquer sur le dernier lien que nous avons envoyé"
+      }
+    },
+    "backLink": "← Retour à l'accueil"
+  },
+  "seo": {
+    "home": {
+      "title": "WatchMeFans - Plateforme de Contenu Vidéo Premium",
+      "description": "Accédez à du contenu vidéo exclusif de vos créateurs préférés. Abonnez-vous ou achetez des vidéos individuelles."
+    },
+    "contact": {
+      "title": "Contact - WatchMeFans",
+      "description": "Des questions ou envie de devenir créateur ? Contactez-nous."
+    },
+    "recoverAccess": {
+      "title": "Récupérer l'accès - WatchMeFans",
+      "description": "Vous avez perdu votre accès ? Entrez votre email pour récupérer votre contenu."
+    },
+    "verifyAccess": {
+      "title": "Vérifier l'accès - WatchMeFans",
+      "description": "Vérifiez votre lien magique pour restaurer l'accès à votre contenu."
+    }
+  }
+}

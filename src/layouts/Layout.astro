@@ -1,0 +1,114 @@
+---
+import type { Language } from "@/i18n/translations";
+
+interface Props {
+  title: string;
+  description?: string;
+  lang: Language;
+  ogImage?: string;
+  ogType?: string;
+  twitterCard?: string;
+  canonicalUrl?: string;
+  keywords?: string;
+  author?: string;
+  robots?: string;
+}
+
+const {
+  title,
+  description = "watchmefans - Solo Dev Making Apps. Quality crafted applications and digital life tips.",
+  lang,
+  ogImage = "/ogimages/default.jpg",
+  ogType = "website",
+  twitterCard = "summary_large_image",
+  canonicalUrl,
+  keywords = "apps, developer, web apps, digital tools, animated wallpapers, VS Code, Cursor",
+  author = "watchmefans",
+  robots = "index, follow",
+} = Astro.props;
+
+// Build canonical URL
+const canonical = canonicalUrl || new URL(Astro.url.pathname, Astro.site).href;
+
+// Build full OG image URL
+const fullOgImage = new URL(ogImage, Astro.site).href;
+
+// Site name
+const siteName = "watchmefans";
+---
+
+<!doctype html>
+<html lang={lang}>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width" />
+    <meta name="generator" content={Astro.generator} />
+
+    <!-- Primary Meta Tags -->
+    <title>{title}</title>
+    <meta name="title" content={title} />
+    <meta name="description" content={description} />
+    <meta name="keywords" content={keywords} />
+    <meta name="author" content={author} />
+    <meta name="robots" content={robots} />
+    <link rel="canonical" href={canonical} />
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content={ogType} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:image" content={fullOgImage} />
+    <meta property="og:site_name" content={siteName} />
+    <meta property="og:locale" content={lang === "en" ? "en_US" : "fr_FR"} />
+
+    <!-- Twitter -->
+    <meta property="twitter:card" content={twitterCard} />
+    <meta property="twitter:url" content={canonical} />
+    <meta property="twitter:title" content={title} />
+    <meta property="twitter:description" content={description} />
+    <meta property="twitter:image" content={fullOgImage} />
+
+    <!-- Additional Meta Tags -->
+    <meta name="theme-color" content="#1a1b3f" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta
+      name="apple-mobile-web-app-status-bar-style"
+      content="black-translucent"
+    />
+  </head>
+  <body class="bg-dark-blue-900 text-white min-h-screen">
+    <slot />
+  </body>
+</html>
+
+<style is:global>
+  * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
+
+  html {
+    font-family:
+      system-ui,
+      -apple-system,
+      BlinkMacSystemFont,
+      "Segoe UI",
+      Roboto,
+      Oxygen,
+      Ubuntu,
+      Cantarell,
+      "Open Sans",
+      "Helvetica Neue",
+      sans-serif;
+    scroll-behavior: smooth;
+  }
+
+  body {
+    line-height: 1.6;
+  }
+</style>

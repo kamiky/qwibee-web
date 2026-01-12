@@ -1,0 +1,152 @@
+{
+  "nav": {
+    "home": "Home",
+    "creators": "Creators",
+    "contact": "Contact"
+  },
+  "hero": {
+    "title": "Premium Video Content",
+    "subtitle": "Exclusive videos from your favorite creators",
+    "cta": "Browse Creators"
+  },
+  "sections": {
+    "creators": {
+      "title": "Featured Creators",
+      "subtitle": "Support creators and access exclusive content"
+    },
+    "howItWorks": {
+      "title": "How It Works",
+      "step1Title": "Choose a Creator",
+      "step1Desc": "Browse profiles and find content you love",
+      "step2Title": "Subscribe or Buy",
+      "step2Desc": "Get membership or purchase videos individually",
+      "step3Title": "Enjoy Content",
+      "step3Desc": "Stream exclusive videos anytime, anywhere"
+    }
+  },
+  "contact": {
+    "title": "Get in Touch",
+    "subtitle": "Have questions or want to become a creator?",
+    "form": {
+      "name": "Name",
+      "namePlaceholder": "Your name",
+      "email": "Email",
+      "emailPlaceholder": "email@example.com",
+      "message": "Message",
+      "messagePlaceholder": "What can we help you with?",
+      "submit": "Send Message",
+      "sending": "Sending..."
+    },
+    "messages": {
+      "successTitle": "✓ Message sent successfully!",
+      "successSubtitle": "We'll get back to you soon.",
+      "errorTitle": "✗ Failed to send message",
+      "errorDefault": "Please try again later.",
+      "errorNetwork": "Network error. Please check your connection and try again."
+    }
+  },
+  "profile": {
+    "membership": "Monthly Membership",
+    "perMonth": "/month",
+    "subscribeCta": "Subscribe Now",
+    "videos": "Videos",
+    "buyVideo": "Buy Video",
+    "watchNow": "Watch Now"
+  },
+  "footer": {
+    "tagline": "Premium content from creators you love."
+  },
+  "recoverAccess": {
+    "title": "Recover Your Access",
+    "subtitle": "Lost your access? Enter your email to retrieve your content.",
+    "form": {
+      "emailLabel": "Email Address",
+      "emailPlaceholder": "you@example.com",
+      "emailHelp": "Enter the email you used when purchasing",
+      "submitButton": "Recover Access",
+      "submitting": "Recovering..."
+    },
+    "success": {
+      "icon": "📧",
+      "title": "Check Your Email!",
+      "message": "We've sent a magic link to",
+      "info": "Click the link in your email to securely access your content.",
+      "nextSteps": {
+        "title": "What to do next:",
+        "step1": "Check your email inbox for our message",
+        "step2": "Click the \"Access My Content\" button in the email",
+        "step3": "You'll be redirected and your access will be restored"
+      },
+      "important": {
+        "title": "⏱️ Important:",
+        "message": "The magic link expires in 1 hour for security. If you don't see the email, check your spam folder or request a new link."
+      }
+    },
+    "error": {
+      "title": "⚠️ Recovery Failed"
+    },
+    "help": {
+      "title": "Having trouble?",
+      "tip1": "Make sure you're using the same email you used for payment",
+      "tip2": "Check your spam folder for the purchase confirmation",
+      "tip3": "It may take a few minutes for purchases to be processed",
+      "tip4": "Still having issues?",
+      "contactSupport": "Contact support"
+    },
+    "backLink": "← Back to Home"
+  },
+  "verifyAccess": {
+    "loading": {
+      "title": "Verifying Your Access",
+      "subtitle": "Please wait while we verify your magic link..."
+    },
+    "success": {
+      "icon": "✅",
+      "title": "Access Restored!",
+      "subtitle": "Your access has been successfully verified.",
+      "info": "You can now access all your content.",
+      "purchaseDate": "Purchase Date:",
+      "email": "Email:",
+      "viewButton": "View Content",
+      "nextSteps": {
+        "title": "✨ What's Next?",
+        "tip1": "Your access has been saved to this browser",
+        "tip2": "You can watch any video without limits",
+        "tip3": "Lost access again? Just use the recovery page"
+      }
+    },
+    "error": {
+      "icon": "⚠️",
+      "title": "Verification Failed",
+      "subtitle": "We couldn't verify your magic link.",
+      "errorLabel": "Error:",
+      "requestNewLink": "Request New Link",
+      "contactSupport": "Contact Support",
+      "commonIssues": {
+        "title": "Common Issues:",
+        "issue1": "Magic links expire after 1 hour for security",
+        "issue2": "Each link can only be used once",
+        "issue3": "Make sure you're clicking the latest link we sent"
+      }
+    },
+    "backLink": "← Back to Home"
+  },
+  "seo": {
+    "home": {
+      "title": "WatchMeFans - Premium Video Content Platform",
+      "description": "Access exclusive video content from your favorite creators. Subscribe for membership or buy individual videos."
+    },
+    "contact": {
+      "title": "Contact - WatchMeFans",
+      "description": "Have questions or want to become a creator? Get in touch with us."
+    },
+    "recoverAccess": {
+      "title": "Recover Access - WatchMeFans",
+      "description": "Lost your access? Enter your email to retrieve your content."
+    },
+    "verifyAccess": {
+      "title": "Verify Access - WatchMeFans",
+      "description": "Verify your magic link to restore access to your content."
+    }
+  }
+}

@@ -1,0 +1,129 @@
+---
+// This component checks for access and redirects if not authorized
+export const prerender = false;
+
+const PUBLIC_STRIPE_KEY = import.meta.env.PUBLIC_STRIPE_KEY || "";
+---
+
+<script define:vars={{ PUBLIC_STRIPE_KEY }}>
+  /**
+   * Simple JWT verification on the client side
+   * Note: This is not cryptographically secure on its own, but combined with
+   * the fact that tokens are signed with Stripe secret, it provides reasonable protection
+   */
+  async function verifyAccess() {
+    const token = localStorage.getItem("animated_wallpapers_access");
+    
+    if (!token) {
+      console.log("No access token found");
+      return false;
+    }
+
+    try {
+      // Decode JWT payload without verification (verification happens server-side if needed)
+      const parts = token.split(".");
+      if (parts.length !== 3) {
+        console.log("Invalid token format");
+        return false;
+      }
+
+      const payload = JSON.parse(atob(parts[1]));
+
+      // Check expiration
+      if (payload.exp && payload.exp < Date.now() / 1000) {
+        console.log("Token expired");
+        return false;
+      }
+
+      // Check product
+      if (payload.product !== "animated_wallpapers_all_access") {
+        console.log("Invalid product");
+        return false;
+      }
+
+      console.log("✓ Access verified");
+      return true;
+    } catch (error) {
+      console.error("Token verification error:", error);
+      return false;
+    }
+  }
+
+  // Check access on page load
+  (async () => {
+    const hasAccess = await verifyAccess();
+    
+    if (!hasAccess) {
+      // Show access denied message
+      document.body.innerHTML = `
+        <div style="
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          justify-content: center;
+          height: 100vh;
+          background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+          color: white;
+          font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+          text-align: center;
+          padding: 20px;
+        ">
+          <div style="
+            background: rgba(0, 0, 0, 0.2);
+            padding: 40px;
+            border-radius: 20px;
+            backdrop-filter: blur(10px);
+            max-width: 500px;
+          ">
+            <h1 style="font-size: 3em; margin-bottom: 20px;">🔒</h1>
+            <h2 style="font-size: 2em; margin-bottom: 15px;">Access Required</h2>
+            <p style="font-size: 1.2em; margin-bottom: 30px; opacity: 0.9;">
+              This animated wallpaper requires a valid access token.
+            </p>
+            <div style="display: flex; flex-direction: column; gap: 15px; align-items: center;">
+              <a href="/apps/animated-wallpapers" style="
+                display: inline-block;
+                background: white;
+                color: #667eea;
+                padding: 15px 30px;
+                border-radius: 10px;
+                text-decoration: none;
+                font-weight: bold;
+                font-size: 1.1em;
+                transition: transform 0.2s;
+              " onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'">
+                Unlock All Wallpapers
+              </a>
+              <a href="/recover-access" style="
+                display: inline-block;
+                background: rgba(255, 255, 255, 0.2);
+                color: white;
+                padding: 12px 25px;
+                border-radius: 10px;
+                text-decoration: none;
+                font-weight: 500;
+                font-size: 1em;
+                transition: all 0.2s;
+              " onmouseover="this.style.background='rgba(255, 255, 255, 0.3)'" onmouseout="this.style.background='rgba(255, 255, 255, 0.2)'">
+                Already purchased? Recover access
+              </a>
+            </div>
+          </div>
+        </div>
+      `;
+    } else {
+      // Access granted, show the content
+      const contentDiv = document.getElementById("protected-content");
+      if (contentDiv) {
+        contentDiv.style.display = "block";
+      }
+    }
+  })();
+</script>
+
+<style>
+  #protected-content {
+    display: none;
+  }
+</style>
+

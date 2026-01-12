@@ -1,0 +1,181 @@
+---
+import Layout from "@/layouts/Layout.astro";
+import Header from "@/components/Header.astro";
+import Footer from "@/components/Footer.astro";
+import LanguageSwitcher from "@/components/LanguageSwitcher.astro";
+import { useTranslations } from "@/i18n/translations";
+import { profiles } from "@/data/profiles";
+
+const lang = "en";
+const t = useTranslations(lang);
+
+// Get all profiles as array
+const allProfiles = Object.values(profiles);
+---
+
+<Layout 
+  title={t.seo.home.title} 
+  description={t.seo.home.description}
+  lang={lang}
+>
+  <Header lang={lang} />
+  <LanguageSwitcher lang={lang} />
+
+  <main class="pt-24 pb-12">
+    <div class="max-w-6xl mx-auto px-6">
+      <!-- Hero Section -->
+      <section class="text-center mb-20">
+        <h1 class="text-5xl sm:text-6xl md:text-7xl font-extrabold mb-6">
+          <span
+            class="bg-gradient-to-r from-purple-500 via-pink-500 to-purple-600 bg-clip-text text-transparent"
+          >
+            {t.hero.title}
+          </span>
+        </h1>
+        <p class="text-xl sm:text-2xl text-gray-300 mb-8 max-w-3xl mx-auto">
+          {t.hero.subtitle}
+        </p>
+        <a
+          href="#creators"
+          class="inline-block bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white font-bold py-4 px-8 rounded-full transition-all transform hover:scale-105 shadow-lg"
+        >
+          {t.hero.cta}
+        </a>
+      </section>
+
+      <!-- How It Works Section -->
+      <section class="mb-20">
+        <h2 class="text-4xl sm:text-5xl font-extrabold text-center mb-12">
+          <span
+            class="bg-gradient-to-r from-green-400 via-purple-500 to-pink-500 bg-clip-text text-transparent"
+          >
+            {t.sections.howItWorks.title}
+          </span>
+        </h2>
+        <div class="grid md:grid-cols-3 gap-8">
+          <div
+            class="bg-gray-800/50 backdrop-blur-sm border border-gray-700 rounded-2xl p-8 text-center hover:border-purple-500/50 transition-all"
+          >
+            <div
+              class="text-5xl mb-4 bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent"
+            >
+              1
+            </div>
+            <h3 class="text-2xl font-bold mb-3 text-white">
+              {t.sections.howItWorks.step1Title}
+            </h3>
+            <p class="text-gray-400">
+              {t.sections.howItWorks.step1Desc}
+            </p>
+          </div>
+          <div
+            class="bg-gray-800/50 backdrop-blur-sm border border-gray-700 rounded-2xl p-8 text-center hover:border-purple-500/50 transition-all"
+          >
+            <div
+              class="text-5xl mb-4 bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent"
+            >
+              2
+            </div>
+            <h3 class="text-2xl font-bold mb-3 text-white">
+              {t.sections.howItWorks.step2Title}
+            </h3>
+            <p class="text-gray-400">
+              {t.sections.howItWorks.step2Desc}
+            </p>
+          </div>
+          <div
+            class="bg-gray-800/50 backdrop-blur-sm border border-gray-700 rounded-2xl p-8 text-center hover:border-purple-500/50 transition-all"
+          >
+            <div
+              class="text-5xl mb-4 bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent"
+            >
+              3
+            </div>
+            <h3 class="text-2xl font-bold mb-3 text-white">
+              {t.sections.howItWorks.step3Title}
+            </h3>
+            <p class="text-gray-400">
+              {t.sections.howItWorks.step3Desc}
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <!-- Creators Section -->
+      <section id="creators" class="scroll-mt-24">
+        <div class="text-center mb-12">
+          <h2 class="text-4xl sm:text-5xl font-extrabold mb-4">
+            <span
+              class="bg-gradient-to-r from-purple-500 via-pink-500 to-purple-600 bg-clip-text text-transparent"
+            >
+              {t.sections.creators.title}
+            </span>
+          </h2>
+          <p class="text-xl text-gray-300">
+            {t.sections.creators.subtitle}
+          </p>
+        </div>
+        <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+          {
+            allProfiles.map((profile) => (
+              <a
+                href={`/${profile.id}`}
+                class="group bg-gray-800/50 backdrop-blur-sm border border-gray-700 rounded-2xl overflow-hidden hover:border-purple-500/50 transition-all hover:transform hover:scale-105"
+              >
+                <div class="aspect-video bg-gradient-to-br from-purple-500/20 to-pink-500/20 flex items-center justify-center">
+                  {profile.avatar ? (
+                    <img
+                      src={profile.avatar}
+                      alt={profile.displayName[lang]}
+                      class="w-full h-full object-cover"
+                    />
+                  ) : (
+                    <div class="text-6xl">👤</div>
+                  )}
+                </div>
+                <div class="p-6">
+                  <h3 class="text-2xl font-bold mb-2 text-white group-hover:text-purple-400 transition-colors">
+                    {profile.displayName[lang]}
+                  </h3>
+                  <p class="text-gray-400 mb-4">{profile.bio[lang]}</p>
+                  <div class="flex items-center justify-between">
+                    <span class="text-sm text-gray-500">
+                      {profile.videos.length} {t.profile.videos}
+                    </span>
+                    {profile.membershipPrice && (
+                      <span class="text-purple-400 font-semibold">
+                        ${(profile.membershipPrice / 100).toFixed(2)}
+                        {t.profile.perMonth}
+                      </span>
+                    )}
+                  </div>
+                </div>
+              </a>
+            ))
+          }
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <Footer lang={lang} />
+
+  <script>
+    // Smooth scroll for anchor links
+    document.querySelectorAll('a[href^="#"]').forEach((anchor) => {
+      anchor.addEventListener("click", (e) => {
+        e.preventDefault();
+        const href = anchor.getAttribute("href");
+        if (href) {
+          const target = document.querySelector(href);
+          if (target) {
+            target.scrollIntoView({
+              behavior: "smooth",
+              block: "start",
+            });
+          }
+        }
+      });
+    });
+  </script>
+</Layout>
