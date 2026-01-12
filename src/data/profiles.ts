@@ -42,7 +42,7 @@ export const profiles: Record<string, Profile> = {
       en: "Exclusive content creator sharing premium videos",
       fr: "Créateur de contenu exclusif partageant des vidéos premium",
     },
-    avatar: "/images/profile1/profile.jpg",
+    avatar: "/uploads/profile1/profile.jpg",
     membershipPrice: 999, // $9.99/month
     videos: [
       {

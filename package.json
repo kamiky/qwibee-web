@@ -12,7 +12,7 @@
     "preview": "astro preview",
     "astro": "astro",
     "deploy:prod": "./bin/deploy.prod.sh",
-    "deploy:videos": "./bin/deploy.videos.sh",
+    "deploy:medias": "./bin/deploy.medias.sh",
     "restart:prod": "./bin/restart.prod.sh",
     "translate": "node scripts/generate-translations.js"
   },
