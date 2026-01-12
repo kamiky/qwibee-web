@@ -54,7 +54,95 @@
     "watchNow": "Watch Now"
   },
   "footer": {
-    "tagline": "Premium content from creators you love."
+    "tagline": "Premium content from creators you love.",
+    "termsOfSale": "Terms of Sale",
+    "privacyPolicy": "Privacy Policy"
+  },
+  "legal": {
+    "backToHome": "Back to Home",
+    "termsOfSale": {
+      "title": "Terms of Sale",
+      "description": "Terms of Sale for WatchMeFans",
+      "lastUpdated": "Last updated: January 2026",
+      "section1": {
+        "title": "1. Purpose",
+        "content": "These terms and conditions of sale govern the contractual relationship between WatchMeFans and its customers. By making a purchase on our platform, you unconditionally accept these terms."
+      },
+      "section2": {
+        "title": "2. Services Offered",
+        "intro": "WatchMeFans offers two types of services:",
+        "item1": "Monthly subscriptions: unlimited access to a creator's content for the duration of the subscription",
+        "item2": "Individual video purchases: permanent access to a specific video"
+      },
+      "section3": {
+        "title": "3. Pricing and Payment",
+        "content": "Prices are displayed in euros including all taxes. Payment is processed securely through Stripe. We accept credit cards and other payment methods offered by Stripe."
+      },
+      "section4": {
+        "title": "4. Right of Withdrawal",
+        "content": "In accordance with current legislation, you have a 14-day period to exercise your right of withdrawal without having to justify your reasons. However, this right is forfeited once you have started accessing digital content, with your prior express consent."
+      },
+      "section5": {
+        "title": "5. Content Access",
+        "content": "After payment, you receive immediate access to the purchased or subscribed content. Access credentials are personal and confidential. Any unauthorized sharing may result in suspension of your access."
+      },
+      "section6": {
+        "title": "6. Intellectual Property",
+        "content": "All content on the platform (videos, images, texts) is protected by copyright. Any reproduction, distribution, or commercial use is strictly prohibited without prior authorization."
+      },
+      "section7": {
+        "title": "7. Contact",
+        "content": "For any questions regarding these terms of sale, you can contact us via our contact form."
+      }
+    },
+    "privacyPolicy": {
+      "title": "Privacy Policy",
+      "description": "Privacy Policy for WatchMeFans",
+      "lastUpdated": "Last updated: January 2026",
+      "section1": {
+        "title": "1. Introduction",
+        "content": "WatchMeFans is committed to protecting your privacy and personal data. This privacy policy describes how we collect, use, and protect your personal information."
+      },
+      "section2": {
+        "title": "2. Data Collected",
+        "intro": "We collect the following data:",
+        "item1": "Email address for account management and communication",
+        "item2": "Payment information (processed securely by Stripe)",
+        "item3": "Browsing data (cookies, IP address) to improve our services",
+        "item4": "Purchase and content access history"
+      },
+      "section3": {
+        "title": "3. Use of Data",
+        "intro": "Your data is used to:",
+        "item1": "Manage your access to purchased or subscribed content",
+        "item2": "Process your payments and manage your account",
+        "item3": "Send you communications related to your purchases",
+        "item4": "Improve our services and your user experience"
+      },
+      "section4": {
+        "title": "4. Data Sharing",
+        "content": "We never sell your personal data to third parties. Your payment information is processed exclusively by Stripe, our secure payment provider, in accordance with their own privacy policies."
+      },
+      "section5": {
+        "title": "5. Security",
+        "content": "We implement appropriate technical and organizational security measures to protect your data against unauthorized access, loss, or alteration."
+      },
+      "section6": {
+        "title": "6. Your Rights",
+        "intro": "In accordance with GDPR, you have the following rights:",
+        "item1": "Right to access, rectify, and delete your data",
+        "item2": "Right to data portability",
+        "item3": "Right to object to the processing of your data"
+      },
+      "section7": {
+        "title": "7. Cookies",
+        "content": "Our site uses cookies essential to the operation of the platform and the management of your access to content. You can set your browser to refuse cookies, but this may affect your user experience."
+      },
+      "section8": {
+        "title": "8. Contact",
+        "content": "For any questions regarding your personal data or to exercise your rights, contact us via our contact form."
+      }
+    }
   },
   "recoverAccess": {
     "title": "Recover Your Access",

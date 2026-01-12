@@ -54,7 +54,95 @@
     "watchNow": "Regarder Maintenant"
   },
   "footer": {
-    "tagline": "Contenu premium de créateurs que vous aimez."
+    "tagline": "Contenu premium de créateurs que vous aimez.",
+    "termsOfSale": "Conditions de vente",
+    "privacyPolicy": "Politique de confidentialité"
+  },
+  "legal": {
+    "backToHome": "Retour à l'accueil",
+    "termsOfSale": {
+      "title": "Conditions Générales de Vente",
+      "description": "Conditions générales de vente de WatchMeFans",
+      "lastUpdated": "Dernière mise à jour : Janvier 2026",
+      "section1": {
+        "title": "1. Objet",
+        "content": "Les présentes conditions générales de vente régissent les relations contractuelles entre WatchMeFans et ses clients. En effectuant un achat sur notre plateforme, vous acceptez sans réserve les présentes conditions."
+      },
+      "section2": {
+        "title": "2. Services proposés",
+        "intro": "WatchMeFans propose deux types d'offres :",
+        "item1": "Abonnements mensuels : accès illimité au contenu d'un créateur pendant la durée de l'abonnement",
+        "item2": "Achat de vidéos à l'unité : accès permanent à une vidéo spécifique"
+      },
+      "section3": {
+        "title": "3. Prix et paiement",
+        "content": "Les prix sont affichés en euros toutes taxes comprises. Le paiement s'effectue de manière sécurisée via Stripe. Nous acceptons les cartes bancaires et autres moyens de paiement proposés par Stripe."
+      },
+      "section4": {
+        "title": "4. Droit de rétractation",
+        "content": "Conformément à la législation en vigueur, vous disposez d'un délai de 14 jours pour exercer votre droit de rétractation sans avoir à justifier de motifs. Toutefois, ce droit est perdu dès lors que vous avez commencé à accéder au contenu numérique, avec votre accord préalable exprès."
+      },
+      "section5": {
+        "title": "5. Accès au contenu",
+        "content": "Après paiement, vous recevez un accès immédiat au contenu acheté ou souscrit. Les identifiants d'accès sont personnels et confidentiels. Tout partage non autorisé peut entraîner la suspension de votre accès."
+      },
+      "section6": {
+        "title": "6. Propriété intellectuelle",
+        "content": "Tous les contenus présents sur la plateforme (vidéos, images, textes) sont protégés par le droit d'auteur. Toute reproduction, distribution ou utilisation commerciale est strictement interdite sans autorisation préalable."
+      },
+      "section7": {
+        "title": "7. Contact",
+        "content": "Pour toute question concernant ces conditions de vente, vous pouvez nous contacter via notre formulaire de contact."
+      }
+    },
+    "privacyPolicy": {
+      "title": "Politique de Confidentialité",
+      "description": "Politique de confidentialité de WatchMeFans",
+      "lastUpdated": "Dernière mise à jour : Janvier 2026",
+      "section1": {
+        "title": "1. Introduction",
+        "content": "WatchMeFans s'engage à protéger votre vie privée et vos données personnelles. Cette politique de confidentialité décrit comment nous collectons, utilisons et protégeons vos informations personnelles."
+      },
+      "section2": {
+        "title": "2. Données collectées",
+        "intro": "Nous collectons les données suivantes :",
+        "item1": "Adresse email pour la gestion de votre compte et la communication",
+        "item2": "Informations de paiement (traitées de manière sécurisée par Stripe)",
+        "item3": "Données de navigation (cookies, adresse IP) pour améliorer nos services",
+        "item4": "Historique d'achats et d'accès aux contenus"
+      },
+      "section3": {
+        "title": "3. Utilisation des données",
+        "intro": "Vos données sont utilisées pour :",
+        "item1": "Gérer votre accès aux contenus achetés ou souscrits",
+        "item2": "Traiter vos paiements et gérer votre compte",
+        "item3": "Vous envoyer des communications relatives à vos achats",
+        "item4": "Améliorer nos services et votre expérience utilisateur"
+      },
+      "section4": {
+        "title": "4. Partage des données",
+        "content": "Nous ne vendons jamais vos données personnelles à des tiers. Vos informations de paiement sont traitées exclusivement par Stripe, notre prestataire de paiement sécurisé, conformément à leurs propres politiques de confidentialité."
+      },
+      "section5": {
+        "title": "5. Sécurité",
+        "content": "Nous mettons en œuvre des mesures de sécurité techniques et organisationnelles appropriées pour protéger vos données contre tout accès non autorisé, perte ou altération."
+      },
+      "section6": {
+        "title": "6. Vos droits",
+        "intro": "Conformément au RGPD, vous disposez des droits suivants :",
+        "item1": "Droit d'accès, de rectification et de suppression de vos données",
+        "item2": "Droit à la portabilité de vos données",
+        "item3": "Droit d'opposition au traitement de vos données"
+      },
+      "section7": {
+        "title": "7. Cookies",
+        "content": "Notre site utilise des cookies essentiels au fonctionnement de la plateforme et à la gestion de votre accès aux contenus. Vous pouvez paramétrer votre navigateur pour refuser les cookies, mais cela peut affecter votre expérience utilisateur."
+      },
+      "section8": {
+        "title": "8. Contact",
+        "content": "Pour toute question relative à vos données personnelles ou pour exercer vos droits, contactez-nous via notre formulaire de contact."
+      }
+    }
   },
   "recoverAccess": {
     "title": "Récupérer votre Accès",
