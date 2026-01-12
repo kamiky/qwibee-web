@@ -19,13 +19,13 @@ const t = useTranslations(lang);
 
       <div class="flex items-center gap-6">
         <a
-          href={`/terms-of-sale?lang=${lang}`}
+          href={lang === "en" ? "/terms-of-sale" : "/fr/terms-of-sale"}
           class="text-gray-600 hover:text-brand-blue-500 transition-colors text-sm"
         >
           {t.footer.termsOfSale}
         </a>
         <a
-          href={`/privacy-policy?lang=${lang}`}
+          href={lang === "en" ? "/privacy-policy" : "/fr/privacy-policy"}
           class="text-gray-600 hover:text-brand-blue-500 transition-colors text-sm"
         >
           {t.footer.privacyPolicy}

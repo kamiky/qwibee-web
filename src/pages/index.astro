@@ -6,7 +6,7 @@ import LanguageSwitcher from "@/components/LanguageSwitcher.astro";
 import { useTranslations } from "@/i18n/translations";
 import { profiles } from "@/data/profiles";
 
-const lang = "fr";
+const lang = "en";
 const t = useTranslations(lang);
 
 // Get all profiles as array
@@ -16,8 +16,8 @@ const allProfiles = Object.values(profiles);
 const profile1Avatar = profiles.profile1.avatar || "/placeholder-avatar.jpg";
 ---
 
-<Layout 
-  title={t.seo.home.title} 
+<Layout
+  title={t.seo.home.title}
   description={t.seo.home.description}
   lang={lang}
 >
@@ -31,10 +31,14 @@ const profile1Avatar = profiles.profile1.avatar || "/placeholder-avatar.jpg";
         <div class="grid lg:grid-cols-2 gap-12 items-center">
           <!-- Left Content -->
           <div class="space-y-8">
-            <h1 class="text-4xl sm:text-5xl lg:text-6xl font-bold text-gray-900 leading-tight">
+            <h1
+              class="text-4xl sm:text-5xl lg:text-6xl font-bold text-gray-900 leading-tight"
+            >
               {t.hero.title}
             </h1>
-            <p class="text-lg sm:text-xl text-gray-600 leading-relaxed max-w-xl">
+            <p
+              class="text-lg sm:text-xl text-gray-600 leading-relaxed max-w-xl"
+            >
               {t.hero.subtitle}
             </p>
             <div>
@@ -49,27 +53,35 @@ const profile1Avatar = profiles.profile1.avatar || "/placeholder-avatar.jpg";
 
           <!-- Right Content - Creator Images -->
           <div class="relative hidden lg:flex items-center justify-center">
-            <div class="relative w-full h-[600px] flex items-center justify-end gap-6">
+            <div
+              class="relative w-full h-[600px] flex items-center justify-end gap-6"
+            >
               <!-- Image 1 - Left -->
-              <div class="relative w-64 h-96 rounded-3xl overflow-hidden shadow-2xl transform -rotate-6 hover:rotate-0 transition-transform duration-300">
+              <div
+                class="relative w-64 h-96 rounded-3xl overflow-hidden shadow-2xl transform -rotate-6 hover:rotate-0 transition-transform duration-300"
+              >
                 <img
                   src={profile1Avatar}
                   alt="Creator 1"
                   class="w-full h-full object-cover"
                 />
               </div>
-              
+
               <!-- Image 2 - Center (larger) -->
-              <div class="relative w-72 h-[500px] rounded-3xl overflow-hidden shadow-2xl z-10 hover:scale-105 transition-transform duration-300">
+              <div
+                class="relative w-72 h-[500px] rounded-3xl overflow-hidden shadow-2xl z-10 hover:scale-105 transition-transform duration-300"
+              >
                 <img
                   src={profile1Avatar}
                   alt="Creator 2"
                   class="w-full h-full object-cover"
                 />
               </div>
-              
+
               <!-- Image 3 - Right -->
-              <div class="relative w-64 h-96 rounded-3xl overflow-hidden shadow-2xl transform rotate-6 hover:rotate-0 transition-transform duration-300">
+              <div
+                class="relative w-64 h-96 rounded-3xl overflow-hidden shadow-2xl transform rotate-6 hover:rotate-0 transition-transform duration-300"
+              >
                 <img
                   src={profile1Avatar}
                   alt="Creator 3"
@@ -86,19 +98,21 @@ const profile1Avatar = profiles.profile1.avatar || "/placeholder-avatar.jpg";
     <section id="creators" class="py-20 px-6 bg-white">
       <div class="max-w-7xl mx-auto">
         <div class="text-center mb-16">
-          <h2 class="text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-900 mb-4">
+          <h2
+            class="text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-900 mb-4"
+          >
             {t.sections.creators.title}
           </h2>
           <p class="text-lg sm:text-xl text-gray-600 max-w-2xl mx-auto">
             {t.sections.creators.subtitle}
           </p>
         </div>
-        
+
         <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
           {
             allProfiles.map((profile) => (
               <a
-                href={`/${profile.id}`}
+                href={lang === "en" ? `/${profile.id}` : `/fr/${profile.id}`}
                 class="group bg-white border border-gray-200 rounded-2xl overflow-hidden hover:border-brand-blue-500 hover:shadow-xl transition-all duration-300 hover:transform hover:-translate-y-1"
               >
                 <div class="aspect-video bg-gradient-to-br from-blue-50 to-purple-50 flex items-center justify-center overflow-hidden">
@@ -116,7 +130,9 @@ const profile1Avatar = profiles.profile1.avatar || "/placeholder-avatar.jpg";
                   <h3 class="text-xl font-bold mb-2 text-gray-900 group-hover:text-brand-blue-500 transition-colors">
                     {profile.displayName[lang]}
                   </h3>
-                  <p class="text-gray-600 mb-4 line-clamp-2">{profile.bio[lang]}</p>
+                  <p class="text-gray-600 mb-4 line-clamp-2">
+                    {profile.bio[lang]}
+                  </p>
                   <div class="flex items-center justify-between">
                     <span class="text-sm text-gray-500">
                       {profile.videos.length} {t.profile.videos}
