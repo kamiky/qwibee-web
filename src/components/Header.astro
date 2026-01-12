@@ -11,31 +11,31 @@ const t = useTranslations(lang);
 ---
 
 <header
-  class="fixed top-0 left-0 right-0 z-50 bg-dark-blue-900/95 backdrop-blur-sm"
+  class="fixed top-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-sm border-b border-gray-200"
 >
-  <div class="max-w-5xl mx-auto px-6 py-4 flex items-center justify-between">
+  <div class="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
     <a href={lang === "en" ? "/" : "/fr"} class="flex items-center gap-3">
       <h1 class="text-2xl font-bold">
-        <span class="text-white">Watch</span><span class="text-purple-600">Me</span><span class="text-pink-600">Fans</span>
+        <span class="text-gray-900">Watch</span><span class="text-brand-blue-500">Me</span><span class="text-purple-600">Fans</span>
       </h1>
     </a>
 
     <nav class="flex items-center gap-8">
       <a
         href={lang === "en" ? "/" : "/fr"}
-        class="text-white hover:text-purple-600 transition-all hover:scale-110"
+        class="text-gray-700 hover:text-brand-blue-500 transition-all font-medium"
       >
         {t.nav.home}
       </a>
       <a
         href={lang === "en" ? "/#creators" : "/fr#creators"}
-        class="text-white hover:text-pink-500 transition-all hover:scale-110"
+        class="text-gray-700 hover:text-brand-blue-500 transition-all font-medium"
       >
         {t.nav.creators}
       </a>
       <a
         href={lang === "en" ? "/contact" : "/fr/contact"}
-        class="text-white hover:text-purple-600 transition-all hover:scale-110"
+        class="text-gray-700 hover:text-brand-blue-500 transition-all font-medium"
       >
         {t.nav.contact}
       </a>

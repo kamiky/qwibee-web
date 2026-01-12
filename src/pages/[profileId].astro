@@ -30,14 +30,14 @@ const formatPrice = (cents: number) => `$${(cents / 100).toFixed(2)}`;
   <Header lang={lang} />
   <LanguageSwitcher lang={lang} />
 
-  <main class="pt-24 pb-12">
+  <main class="pt-24 pb-12 min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
     <div class="max-w-6xl mx-auto px-6">
       <!-- Profile Header -->
       <section class="mb-12">
         <div class="flex items-start gap-8 mb-8">
           <!-- Avatar -->
           <div
-            class="w-32 h-32 rounded-full overflow-hidden bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center flex-shrink-0"
+            class="w-32 h-32 rounded-full overflow-hidden bg-gradient-to-br from-brand-blue-500 to-purple-500 flex items-center justify-center flex-shrink-0 shadow-lg"
           >
             {
               profile.avatar ? (
@@ -55,32 +55,32 @@ const formatPrice = (cents: number) => `$${(cents / 100).toFixed(2)}`;
           <!-- Profile Info -->
           <div class="flex-1">
             <h1
-              class="text-4xl sm:text-5xl font-extrabold mb-4 bg-gradient-to-r from-purple-500 via-pink-500 to-purple-600 bg-clip-text text-transparent"
+              class="text-4xl sm:text-5xl font-extrabold mb-4 text-gray-900"
             >
               {profile.displayName[lang]}
             </h1>
-            <p class="text-xl text-gray-300 mb-6">
+            <p class="text-xl text-gray-600 mb-6">
               {profile.bio[lang]}
             </p>
 
             <!-- Membership Option -->
             {
               profile.membershipPrice && (
-                <div class="bg-gradient-to-r from-purple-500/20 to-pink-500/20 border border-purple-500/50 rounded-xl p-6 mb-4">
+                <div class="bg-gradient-to-r from-blue-50 to-purple-50 border border-brand-blue-200 rounded-xl p-6 mb-4 shadow-md">
                   <div class="flex items-center justify-between">
                     <div>
-                      <h3 class="text-2xl font-bold text-white mb-2">
+                      <h3 class="text-2xl font-bold text-gray-900 mb-2">
                         {t.profile.membership}
                       </h3>
-                      <p class="text-gray-300">
+                      <p class="text-gray-700">
                         Access all videos for{" "}
-                        <span class="text-purple-400 font-bold text-xl">
+                        <span class="text-brand-blue-500 font-bold text-xl">
                           {formatPrice(profile.membershipPrice)}
                           {t.profile.perMonth}
                         </span>
                       </p>
                     </div>
-                    <button class="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white font-bold py-3 px-8 rounded-full transition-all transform hover:scale-105 shadow-lg">
+                    <button class="bg-brand-blue-500 hover:bg-brand-blue-600 text-white font-bold py-3 px-8 rounded-full transition-all transform hover:scale-105 shadow-lg">
                       {t.profile.subscribeCta}
                     </button>
                   </div>
@@ -93,15 +93,15 @@ const formatPrice = (cents: number) => `$${(cents / 100).toFixed(2)}`;
 
       <!-- Videos Grid -->
       <section>
-        <h2 class="text-3xl font-bold mb-8 text-white">
+        <h2 class="text-3xl font-bold mb-8 text-gray-900">
           {t.profile.videos}
         </h2>
         <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
           {
             profile.videos.map((video) => (
-              <div class="bg-gray-800/50 backdrop-blur-sm border border-gray-700 rounded-xl overflow-hidden hover:border-purple-500/50 transition-all group">
+              <div class="bg-white border border-gray-200 rounded-xl overflow-hidden hover:border-brand-blue-500 hover:shadow-xl transition-all group">
                 {/* Video Preview */}
-                <div class="aspect-video bg-gradient-to-br from-purple-500/20 to-pink-500/20 relative">
+                <div class="aspect-video bg-gradient-to-br from-blue-50 to-purple-50 relative">
                   <video
                     class="w-full h-full object-cover"
                     preload="metadata"
@@ -130,18 +130,18 @@ const formatPrice = (cents: number) => `$${(cents / 100).toFixed(2)}`;
 
                 {/* Video Info */}
                 <div class="p-4">
-                  <h3 class="text-lg font-bold text-white mb-2 line-clamp-1">
+                  <h3 class="text-lg font-bold text-gray-900 mb-2 line-clamp-1">
                     {video.title[lang]}
                   </h3>
-                  <p class="text-sm text-gray-400 mb-4 line-clamp-2">
+                  <p class="text-sm text-gray-600 mb-4 line-clamp-2">
                     {video.description[lang]}
                   </p>
 
                   <div class="flex items-center justify-between">
-                    <span class="text-purple-400 font-bold text-lg">
+                    <span class="text-brand-blue-500 font-bold text-lg">
                       {formatPrice(video.price)}
                     </span>
-                    <button class="bg-purple-600 hover:bg-purple-700 text-white font-semibold py-2 px-4 rounded-lg transition-all">
+                    <button class="bg-brand-blue-500 hover:bg-brand-blue-600 text-white font-semibold py-2 px-4 rounded-lg transition-all">
                       {t.profile.buyVideo}
                     </button>
                   </div>

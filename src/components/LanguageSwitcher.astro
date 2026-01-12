@@ -8,16 +8,16 @@ interface Props {
 const { lang } = Astro.props;
 ---
 
-<div class="fixed bottom-6 right-6 z-50 flex items-center gap-2 bg-dark-blue-800/95 backdrop-blur-sm border border-dark-blue-600 rounded-full px-3 py-2 shadow-lg">
+<div class="fixed bottom-6 right-6 z-50 flex items-center gap-2 bg-white/95 backdrop-blur-sm border border-gray-200 rounded-full px-3 py-2 shadow-lg">
   <a 
     href="/" 
-    class={`text-sm px-3 py-1.5 rounded-full transition-all ${lang === 'en' ? 'bg-purple-600 text-white' : 'text-gray-400 hover:text-white hover:bg-dark-blue-700'}`}
+    class={`text-sm px-3 py-1.5 rounded-full transition-all font-medium ${lang === 'en' ? 'bg-brand-blue-500 text-white' : 'text-gray-600 hover:text-gray-900 hover:bg-gray-100'}`}
   >
     EN
   </a>
   <a 
     href="/fr" 
-    class={`text-sm px-3 py-1.5 rounded-full transition-all ${lang === 'fr' ? 'bg-purple-600 text-white' : 'text-gray-400 hover:text-white hover:bg-dark-blue-700'}`}
+    class={`text-sm px-3 py-1.5 rounded-full transition-all font-medium ${lang === 'fr' ? 'bg-brand-blue-500 text-white' : 'text-gray-600 hover:text-gray-900 hover:bg-gray-100'}`}
   >
     FR
   </a>

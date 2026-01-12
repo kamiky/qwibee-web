@@ -6,11 +6,14 @@ import LanguageSwitcher from "@/components/LanguageSwitcher.astro";
 import { useTranslations } from "@/i18n/translations";
 import { profiles } from "@/data/profiles";
 
-const lang = "en";
+const lang = "fr";
 const t = useTranslations(lang);
 
 // Get all profiles as array
 const allProfiles = Object.values(profiles);
+
+// Get profile1 avatar for hero images
+const profile1Avatar = profiles.profile1.avatar || "/placeholder-avatar.jpg";
 ---
 
 <Layout 
@@ -21,129 +24,105 @@ const allProfiles = Object.values(profiles);
   <Header lang={lang} />
   <LanguageSwitcher lang={lang} />
 
-  <main class="pt-24 pb-12">
-    <div class="max-w-6xl mx-auto px-6">
-      <!-- Hero Section -->
-      <section class="text-center mb-20">
-        <h1 class="text-5xl sm:text-6xl md:text-7xl font-extrabold mb-6">
-          <span
-            class="bg-gradient-to-r from-purple-500 via-pink-500 to-purple-600 bg-clip-text text-transparent"
-          >
-            {t.hero.title}
-          </span>
-        </h1>
-        <p class="text-xl sm:text-2xl text-gray-300 mb-8 max-w-3xl mx-auto">
-          {t.hero.subtitle}
-        </p>
-        <a
-          href="#creators"
-          class="inline-block bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white font-bold py-4 px-8 rounded-full transition-all transform hover:scale-105 shadow-lg"
-        >
-          {t.hero.cta}
-        </a>
-      </section>
+  <main class="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
+    <!-- Hero Section -->
+    <section class="pt-32 pb-20 px-6">
+      <div class="max-w-7xl mx-auto">
+        <div class="grid lg:grid-cols-2 gap-12 items-center">
+          <!-- Left Content -->
+          <div class="space-y-8">
+            <h1 class="text-4xl sm:text-5xl lg:text-6xl font-bold text-gray-900 leading-tight">
+              {t.hero.title}
+            </h1>
+            <p class="text-lg sm:text-xl text-gray-600 leading-relaxed max-w-xl">
+              {t.hero.subtitle}
+            </p>
+            <div>
+              <a
+                href="#creators"
+                class="inline-flex items-center justify-center bg-brand-blue-500 hover:bg-brand-blue-600 text-white font-semibold py-4 px-10 rounded-full transition-all transform hover:scale-105 shadow-lg hover:shadow-xl"
+              >
+                {t.hero.cta}
+              </a>
+            </div>
+          </div>
 
-      <!-- How It Works Section -->
-      <section class="mb-20">
-        <h2 class="text-4xl sm:text-5xl font-extrabold text-center mb-12">
-          <span
-            class="bg-gradient-to-r from-green-400 via-purple-500 to-pink-500 bg-clip-text text-transparent"
-          >
-            {t.sections.howItWorks.title}
-          </span>
-        </h2>
-        <div class="grid md:grid-cols-3 gap-8">
-          <div
-            class="bg-gray-800/50 backdrop-blur-sm border border-gray-700 rounded-2xl p-8 text-center hover:border-purple-500/50 transition-all"
-          >
-            <div
-              class="text-5xl mb-4 bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent"
-            >
-              1
+          <!-- Right Content - Creator Images -->
+          <div class="relative hidden lg:flex items-center justify-center">
+            <div class="relative w-full h-[600px] flex items-center justify-end gap-6">
+              <!-- Image 1 - Left -->
+              <div class="relative w-64 h-96 rounded-3xl overflow-hidden shadow-2xl transform -rotate-6 hover:rotate-0 transition-transform duration-300">
+                <img
+                  src={profile1Avatar}
+                  alt="Creator 1"
+                  class="w-full h-full object-cover"
+                />
+              </div>
+              
+              <!-- Image 2 - Center (larger) -->
+              <div class="relative w-72 h-[500px] rounded-3xl overflow-hidden shadow-2xl z-10 hover:scale-105 transition-transform duration-300">
+                <img
+                  src={profile1Avatar}
+                  alt="Creator 2"
+                  class="w-full h-full object-cover"
+                />
+              </div>
+              
+              <!-- Image 3 - Right -->
+              <div class="relative w-64 h-96 rounded-3xl overflow-hidden shadow-2xl transform rotate-6 hover:rotate-0 transition-transform duration-300">
+                <img
+                  src={profile1Avatar}
+                  alt="Creator 3"
+                  class="w-full h-full object-cover"
+                />
+              </div>
             </div>
-            <h3 class="text-2xl font-bold mb-3 text-white">
-              {t.sections.howItWorks.step1Title}
-            </h3>
-            <p class="text-gray-400">
-              {t.sections.howItWorks.step1Desc}
-            </p>
-          </div>
-          <div
-            class="bg-gray-800/50 backdrop-blur-sm border border-gray-700 rounded-2xl p-8 text-center hover:border-purple-500/50 transition-all"
-          >
-            <div
-              class="text-5xl mb-4 bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent"
-            >
-              2
-            </div>
-            <h3 class="text-2xl font-bold mb-3 text-white">
-              {t.sections.howItWorks.step2Title}
-            </h3>
-            <p class="text-gray-400">
-              {t.sections.howItWorks.step2Desc}
-            </p>
-          </div>
-          <div
-            class="bg-gray-800/50 backdrop-blur-sm border border-gray-700 rounded-2xl p-8 text-center hover:border-purple-500/50 transition-all"
-          >
-            <div
-              class="text-5xl mb-4 bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent"
-            >
-              3
-            </div>
-            <h3 class="text-2xl font-bold mb-3 text-white">
-              {t.sections.howItWorks.step3Title}
-            </h3>
-            <p class="text-gray-400">
-              {t.sections.howItWorks.step3Desc}
-            </p>
           </div>
         </div>
-      </section>
+      </div>
+    </section>
 
-      <!-- Creators Section -->
-      <section id="creators" class="scroll-mt-24">
-        <div class="text-center mb-12">
-          <h2 class="text-4xl sm:text-5xl font-extrabold mb-4">
-            <span
-              class="bg-gradient-to-r from-purple-500 via-pink-500 to-purple-600 bg-clip-text text-transparent"
-            >
-              {t.sections.creators.title}
-            </span>
+    <!-- Featured Creators Section -->
+    <section id="creators" class="py-20 px-6 bg-white">
+      <div class="max-w-7xl mx-auto">
+        <div class="text-center mb-16">
+          <h2 class="text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-900 mb-4">
+            {t.sections.creators.title}
           </h2>
-          <p class="text-xl text-gray-300">
+          <p class="text-lg sm:text-xl text-gray-600 max-w-2xl mx-auto">
             {t.sections.creators.subtitle}
           </p>
         </div>
+        
         <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
           {
             allProfiles.map((profile) => (
               <a
                 href={`/${profile.id}`}
-                class="group bg-gray-800/50 backdrop-blur-sm border border-gray-700 rounded-2xl overflow-hidden hover:border-purple-500/50 transition-all hover:transform hover:scale-105"
+                class="group bg-white border border-gray-200 rounded-2xl overflow-hidden hover:border-brand-blue-500 hover:shadow-xl transition-all duration-300 hover:transform hover:-translate-y-1"
               >
-                <div class="aspect-video bg-gradient-to-br from-purple-500/20 to-pink-500/20 flex items-center justify-center">
+                <div class="aspect-video bg-gradient-to-br from-blue-50 to-purple-50 flex items-center justify-center overflow-hidden">
                   {profile.avatar ? (
                     <img
                       src={profile.avatar}
                       alt={profile.displayName[lang]}
-                      class="w-full h-full object-cover"
+                      class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
                     />
                   ) : (
                     <div class="text-6xl">👤</div>
                   )}
                 </div>
                 <div class="p-6">
-                  <h3 class="text-2xl font-bold mb-2 text-white group-hover:text-purple-400 transition-colors">
+                  <h3 class="text-xl font-bold mb-2 text-gray-900 group-hover:text-brand-blue-500 transition-colors">
                     {profile.displayName[lang]}
                   </h3>
-                  <p class="text-gray-400 mb-4">{profile.bio[lang]}</p>
+                  <p class="text-gray-600 mb-4 line-clamp-2">{profile.bio[lang]}</p>
                   <div class="flex items-center justify-between">
                     <span class="text-sm text-gray-500">
                       {profile.videos.length} {t.profile.videos}
                     </span>
                     {profile.membershipPrice && (
-                      <span class="text-purple-400 font-semibold">
+                      <span class="text-brand-blue-500 font-semibold">
                         ${(profile.membershipPrice / 100).toFixed(2)}
                         {t.profile.perMonth}
                       </span>
@@ -154,8 +133,8 @@ const allProfiles = Object.values(profiles);
             ))
           }
         </div>
-      </section>
-    </div>
+      </div>
+    </section>
   </main>
 
   <Footer lang={lang} />
