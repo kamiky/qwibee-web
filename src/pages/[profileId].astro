@@ -30,7 +30,9 @@ const formatPrice = (cents: number) => `$${(cents / 100).toFixed(2)}`;
   <Header lang={lang} />
   <LanguageSwitcher lang={lang} />
 
-  <main class="pt-24 pb-12 min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
+  <main
+    class="pt-24 pb-12 min-h-screen bg-gradient-to-br from-gray-50 to-gray-100"
+  >
     <div class="max-w-6xl mx-auto px-6">
       <!-- Profile Header -->
       <section class="mb-12">
@@ -54,9 +56,7 @@ const formatPrice = (cents: number) => `$${(cents / 100).toFixed(2)}`;
 
           <!-- Profile Info -->
           <div class="flex-1">
-            <h1
-              class="text-4xl sm:text-5xl font-extrabold mb-4 text-gray-900"
-            >
+            <h1 class="text-4xl sm:text-5xl font-extrabold mb-4 text-gray-900">
               {profile.displayName[lang]}
             </h1>
             <p class="text-xl text-gray-600 mb-6">
@@ -108,7 +108,7 @@ const formatPrice = (cents: number) => `$${(cents / 100).toFixed(2)}`;
                     poster={video.thumbnail}
                   >
                     <source
-                      src={`/uploads/${profile.id}/${video.filename}#t=0.1`}
+                      src={`/uploads/${profile.id}/${video.previewFilename}#t=0.1`}
                       type="video/mp4"
                     />
                   </video>

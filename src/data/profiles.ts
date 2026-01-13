@@ -11,7 +11,8 @@ export interface Video {
   thumbnail?: string;
   duration?: string;
   price: number; // Price in cents (e.g., 999 = $9.99)
-  filename: string; // Video filename in /public/videos/[profileId]/
+  paidFilename: string; // Paid content filename in /public/uploads/[profileId]/
+  previewFilename: string; // Preview/blurred filename in /public/uploads/[profileId]/
 }
 
 export interface Profile {
@@ -42,7 +43,8 @@ export const profiles: Record<string, Profile> = {
       en: "Exclusive content creator sharing premium videos",
       fr: "Créateur de contenu exclusif partageant des vidéos premium",
     },
-    avatar: "/uploads/profile1/profile.jpg",
+    avatar:
+      "/uploads/profile1/paid_mp9nr2q3_5kyag60veyup4qdokuxoox9sol4hfl.jpg",
     membershipPrice: 999, // $9.99/month
     videos: [
       {
@@ -57,7 +59,8 @@ export const profiles: Record<string, Profile> = {
         },
         duration: "2:30",
         price: 499, // $4.99 one-time
-        filename: "SIMPStash.com_11041.mp4",
+        paidFilename: "paid_hygahghv_kbr69oqxvnuzdiwkhpuibvch6vg6sp.mp4",
+        previewFilename: "preview_hygahghv_irh5edyizwam8sznbiwovkild3f98h.mp4",
       },
       {
         id: "video2",
@@ -71,7 +74,8 @@ export const profiles: Record<string, Profile> = {
         },
         duration: "3:15",
         price: 599, // $5.99 one-time
-        filename: "SIMPStash.com_11043.mp4",
+        paidFilename: "paid_izsymaig_3w5zqif2o4ne7opqd5fjnq9q9tqmxy.mp4",
+        previewFilename: "preview_izsymaig_girt33gkvflzthjttggz217snl8ipf.mp4",
       },
       {
         id: "video3",
@@ -85,7 +89,8 @@ export const profiles: Record<string, Profile> = {
         },
         duration: "4:20",
         price: 699, // $6.99 one-time
-        filename: "SIMPStash.com_11045.mp4",
+        paidFilename: "paid_jg2xfo13_q4rc0walixb505g9sqed64991jpnys.mp4",
+        previewFilename: "preview_jg2xfo13_5le2oxxeael3cntsus0dzn0uk7ihwi.mp4",
       },
       {
         id: "video4",
@@ -99,7 +104,8 @@ export const profiles: Record<string, Profile> = {
         },
         duration: "5:00",
         price: 799, // $7.99 one-time
-        filename: "SIMPStash.com_11047.mp4",
+        paidFilename: "paid_zhz3rnmt_66t16c8sr2m0f0esmg5gqipdhi6nf9.mp4",
+        previewFilename: "preview_zhz3rnmt_giplfonf2j5hjpz0q1o74w3m0d9dsr.mp4",
       },
     ],
   },
