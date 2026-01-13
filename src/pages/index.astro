@@ -3,10 +3,10 @@ import Layout from "@/layouts/Layout.astro";
 import Header from "@/components/Header.astro";
 import Footer from "@/components/Footer.astro";
 import LanguageSwitcher from "@/components/LanguageSwitcher.astro";
-import { useTranslations } from "@/i18n/translations";
+import { useTranslations, type Language } from "@/i18n/translations";
 import { profiles } from "@/data/profiles";
 
-const lang = "en";
+const lang: Language = "en";
 const t = useTranslations(lang);
 
 // Get all profiles as array
@@ -14,6 +14,11 @@ const allProfiles = Object.values(profiles);
 
 // Get profile1 avatar for hero images
 const profile1Avatar = profiles.profile1.avatar || "/placeholder-avatar.jpg";
+
+// Helper function to generate profile URL based on language
+const getProfileUrl = (profileId: string) => {
+  return (lang as string) === "en" ? `/${profileId}` : `/${lang}/${profileId}`;
+};
 ---
 
 <Layout
@@ -112,7 +117,7 @@ const profile1Avatar = profiles.profile1.avatar || "/placeholder-avatar.jpg";
           {
             allProfiles.map((profile) => (
               <a
-                href={lang === "en" ? `/${profile.id}` : `/fr/${profile.id}`}
+                href={getProfileUrl(profile.id)}
                 class="group bg-white border border-gray-200 rounded-2xl overflow-hidden hover:border-brand-blue-500 hover:shadow-xl transition-all duration-300 hover:transform hover:-translate-y-1"
               >
                 <div class="aspect-video bg-gradient-to-br from-blue-50 to-purple-50 flex items-center justify-center overflow-hidden">
