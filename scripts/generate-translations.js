@@ -41,7 +41,10 @@ if (!fs.existsSync(FR_DIR)) {
 function updateLang(content) {
   return content
     .replace(/const lang = ["']en["'];/g, 'const lang = "fr";')
-    .replace(/const lang: Language = ["']en["'];/g, 'const lang: Language = "fr";');
+    .replace(
+      /const lang: Language = ["']en["'];/g,
+      'const lang: Language = "fr";'
+    );
 }
 
 /**
