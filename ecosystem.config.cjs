@@ -3,7 +3,7 @@ module.exports = {
     {
       name: "watchmefans-web",
       script: "dist/server/entry.mjs",
-      cwd: "/var/www/watchmefans",
+      cwd: "/var/www/watchmefans-web",
       instances: 1,
       exec_mode: "fork",
       env: {

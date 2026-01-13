@@ -14,7 +14,7 @@ ssh-add ~/.ssh/id_rsa
 echo "Deploying medias to production server..."
 rsync -avz --progress -e ssh \
   public/uploads/ \
-  root@142.93.173.10:/var/www/watchmefans/public/uploads/
+  root@142.93.173.10:/var/www/watchmefans-web/public/uploads/
 
 echo "✓ Videos deployed successfully!"
 
