@@ -8,7 +8,7 @@
     "build": "yarn translate && astro check && astro build",
     "build:prod": "yarn translate && astro check && astro build --mode production",
     "prod": "pm2 start ecosystem.config.cjs",
-    "prod-legacy": "cross-env PORT=7000 pm2 start ./dist/server/entry.mjs --name watchmefans-web",
+    "prod-legacy": "cross-env PORT=8000 pm2 start ./dist/server/entry.mjs --name watchmefans-web",
     "preview": "astro preview",
     "astro": "astro",
     "deploy:prod": "./bin/deploy.prod.sh",
