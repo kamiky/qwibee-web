@@ -194,7 +194,7 @@ const t = useTranslations(lang);
         }
 
         // Verify the magic link
-        const response = await fetch("/api/stripe/verify-magic-link", {
+        const response = await fetch("/api/auth/verify-magic-link", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -208,8 +208,13 @@ const t = useTranslations(lang);
           throw new Error(data.error || "Failed to verify magic link");
         }
 
+        const accessToken = data.data.token;
+        const email = data.data.email;
+        const profileId = data.data.profileId;
+
         // Store the access token
-        localStorage.setItem("animated_wallpapers_access", data.token);
+        localStorage.setItem("wmf_access_token", accessToken);
+        localStorage.setItem("wmf_profile_id", profileId);
         console.log("✓ Access token stored successfully");
 
         // Show success
@@ -220,24 +225,34 @@ const t = useTranslations(lang);
         const purchaseDateEl = document.getElementById("purchase-date");
         const recoveredEmailEl = document.getElementById("recovered-email");
 
-        if (purchaseDateEl && data.purchaseDate) {
-          purchaseDateEl.textContent = new Date(
-            data.purchaseDate
-          ).toLocaleDateString();
+        if (purchaseDateEl) {
+          purchaseDateEl.textContent = new Date().toLocaleDateString();
         }
         if (recoveredEmailEl) {
-          recoveredEmailEl.textContent = data.email;
+          recoveredEmailEl.textContent = email;
         }
+
+        // Update the view button to go to the profile
+        const viewButton = successContainer?.querySelector("a[href='/']");
+        if (viewButton) {
+          viewButton.setAttribute("href", `/${profileId}`);
+        }
+
+        // Redirect after 3 seconds
+        setTimeout(() => {
+          window.location.href = `/${profileId}`;
+        }, 3000);
       } catch (error) {
         console.error("Verification error:", error);
         showError(error instanceof Error ? error.message : "Failed to verify magic link");
       }
     }
 
-    function showError(message: string) {
+    // @ts-ignore
+    function showError(message) {
       if (loadingContainer) loadingContainer.classList.add("hidden");
       if (errorContainer) errorContainer.classList.remove("hidden");
-      if (errorMessage) errorMessage.textContent = message;
+      if (errorMessage) errorMessage.textContent = String(message || "An error occurred");
     }
 
     // Auto-verify on page load

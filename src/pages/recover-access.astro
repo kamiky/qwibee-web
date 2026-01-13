@@ -4,9 +4,16 @@ import Header from "@/components/Header.astro";
 import Footer from "@/components/Footer.astro";
 import LanguageSwitcher from "@/components/LanguageSwitcher.astro";
 import { useTranslations } from "@/i18n/translations";
+import { profiles } from "@/data/profiles";
 
 const lang = "en";
 const t = useTranslations(lang);
+
+// Get all profile IDs for the selector
+const profileList = Object.keys(profiles).map((id) => ({
+  id,
+  name: profiles[id].displayName[lang],
+}));
 ---
 
 <Layout 
@@ -33,6 +40,28 @@ const t = useTranslations(lang);
       <div class="bg-white rounded-2xl p-8 border border-gray-200 shadow-lg">
         <div id="form-container">
           <div class="mb-6">
+            <label for="profileId" class="block text-lg font-medium mb-2 text-gray-900">
+              Select Profile
+            </label>
+            <select
+              id="profileId"
+              name="profileId"
+              class="w-full px-4 py-3 rounded-lg bg-white border border-gray-300 focus:border-brand-blue-500 focus:ring-2 focus:ring-brand-blue-500/20 focus:outline-none text-gray-900"
+              required
+            >
+              <option value="">Choose a profile...</option>
+              {
+                profileList.map((profile) => (
+                  <option value={profile.id}>{profile.name}</option>
+                ))
+              }
+            </select>
+            <p class="text-sm text-gray-600 mt-2">
+              Select the profile you have a membership with
+            </p>
+          </div>
+
+          <div class="mb-6">
             <label for="email" class="block text-lg font-medium mb-2 text-gray-900">
               {t.recoverAccess.form.emailLabel}
             </label>
@@ -51,7 +80,7 @@ const t = useTranslations(lang);
 
           <button
             id="recover-btn"
-            class="w-full bg-brand-blue-500 hover:bg-brand-blue-600 text-white font-bold py-3 px-6 rounded-lg transition-colors shadow-lg hover:shadow-xl"
+            class="w-full bg-brand-blue-500 hover:bg-brand-blue-600 text-white font-bold py-3 px-6 rounded-lg transition-colors shadow-lg hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed"
           >
             <span id="recover-btn-text"
               >{t.recoverAccess.form.submitButton}</span
@@ -170,16 +199,23 @@ const t = useTranslations(lang);
     const recoverBtn = document.getElementById("recover-btn");
     const recoverBtnText = document.getElementById("recover-btn-text");
     const emailInput = document.getElementById("email");
+    const profileIdInput = document.getElementById("profileId");
     const formContainer = document.getElementById("form-container");
     const successContainer = document.getElementById("success-container");
     const errorContainer = document.getElementById("error-container");
     const errorMessage = document.getElementById("error-message");
 
-    if (recoverBtn && emailInput) {
+    if (recoverBtn && emailInput && profileIdInput) {
       recoverBtn.addEventListener("click", async () => {
         const email = emailInput.value.trim();
+        const profileId = profileIdInput.value.trim();
 
-        // Validate email
+        // Validate inputs
+        if (!profileId) {
+          showError("Please select a profile");
+          return;
+        }
+
         if (!email || !email.includes("@")) {
           showError("Please enter a valid email address");
           return;
@@ -187,7 +223,7 @@ const t = useTranslations(lang);
 
         try {
           // Disable button
-          recoverBtn.setAttribute("disabled", "true");
+          recoverBtn.disabled = true;
           if (recoverBtnText)
             recoverBtnText.textContent = t.recoverAccess.form.submitting;
 
@@ -195,18 +231,18 @@ const t = useTranslations(lang);
           if (errorContainer) errorContainer.classList.add("hidden");
 
           // Call recovery API
-          const response = await fetch("/api/stripe/recover-access", {
+          const response = await fetch("/api/auth/send-magic-link", {
             method: "POST",
             headers: {
               "Content-Type": "application/json",
             },
-            body: JSON.stringify({ email }),
+            body: JSON.stringify({ email, profileId }),
           });
 
           const data = await response.json();
 
           if (!response.ok) {
-            throw new Error(data.error || "Failed to recover access");
+            throw new Error(data.error || "Failed to send recovery link");
           }
 
           console.log("✓ Magic link email sent successfully");
@@ -222,10 +258,10 @@ const t = useTranslations(lang);
           }
         } catch (error) {
           console.error("Recovery error:", error);
-          showError(error.message || "Failed to recover access");
+          showError(error.message || "Failed to send recovery link");
 
           // Re-enable button
-          recoverBtn.removeAttribute("disabled");
+          recoverBtn.disabled = false;
           if (recoverBtnText)
             recoverBtnText.textContent = t.recoverAccess.form.submitButton;
         }
@@ -239,9 +275,10 @@ const t = useTranslations(lang);
       });
     }
 
+    // @ts-ignore
     function showError(message) {
       if (errorContainer && errorMessage) {
-        errorMessage.textContent = message;
+        errorMessage.textContent = String(message || "An error occurred");
         errorContainer.classList.remove("hidden");
       }
     }
