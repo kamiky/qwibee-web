@@ -4,11 +4,15 @@ import Header from "@/components/Header.astro";
 import Footer from "@/components/Footer.astro";
 import LanguageSwitcher from "@/components/LanguageSwitcher.astro";
 import { useTranslations } from "@/i18n/translations";
-import { profiles } from "@/data/profiles";
+import { profiles, type ContentType } from "@/data/profiles";
 
 const { profileId } = Astro.params;
 const lang = "en";
 const t = useTranslations(lang);
+
+// Temporary constant for user plan - will be replaced with actual user data later
+const USER_PLAN = "free" as "free" | "membership"; // Options: 'free', 'membership', 'premium'
+const PURCHASED_VIDEO_IDS: string[] = []; // IDs of individually purchased videos
 
 // Get profile data
 const profile = profiles[profileId || ""];
@@ -20,6 +24,32 @@ if (!profile) {
 
 // Format price helper
 const formatPrice = (cents: number) => `$${(cents / 100).toFixed(2)}`;
+
+// Helper to determine if user has access to content
+const hasAccess = (contentType: ContentType, videoId: string): boolean => {
+  if (contentType === "free") return true;
+  if (contentType === "membership") return USER_PLAN === "membership";
+  if (contentType === "paid") return PURCHASED_VIDEO_IDS.includes(videoId);
+  return false;
+};
+
+// Helper to get the appropriate filename based on access
+const getVideoFilename = (
+  contentType: ContentType,
+  videoId: string,
+  paidFilename: string,
+  previewFilename: string
+) => {
+  return hasAccess(contentType, videoId) ? paidFilename : previewFilename;
+};
+
+// Helper to get content label
+const getContentLabel = (contentType: ContentType) => {
+  if (contentType === "free") return "🆓 FREE";
+  if (contentType === "membership") return "👑 MEMBERS ONLY";
+  if (contentType === "paid") return "💎 PAY-PER-VIEW";
+  return "";
+};
 ---
 
 <Layout
@@ -98,56 +128,114 @@ const formatPrice = (cents: number) => `$${(cents / 100).toFixed(2)}`;
         </h2>
         <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
           {
-            profile.videos.map((video) => (
-              <div class="bg-white border border-gray-200 rounded-xl overflow-hidden hover:border-brand-blue-500 hover:shadow-xl transition-all group">
-                {/* Video Preview */}
-                <div class="aspect-video bg-gradient-to-br from-blue-50 to-purple-50 relative">
-                  <video
-                    class="w-full h-full object-cover"
-                    preload="metadata"
-                    poster={video.thumbnail}
-                  >
-                    <source
-                      src={`/uploads/${profile.id}/${video.previewFilename}#t=0.1`}
-                      type="video/mp4"
-                    />
-                  </video>
-                  <div class="absolute inset-0 bg-black/50 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-                    <svg
-                      class="w-16 h-16 text-white"
-                      fill="currentColor"
-                      viewBox="0 0 20 20"
+            profile.videos.map((video) => {
+              const userHasAccess = hasAccess(video.type, video.id);
+              const videoFilename = getVideoFilename(
+                video.type,
+                video.id,
+                video.paidFilename,
+                video.previewFilename
+              );
+              const contentLabel = getContentLabel(video.type);
+
+              return (
+                <div class="bg-white border border-gray-200 rounded-xl overflow-hidden hover:border-brand-blue-500 hover:shadow-xl transition-all group">
+                  {/* Video Preview */}
+                  <div class="aspect-video bg-gradient-to-br from-blue-50 to-purple-50 relative">
+                    <video
+                      class="w-full h-full object-cover"
+                      preload="metadata"
+                      poster={video.thumbnail}
+                      controls={userHasAccess}
                     >
-                      <path d="M6.3 2.841A1.5 1.5 0 004 4.11V15.89a1.5 1.5 0 002.3 1.269l9.344-5.89a1.5 1.5 0 000-2.538L6.3 2.84z" />
-                    </svg>
-                  </div>
-                  {video.duration && (
-                    <div class="absolute bottom-2 right-2 bg-black/80 text-white text-xs px-2 py-1 rounded">
-                      {video.duration}
+                      <source
+                        src={`/uploads/${profile.id}/${videoFilename}#t=0.1`}
+                        type="video/mp4"
+                      />
+                    </video>
+
+                    {/* Content Type Badge */}
+                    <div class="absolute top-2 left-2 bg-black/80 text-white text-xs font-bold px-3 py-1 rounded-full">
+                      {contentLabel}
                     </div>
-                  )}
-                </div>
 
-                {/* Video Info */}
-                <div class="p-4">
-                  <h3 class="text-lg font-bold text-gray-900 mb-2 line-clamp-1">
-                    {video.title[lang]}
-                  </h3>
-                  <p class="text-sm text-gray-600 mb-4 line-clamp-2">
-                    {video.description[lang]}
-                  </p>
+                    {/* Lock Icon for locked content */}
+                    {!userHasAccess && (
+                      <div class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-black/70 text-white p-4 rounded-full">
+                        <svg
+                          class="w-8 h-8"
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                        >
+                          <path
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            stroke-width="2"
+                            d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"
+                          />
+                        </svg>
+                      </div>
+                    )}
 
-                  <div class="flex items-center justify-between">
-                    <span class="text-brand-blue-500 font-bold text-lg">
-                      {formatPrice(video.price)}
-                    </span>
-                    <button class="bg-brand-blue-500 hover:bg-brand-blue-600 text-white font-semibold py-2 px-4 rounded-lg transition-all">
-                      {t.profile.buyVideo}
-                    </button>
+                    {video.duration && (
+                      <div class="absolute bottom-2 right-2 bg-black/80 text-white text-xs px-2 py-1 rounded">
+                        {video.duration}
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Video Info */}
+                  <div class="p-4">
+                    <h3 class="text-lg font-bold text-gray-900 mb-2 line-clamp-1">
+                      {video.title[lang]}
+                    </h3>
+                    <p class="text-sm text-gray-600 mb-4 line-clamp-2">
+                      {video.description[lang]}
+                    </p>
+
+                    <div class="flex items-center justify-between">
+                      {/* Price/Access Info */}
+                      {userHasAccess ? (
+                        <span class="text-green-600 font-bold text-sm flex items-center gap-1">
+                          <svg
+                            class="w-5 h-5"
+                            fill="currentColor"
+                            viewBox="0 0 20 20"
+                          >
+                            <path
+                              fill-rule="evenodd"
+                              d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                              clip-rule="evenodd"
+                            />
+                          </svg>
+                          UNLOCKED
+                        </span>
+                      ) : (
+                        <span class="text-brand-blue-500 font-bold text-lg">
+                          {video.type === "paid"
+                            ? formatPrice(video.price)
+                            : video.type === "membership"
+                              ? "Members"
+                              : "Free"}
+                        </span>
+                      )}
+
+                      {/* Action Button */}
+                      {!userHasAccess && (
+                        <button class="bg-brand-blue-500 hover:bg-brand-blue-600 text-white font-semibold py-2 px-4 rounded-lg transition-all">
+                          {video.type === "paid"
+                            ? t.profile.buyVideo
+                            : video.type === "membership"
+                              ? "Subscribe"
+                              : "Watch"}
+                        </button>
+                      )}
+                    </div>
                   </div>
                 </div>
-              </div>
-            ))
+              );
+            })
           }
         </div>
       </section>
