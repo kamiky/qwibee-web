@@ -9,6 +9,9 @@ import { profiles } from "@/data/profiles";
 const lang: Language = "en";
 const t = useTranslations(lang);
 
+// Check if we're in production mode
+const isProduction = import.meta.env.MODE === "production";
+
 // Get all profiles as array
 const allProfiles = Object.values(profiles);
 
@@ -26,10 +29,18 @@ const getProfileUrl = (profileId: string) => {
   description={t.seo.home.description}
   lang={lang}
 >
-  <Header lang={lang} />
-  <LanguageSwitcher lang={lang} />
+  {isProduction ? (
+    <main class="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 flex items-center justify-center">
+      <div class="text-center px-6">
+        <h1 class="text-4xl font-bold text-gray-900 mb-4">Please wait, website is not ready for production yet...</h1>
+      </div>
+    </main>
+  ) : (
+    <>
+      <Header lang={lang} />
+      <LanguageSwitcher lang={lang} />
 
-  <main class="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
+      <main class="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
     <!-- Hero Section -->
     <section class="pt-32 pb-20 px-6">
       <div class="max-w-7xl mx-auto">
@@ -156,11 +167,11 @@ const getProfileUrl = (profileId: string) => {
         </div>
       </div>
     </section>
-  </main>
+      </main>
 
-  <Footer lang={lang} />
+      <Footer lang={lang} />
 
-  <script>
+      <script>
     // Smooth scroll for anchor links
     document.querySelectorAll('a[href^="#"]').forEach((anchor) => {
       anchor.addEventListener("click", (e) => {
@@ -177,5 +188,7 @@ const getProfileUrl = (profileId: string) => {
         }
       });
     });
-  </script>
+      </script>
+    </>
+  )}
 </Layout>
