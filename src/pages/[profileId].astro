@@ -609,10 +609,57 @@ const getContentLabel = (contentType: ContentType) => {
           return;
         }
 
+        // Open new tab immediately to avoid popup blockers
+        const stripeWindow = window.open("about:blank", "_blank");
+        
         // Show loading state
         const ctaText = document.getElementById("membership-cta-text");
         const originalText = ctaText?.textContent || "Subscribe";
         if (ctaText) ctaText.textContent = "Loading...";
+
+        // Show loading message in the new tab
+        if (stripeWindow) {
+          stripeWindow.document.write(`
+            <html>
+              <head>
+                <title>Loading...</title>
+                <style>
+                  body {
+                    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    height: 100vh;
+                    margin: 0;
+                    background: #f9fafb;
+                  }
+                  .loader {
+                    text-align: center;
+                  }
+                  .spinner {
+                    border: 3px solid #e5e7eb;
+                    border-top: 3px solid #3b82f6;
+                    border-radius: 50%;
+                    width: 40px;
+                    height: 40px;
+                    animation: spin 1s linear infinite;
+                    margin: 0 auto 16px;
+                  }
+                  @keyframes spin {
+                    0% { transform: rotate(0deg); }
+                    100% { transform: rotate(360deg); }
+                  }
+                </style>
+              </head>
+              <body>
+                <div class="loader">
+                  <div class="spinner"></div>
+                  <p>Redirecting to Stripe...</p>
+                </div>
+              </body>
+            </html>
+          `);
+        }
 
         try {
           // Extract user email from token
@@ -643,8 +690,11 @@ const getContentLabel = (contentType: ContentType) => {
 
             const data = await response.json();
 
-            // Redirect to Stripe customer portal
-            if (data.url) {
+            // Redirect the opened tab to Stripe customer portal
+            if (data.url && stripeWindow) {
+              stripeWindow.location.href = data.url;
+            } else if (!stripeWindow) {
+              // Fallback if popup was blocked
               window.location.href = data.url;
             } else {
               throw new Error("No portal URL received");
@@ -675,15 +725,27 @@ const getContentLabel = (contentType: ContentType) => {
 
             const data = await response.json();
 
-            // Redirect to Stripe checkout
-            if (data.url) {
+            // Redirect the opened tab to Stripe checkout
+            if (data.url && stripeWindow) {
+              stripeWindow.location.href = data.url;
+            } else if (!stripeWindow) {
+              // Fallback if popup was blocked
               window.location.href = data.url;
             } else {
               throw new Error("No checkout URL received");
             }
           }
+          
+          // Restore button text
+          if (ctaText) ctaText.textContent = originalText;
         } catch (error) {
           console.error("Error:", error);
+          
+          // Close the loading tab if there was an error
+          if (stripeWindow) {
+            stripeWindow.close();
+          }
+          
           alert(`Failed to ${isSubscribed ? "open subscription management" : "start checkout"}. Please try again.`);
 
           // Restore original text
