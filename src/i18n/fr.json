@@ -1,7 +1,6 @@
 {
   "nav": {
-    "home": "Accueil",
-    "creators": "Créateurs",
+    "login": "Connexion",
     "contact": "Contact"
   },
   "hero": {
@@ -144,6 +143,44 @@
       }
     }
   },
+  "auth": {
+    "title": "Connexion / Inscription",
+    "subtitle": "Entrez votre email pour recevoir un lien magique et accéder à votre compte.",
+    "form": {
+      "emailLabel": "Adresse email",
+      "emailPlaceholder": "vous@exemple.com",
+      "emailHelp": "Nous vous enverrons un lien d'authentification sécurisé",
+      "submitButton": "Envoyer le lien magique",
+      "submitting": "Envoi en cours..."
+    },
+    "success": {
+      "icon": "📧",
+      "title": "Vérifiez votre email !",
+      "message": "Nous avons envoyé un lien magique à",
+      "info": "Cliquez sur le lien dans votre email pour vous connecter en toute sécurité à votre compte.",
+      "nextSteps": {
+        "title": "Que faire ensuite :",
+        "step1": "Vérifiez votre boîte de réception pour notre message",
+        "step2": "Cliquez sur le bouton \"Se connecter\" dans l'email",
+        "step3": "Vous serez automatiquement connecté à votre compte"
+      },
+      "important": {
+        "title": "⏱️ Important :",
+        "message": "Le lien magique expire dans 1 heure pour des raisons de sécurité. Si vous ne voyez pas l'email, vérifiez votre dossier spam ou demandez un nouveau lien."
+      }
+    },
+    "error": {
+      "title": "⚠️ Échec de l'authentification"
+    },
+    "help": {
+      "title": "Besoin d'aide ?",
+      "tip1": "Vérifiez votre dossier spam ou courrier indésirable si vous ne voyez pas l'email",
+      "tip2": "Assurez-vous d'avoir entré la bonne adresse email",
+      "tip3": "Toujours des problèmes ?",
+      "contactSupport": "Contacter le support"
+    },
+    "backLink": "← Retour à l'accueil"
+  },
   "recoverAccess": {
     "title": "Récupérer votre Accès",
     "subtitle": "Vous avez perdu votre accès ? Entrez votre email pour récupérer votre contenu.",
@@ -227,6 +264,10 @@
     "contact": {
       "title": "Contact - WatchMeFans",
       "description": "Des questions ou envie de devenir créateur ? Contactez-nous."
+    },
+    "auth": {
+      "title": "Connexion / Inscription - WatchMeFans",
+      "description": "Connectez-vous ou créez un compte avec l'authentification par lien magique."
     },
     "recoverAccess": {
       "title": "Récupérer l'accès - WatchMeFans",

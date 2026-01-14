@@ -22,22 +22,10 @@ const t = useTranslations(lang);
 
     <nav class="flex items-center gap-8">
       <a
-        href={lang === "en" ? "/" : "/fr"}
+        href={lang === "en" ? "/login" : "/fr/login"}
         class="text-gray-700 hover:text-brand-blue-500 transition-all font-medium"
       >
-        {t.nav.home}
-      </a>
-      <a
-        href={lang === "en" ? "/#creators" : "/fr#creators"}
-        class="text-gray-700 hover:text-brand-blue-500 transition-all font-medium"
-      >
-        {t.nav.creators}
-      </a>
-      <a
-        href={lang === "en" ? "/contact" : "/fr/contact"}
-        class="text-gray-700 hover:text-brand-blue-500 transition-all font-medium"
-      >
-        {t.nav.contact}
+        {t.nav.login}
       </a>
     </nav>
   </div>

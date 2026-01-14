@@ -5,11 +5,11 @@ export const prerender = false;
 export const POST: APIRoute = async ({ request }) => {
   try {
     const body = await request.json();
-    const { email, profileId } = body;
+    const { email } = body;
 
-    if (!email || !profileId) {
+    if (!email) {
       return new Response(
-        JSON.stringify({ error: "Missing email or profileId" }),
+        JSON.stringify({ error: "Missing email" }),
         {
           status: 400,
           headers: { "Content-Type": "application/json" },
@@ -25,10 +25,7 @@ export const POST: APIRoute = async ({ request }) => {
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({
-        email,
-        profileId,
-      }),
+      body: JSON.stringify({ email }),
     });
 
     if (!response.ok) {

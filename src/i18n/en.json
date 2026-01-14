@@ -1,7 +1,6 @@
 {
   "nav": {
-    "home": "Home",
-    "creators": "Creators",
+    "login": "Login",
     "contact": "Contact"
   },
   "hero": {
@@ -144,6 +143,44 @@
       }
     }
   },
+  "auth": {
+    "title": "Sign In / Register",
+    "subtitle": "Enter your email to receive a magic link and access your account.",
+    "form": {
+      "emailLabel": "Email Address",
+      "emailPlaceholder": "you@example.com",
+      "emailHelp": "We'll send you a secure authentication link",
+      "submitButton": "Send Magic Link",
+      "submitting": "Sending..."
+    },
+    "success": {
+      "icon": "📧",
+      "title": "Check Your Email!",
+      "message": "We've sent a magic link to",
+      "info": "Click the link in your email to securely sign in to your account.",
+      "nextSteps": {
+        "title": "What to do next:",
+        "step1": "Check your email inbox for our message",
+        "step2": "Click the \"Sign In\" button in the email",
+        "step3": "You'll be automatically signed in to your account"
+      },
+      "important": {
+        "title": "⏱️ Important:",
+        "message": "The magic link expires in 1 hour for security. If you don't see the email, check your spam folder or request a new link."
+      }
+    },
+    "error": {
+      "title": "⚠️ Authentication Failed"
+    },
+    "help": {
+      "title": "Having trouble?",
+      "tip1": "Check your spam or junk folder if you don't see the email",
+      "tip2": "Make sure you entered the correct email address",
+      "tip3": "Still having issues?",
+      "contactSupport": "Contact support"
+    },
+    "backLink": "← Back to Home"
+  },
   "recoverAccess": {
     "title": "Recover Your Access",
     "subtitle": "Lost your access? Enter your email to retrieve your content.",
@@ -227,6 +264,10 @@
     "contact": {
       "title": "Contact - WatchMeFans",
       "description": "Have questions or want to become a creator? Get in touch with us."
+    },
+    "auth": {
+      "title": "Sign In / Register - WatchMeFans",
+      "description": "Sign in or create an account with magic link authentication."
     },
     "recoverAccess": {
       "title": "Recover Access - WatchMeFans",

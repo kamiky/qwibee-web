@@ -4,21 +4,14 @@ import Header from "@/components/Header.astro";
 import Footer from "@/components/Footer.astro";
 import LanguageSwitcher from "@/components/LanguageSwitcher.astro";
 import { useTranslations } from "@/i18n/translations";
-import { profiles } from "@/data/profiles";
 
 const lang = "en";
 const t = useTranslations(lang);
-
-// Get all profile IDs for the selector
-const profileList = Object.keys(profiles).map((id) => ({
-  id,
-  name: profiles[id].displayName[lang],
-}));
 ---
 
 <Layout 
-  title={t.seo.recoverAccess.title} 
-  description={t.seo.recoverAccess.description}
+  title={t.seo.auth.title} 
+  description={t.seo.auth.description}
   lang={lang}
 >
   <Header lang={lang} />
@@ -29,61 +22,39 @@ const profileList = Object.keys(profiles).map((id) => ({
       <!-- Header -->
       <div class="text-center mb-12">
         <h1 class="text-4xl sm:text-5xl font-extrabold mb-4 text-gray-900">
-          {t.recoverAccess.title}
+          {t.auth.title}
         </h1>
         <p class="text-xl text-gray-600">
-          {t.recoverAccess.subtitle}
+          {t.auth.subtitle}
         </p>
       </div>
 
-      <!-- Recovery Form -->
+      <!-- Auth Form -->
       <div class="bg-white rounded-2xl p-8 border border-gray-200 shadow-lg">
         <div id="form-container">
           <div class="mb-6">
-            <label for="profileId" class="block text-lg font-medium mb-2 text-gray-900">
-              Select Profile
-            </label>
-            <select
-              id="profileId"
-              name="profileId"
-              class="w-full px-4 py-3 rounded-lg bg-white border border-gray-300 focus:border-brand-blue-500 focus:ring-2 focus:ring-brand-blue-500/20 focus:outline-none text-gray-900"
-              required
-            >
-              <option value="">Choose a profile...</option>
-              {
-                profileList.map((profile) => (
-                  <option value={profile.id}>{profile.name}</option>
-                ))
-              }
-            </select>
-            <p class="text-sm text-gray-600 mt-2">
-              Select the profile you have a membership with
-            </p>
-          </div>
-
-          <div class="mb-6">
             <label for="email" class="block text-lg font-medium mb-2 text-gray-900">
-              {t.recoverAccess.form.emailLabel}
+              {t.auth.form.emailLabel}
             </label>
             <input
               type="email"
               id="email"
               name="email"
-              placeholder={t.recoverAccess.form.emailPlaceholder}
+              placeholder={t.auth.form.emailPlaceholder}
               class="w-full px-4 py-3 rounded-lg bg-white border border-gray-300 focus:border-brand-blue-500 focus:ring-2 focus:ring-brand-blue-500/20 focus:outline-none text-gray-900"
               required
             />
             <p class="text-sm text-gray-600 mt-2">
-              {t.recoverAccess.form.emailHelp}
+              {t.auth.form.emailHelp}
             </p>
           </div>
 
           <button
-            id="recover-btn"
+            id="auth-btn"
             class="w-full bg-brand-blue-500 hover:bg-brand-blue-600 text-white font-bold py-3 px-6 rounded-lg transition-colors shadow-lg hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            <span id="recover-btn-text"
-              >{t.recoverAccess.form.submitButton}</span
+            <span id="auth-btn-text"
+              >{t.auth.form.submitButton}</span
             >
           </button>
         </div>
@@ -91,16 +62,16 @@ const profileList = Object.keys(profiles).map((id) => ({
         <!-- Success Message (hidden by default) -->
         <div id="success-container" class="hidden">
           <div class="text-center mb-6">
-            <div class="text-6xl mb-4">{t.recoverAccess.success.icon}</div>
+            <div class="text-6xl mb-4">{t.auth.success.icon}</div>
             <h2 class="text-2xl font-bold text-green-600 mb-2">
-              {t.recoverAccess.success.title}
+              {t.auth.success.title}
             </h2>
             <p class="text-gray-700 mb-4">
-              {t.recoverAccess.success.message}
-              <strong id="recovered-email" class="text-gray-900"></strong>
+              {t.auth.success.message}
+              <strong id="auth-email" class="text-gray-900"></strong>
             </p>
             <p class="text-gray-600 text-sm">
-              {t.recoverAccess.success.info}
+              {t.auth.success.info}
             </p>
           </div>
 
@@ -108,20 +79,20 @@ const profileList = Object.keys(profiles).map((id) => ({
             class="bg-blue-50 border border-blue-200 rounded-lg p-6 mb-4"
           >
             <h3 class="text-lg font-bold text-blue-700 mb-3">
-              {t.recoverAccess.success.nextSteps.title}
+              {t.auth.success.nextSteps.title}
             </h3>
             <ul class="space-y-2 text-gray-700">
               <li class="flex items-start gap-2">
                 <span class="text-brand-blue-500 mt-1 font-bold">1.</span>
-                <span>{t.recoverAccess.success.nextSteps.step1}</span>
+                <span>{t.auth.success.nextSteps.step1}</span>
               </li>
               <li class="flex items-start gap-2">
                 <span class="text-brand-blue-500 mt-1 font-bold">2.</span>
-                <span>{t.recoverAccess.success.nextSteps.step2}</span>
+                <span>{t.auth.success.nextSteps.step2}</span>
               </li>
               <li class="flex items-start gap-2">
                 <span class="text-brand-blue-500 mt-1 font-bold">3.</span>
-                <span>{t.recoverAccess.success.nextSteps.step3}</span>
+                <span>{t.auth.success.nextSteps.step3}</span>
               </li>
             </ul>
           </div>
@@ -130,10 +101,10 @@ const profileList = Object.keys(profiles).map((id) => ({
             class="bg-yellow-50 border border-yellow-200 rounded-lg p-4"
           >
             <p class="text-sm text-yellow-700 mb-2 font-bold">
-              {t.recoverAccess.success.important.title}
+              {t.auth.success.important.title}
             </p>
             <p class="text-sm text-gray-700">
-              {t.recoverAccess.success.important.message}
+              {t.auth.success.important.message}
             </p>
           </div>
         </div>
@@ -143,7 +114,7 @@ const profileList = Object.keys(profiles).map((id) => ({
           <div
             class="bg-red-50 border border-red-200 rounded-lg p-4 text-red-700"
           >
-            <p class="font-medium mb-1">{t.recoverAccess.error.title}</p>
+            <p class="font-medium mb-1">{t.auth.error.title}</p>
             <p class="text-sm" id="error-message"></p>
           </div>
         </div>
@@ -153,28 +124,24 @@ const profileList = Object.keys(profiles).map((id) => ({
       <div
         class="mt-8 bg-white rounded-xl p-6 border border-gray-200 shadow-md"
       >
-        <h3 class="text-lg font-bold mb-3 text-gray-900">{t.recoverAccess.help.title}</h3>
+        <h3 class="text-lg font-bold mb-3 text-gray-900">{t.auth.help.title}</h3>
         <ul class="space-y-2 text-gray-700">
           <li class="flex items-start gap-2">
             <span class="text-brand-blue-500 mt-1">•</span>
-            <span>{t.recoverAccess.help.tip1}</span>
+            <span>{t.auth.help.tip1}</span>
           </li>
           <li class="flex items-start gap-2">
             <span class="text-brand-blue-500 mt-1">•</span>
-            <span>{t.recoverAccess.help.tip2}</span>
-          </li>
-          <li class="flex items-start gap-2">
-            <span class="text-brand-blue-500 mt-1">•</span>
-            <span>{t.recoverAccess.help.tip3}</span>
+            <span>{t.auth.help.tip2}</span>
           </li>
           <li class="flex items-start gap-2">
             <span class="text-brand-blue-500 mt-1">•</span>
             <span
-              >{t.recoverAccess.help.tip4}
+              >{t.auth.help.tip3}
               <a
                 href="/contact"
                 class="text-brand-blue-500 hover:text-brand-blue-600 underline"
-                >{t.recoverAccess.help.contactSupport}</a
+                >{t.auth.help.contactSupport}</a
               ></span
             >
           </li>
@@ -187,7 +154,7 @@ const profileList = Object.keys(profiles).map((id) => ({
           href="/"
           class="text-brand-blue-500 hover:text-brand-blue-600 transition-colors"
         >
-          {t.recoverAccess.backLink}
+          {t.auth.backLink}
         </a>
       </div>
     </div>
@@ -196,26 +163,19 @@ const profileList = Object.keys(profiles).map((id) => ({
   <Footer lang={lang} />
 
   <script define:vars={{ t }}>
-    const recoverBtn = document.getElementById("recover-btn");
-    const recoverBtnText = document.getElementById("recover-btn-text");
+    const authBtn = document.getElementById("auth-btn");
+    const authBtnText = document.getElementById("auth-btn-text");
     const emailInput = document.getElementById("email");
-    const profileIdInput = document.getElementById("profileId");
     const formContainer = document.getElementById("form-container");
     const successContainer = document.getElementById("success-container");
     const errorContainer = document.getElementById("error-container");
     const errorMessage = document.getElementById("error-message");
 
-    if (recoverBtn && emailInput && profileIdInput) {
-      recoverBtn.addEventListener("click", async () => {
+    if (authBtn && emailInput) {
+      authBtn.addEventListener("click", async () => {
         const email = emailInput.value.trim();
-        const profileId = profileIdInput.value.trim();
 
-        // Validate inputs
-        if (!profileId) {
-          showError("Please select a profile");
-          return;
-        }
-
+        // Validate input
         if (!email || !email.includes("@")) {
           showError("Please enter a valid email address");
           return;
@@ -223,26 +183,26 @@ const profileList = Object.keys(profiles).map((id) => ({
 
         try {
           // Disable button
-          recoverBtn.disabled = true;
-          if (recoverBtnText)
-            recoverBtnText.textContent = t.recoverAccess.form.submitting;
+          authBtn.disabled = true;
+          if (authBtnText)
+            authBtnText.textContent = t.auth.form.submitting;
 
           // Hide previous errors
           if (errorContainer) errorContainer.classList.add("hidden");
 
-          // Call recovery API
+          // Call auth API
           const response = await fetch("/api/auth/send-magic-link", {
             method: "POST",
             headers: {
               "Content-Type": "application/json",
             },
-            body: JSON.stringify({ email, profileId }),
+            body: JSON.stringify({ email }),
           });
 
           const data = await response.json();
 
           if (!response.ok) {
-            throw new Error(data.error || "Failed to send recovery link");
+            throw new Error(data.error || "Failed to send authentication link");
           }
 
           console.log("✓ Magic link email sent successfully");
@@ -252,25 +212,25 @@ const profileList = Object.keys(profiles).map((id) => ({
           if (successContainer) successContainer.classList.remove("hidden");
 
           // Fill in email
-          const recoveredEmailEl = document.getElementById("recovered-email");
-          if (recoveredEmailEl) {
-            recoveredEmailEl.textContent = email;
+          const authEmailEl = document.getElementById("auth-email");
+          if (authEmailEl) {
+            authEmailEl.textContent = email;
           }
         } catch (error) {
-          console.error("Recovery error:", error);
-          showError(error.message || "Failed to send recovery link");
+          console.error("Authentication error:", error);
+          showError(error.message || "Failed to send authentication link");
 
           // Re-enable button
-          recoverBtn.disabled = false;
-          if (recoverBtnText)
-            recoverBtnText.textContent = t.recoverAccess.form.submitButton;
+          authBtn.disabled = false;
+          if (authBtnText)
+            authBtnText.textContent = t.auth.form.submitButton;
         }
       });
 
       // Allow Enter key to submit
       emailInput.addEventListener("keypress", (e) => {
         if (e.key === "Enter") {
-          recoverBtn.click();
+          authBtn.click();
         }
       });
     }
