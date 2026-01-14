@@ -221,42 +221,6 @@
     },
     "backLink": "← Back to Home"
   },
-  "verifyAccess": {
-    "loading": {
-      "title": "Verifying Your Access",
-      "subtitle": "Please wait while we verify your magic link..."
-    },
-    "success": {
-      "icon": "✅",
-      "title": "Access Restored!",
-      "subtitle": "Your access has been successfully verified.",
-      "info": "You can now access all your content.",
-      "purchaseDate": "Purchase Date:",
-      "email": "Email:",
-      "viewButton": "View Content",
-      "nextSteps": {
-        "title": "✨ What's Next?",
-        "tip1": "Your access has been saved to this browser",
-        "tip2": "You can watch any video without limits",
-        "tip3": "Lost access again? Just use the recovery page"
-      }
-    },
-    "error": {
-      "icon": "⚠️",
-      "title": "Verification Failed",
-      "subtitle": "We couldn't verify your magic link.",
-      "errorLabel": "Error:",
-      "requestNewLink": "Request New Link",
-      "contactSupport": "Contact Support",
-      "commonIssues": {
-        "title": "Common Issues:",
-        "issue1": "Magic links expire after 15 minutes for security",
-        "issue2": "Each link can only be used once",
-        "issue3": "Make sure you're clicking the latest link we sent"
-      }
-    },
-    "backLink": "← Back to Home"
-  },
   "seo": {
     "home": {
       "title": "WatchMeFans - Premium Video Content Platform",
@@ -273,10 +237,6 @@
     "recoverAccess": {
       "title": "Recover Access - WatchMeFans",
       "description": "Lost your access? Enter your email to retrieve your content."
-    },
-    "verifyAccess": {
-      "title": "Verify Access - WatchMeFans",
-      "description": "Verify your magic link to restore access to your content."
     }
   }
 }

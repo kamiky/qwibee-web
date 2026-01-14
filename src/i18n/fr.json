@@ -221,42 +221,6 @@
     },
     "backLink": "← Retour à l'accueil"
   },
-  "verifyAccess": {
-    "loading": {
-      "title": "Vérification de votre accès",
-      "subtitle": "Veuillez patienter pendant que nous vérifions votre lien magique..."
-    },
-    "success": {
-      "icon": "✅",
-      "title": "Accès restauré !",
-      "subtitle": "Votre accès a été vérifié avec succès.",
-      "info": "Vous pouvez maintenant accéder à tout votre contenu.",
-      "purchaseDate": "Date d'achat :",
-      "email": "Email :",
-      "viewButton": "Voir le contenu",
-      "nextSteps": {
-        "title": "✨ Et maintenant ?",
-        "tip1": "Votre accès a été sauvegardé dans ce navigateur",
-        "tip2": "Vous pouvez regarder n'importe quelle vidéo sans limite",
-        "tip3": "Accès perdu à nouveau ? Utilisez simplement la page de récupération"
-      }
-    },
-    "error": {
-      "icon": "⚠️",
-      "title": "Échec de la vérification",
-      "subtitle": "Nous n'avons pas pu vérifier votre lien magique.",
-      "errorLabel": "Erreur :",
-      "requestNewLink": "Demander un nouveau lien",
-      "contactSupport": "Contacter le support",
-      "commonIssues": {
-        "title": "Problèmes courants :",
-        "issue1": "Les liens magiques expirent après 15 minutes pour des raisons de sécurité",
-        "issue2": "Chaque lien ne peut être utilisé qu'une seule fois",
-        "issue3": "Assurez-vous de cliquer sur le dernier lien que nous avons envoyé"
-      }
-    },
-    "backLink": "← Retour à l'accueil"
-  },
   "seo": {
     "home": {
       "title": "WatchMeFans - Plateforme de Contenu Vidéo Premium",
@@ -273,10 +237,6 @@
     "recoverAccess": {
       "title": "Récupérer l'accès - WatchMeFans",
       "description": "Vous avez perdu votre accès ? Entrez votre email pour récupérer votre contenu."
-    },
-    "verifyAccess": {
-      "title": "Vérifier l'accès - WatchMeFans",
-      "description": "Vérifiez votre lien magique pour restaurer l'accès à votre contenu."
     }
   }
 }
