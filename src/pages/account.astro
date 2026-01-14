@@ -75,6 +75,37 @@ const t = useTranslations(lang);
             </button>
           </div>
         </div>
+
+        <!-- Logout Modal -->
+        <div id="logout-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-black bg-opacity-50 backdrop-blur-sm transition-opacity duration-200">
+          <div class="bg-white rounded-2xl shadow-2xl max-w-md w-full p-6 transform transition-all duration-200 scale-100 animate-fadeIn">
+            <!-- Header -->
+            <div class="mb-4">
+              <h3 class="text-2xl font-bold text-gray-900">Confirm Logout</h3>
+            </div>
+
+            <!-- Message -->
+            <div class="mb-6">
+              <p class="text-gray-600 text-lg">Are you sure you want to logout? You'll need to log in again to access your account.</p>
+            </div>
+
+            <!-- Actions -->
+            <div class="flex gap-3 justify-end">
+              <button
+                id="modal-cancel"
+                class="px-6 py-2.5 rounded-lg font-semibold text-gray-700 bg-gray-100 hover:bg-gray-200 transition-colors focus:outline-none focus:ring-2 focus:ring-gray-300"
+              >
+                Cancel
+              </button>
+              <button
+                id="modal-confirm"
+                class="px-6 py-2.5 rounded-lg font-semibold text-white bg-red-500 hover:bg-red-600 transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
+              >
+                Yes, Logout
+              </button>
+            </div>
+          </div>
+        </div>
       </div>
 
       <!-- Not Logged In State -->
@@ -105,6 +136,9 @@ const t = useTranslations(lang);
     const membershipsList = document.getElementById("memberships-list");
     const noMemberships = document.getElementById("no-memberships");
     const logoutBtn = document.getElementById("logout-btn");
+    const logoutModal = document.getElementById("logout-modal");
+    const modalCancel = document.getElementById("modal-cancel");
+    const modalConfirm = document.getElementById("modal-confirm");
 
     // Get auth data
     const auth = getAuth();
@@ -176,11 +210,34 @@ const t = useTranslations(lang);
       }
     }
 
-    // Logout handler
-    if (logoutBtn) {
-      logoutBtn.addEventListener("click", async () => {
-        if (!confirm("Are you sure you want to logout?")) return;
+    // Modal functions
+    function openModal() {
+      if (logoutModal) {
+        logoutModal.classList.remove("hidden");
+        document.body.style.overflow = "hidden";
+      }
+    }
 
+    function closeModal() {
+      if (logoutModal) {
+        logoutModal.classList.add("hidden");
+        document.body.style.overflow = "unset";
+      }
+    }
+
+    // Logout button click
+    if (logoutBtn) {
+      logoutBtn.addEventListener("click", openModal);
+    }
+
+    // Modal cancel button
+    if (modalCancel) {
+      modalCancel.addEventListener("click", closeModal);
+    }
+
+    // Modal confirm button
+    if (modalConfirm) {
+      modalConfirm.addEventListener("click", async () => {
         try {
           // Call logout API
           const refreshToken = localStorage.getItem("wmf_refresh_token");
@@ -204,5 +261,21 @@ const t = useTranslations(lang);
         window.location.href = "/";
       });
     }
+
+    // Close modal on backdrop click
+    if (logoutModal) {
+      logoutModal.addEventListener("click", (e) => {
+        if (e.target === logoutModal) {
+          closeModal();
+        }
+      });
+    }
+
+    // Close modal on Escape key
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Escape" && logoutModal && !logoutModal.classList.contains("hidden")) {
+        closeModal();
+      }
+    });
   </script>
 </Layout>
