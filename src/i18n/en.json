@@ -286,11 +286,26 @@
     "browseCreators": "Browse Creators →",
     "actions": "Actions",
     "logout": "Logout",
+    "deleteAccount": "Delete Account",
     "logoutModal": {
       "title": "Confirm Logout",
       "message": "Are you sure you want to logout? You'll need to log in again to access your account.",
       "cancel": "Cancel",
       "confirm": "Yes, Logout"
+    },
+    "deleteAccountModal": {
+      "title": "Delete Account",
+      "message": "Are you sure you want to delete your account? This action is irreversible and will:",
+      "warning1": "Cancel all your active subscriptions",
+      "warning2": "Permanently delete all your data",
+      "warning3": "Remove access to all content",
+      "verificationLabel": "To confirm, please type your email address:",
+      "verificationPlaceholder": "Enter your email to confirm",
+      "cancel": "Cancel",
+      "confirm": "Yes, Delete My Account",
+      "deleting": "Deleting...",
+      "success": "Your account has been deleted successfully",
+      "error": "Failed to delete account. Please try again."
     },
     "notLoggedIn": {
       "icon": "🔒",

@@ -1,5 +1,6 @@
 ---
 import type { Language } from "@/i18n/translations";
+import Toast from "@/components/Toast.astro";
 
 interface Props {
   title: string;
@@ -82,6 +83,7 @@ const siteName = "watchmefans";
   </head>
   <body class="bg-white text-gray-900 min-h-screen">
     <slot />
+    <Toast />
   </body>
 </html>
 

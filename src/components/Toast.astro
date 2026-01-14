@@ -1,0 +1,100 @@
+---
+// Toast notification component
+// This component checks for toast messages in sessionStorage and displays them
+---
+
+<div
+  id="toast-container"
+  class="fixed top-4 right-4 z-[100] flex flex-col gap-2 pointer-events-none"
+>
+</div>
+
+<script is:inline>
+  (function () {
+    // Check for toast message in sessionStorage
+    const toastMessage = sessionStorage.getItem("toast_message");
+    const toastType = sessionStorage.getItem("toast_type") || "success";
+
+    if (toastMessage) {
+      // Clear the message immediately to prevent it from showing again
+      sessionStorage.removeItem("toast_message");
+      sessionStorage.removeItem("toast_type");
+
+      // Show the toast
+      showToast(toastMessage, toastType);
+    }
+
+    function showToast(message, type = "success") {
+      const container = document.getElementById("toast-container");
+      if (!container) return;
+
+      // Create toast element
+      const toast = document.createElement("div");
+      toast.className = `pointer-events-auto transform transition-all duration-300 ease-out translate-x-full opacity-0 max-w-md w-full bg-white rounded-lg shadow-2xl border-l-4 overflow-hidden ${
+        type === "success"
+          ? "border-green-500"
+          : type === "error"
+          ? "border-red-500"
+          : type === "warning"
+          ? "border-yellow-500"
+          : "border-blue-500"
+      }`;
+
+      // Icon based on type
+      const icons = {
+        success: "✓",
+        error: "✗",
+        warning: "⚠",
+        info: "ℹ",
+      };
+
+      const colors = {
+        success: "text-green-500 bg-green-50",
+        error: "text-red-500 bg-red-50",
+        warning: "text-yellow-500 bg-yellow-50",
+        info: "text-blue-500 bg-blue-50",
+      };
+
+      toast.innerHTML = `
+        <div class="flex items-center p-4">
+          <div class="flex-shrink-0 w-10 h-10 flex items-center justify-center rounded-full ${colors[type]}">
+            <span class="text-xl font-bold">${icons[type]}</span>
+          </div>
+          <div class="ml-3 flex-1">
+            <p class="text-sm font-medium text-gray-900">${message}</p>
+          </div>
+          <button
+            onclick="this.closest('[role=alert]').remove()"
+            class="ml-4 flex-shrink-0 inline-flex text-gray-400 hover:text-gray-500 focus:outline-none"
+          >
+            <span class="sr-only">Close</span>
+            <svg class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+              <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd" />
+            </svg>
+          </button>
+        </div>
+      `;
+
+      toast.setAttribute("role", "alert");
+      container.appendChild(toast);
+
+      // Trigger animation
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+          toast.classList.remove("translate-x-full", "opacity-0");
+        });
+      });
+
+      // Auto-remove after 5 seconds
+      setTimeout(() => {
+        toast.classList.add("translate-x-full", "opacity-0");
+        setTimeout(() => {
+          toast.remove();
+        }, 300);
+      }, 5000);
+    }
+
+    // Expose showToast globally for use in other scripts
+    window.showToast = showToast;
+  })();
+</script>

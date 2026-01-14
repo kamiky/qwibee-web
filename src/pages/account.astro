@@ -61,12 +61,6 @@ const t = useTranslations(lang);
               >
               <p class="text-lg text-gray-900" id="user-email"></p>
             </div>
-            <div>
-              <label class="text-sm font-medium text-gray-600"
-                >{t.account.username}</label
-              >
-              <p class="text-lg text-gray-900" id="username"></p>
-            </div>
           </div>
         </div>
 
@@ -103,6 +97,12 @@ const t = useTranslations(lang);
               class="w-full bg-red-500 hover:bg-red-600 text-white font-semibold py-3 px-6 rounded-lg transition-colors"
             >
               {t.account.logout}
+            </button>
+            <button
+              id="delete-account-btn"
+              class="w-full bg-gray-700 hover:bg-gray-800 text-white font-semibold py-3 px-6 rounded-lg transition-colors"
+            >
+              {t.account.deleteAccount}
             </button>
           </div>
         </div>
@@ -142,6 +142,76 @@ const t = useTranslations(lang);
                 class="px-6 py-2.5 rounded-lg font-semibold text-white bg-red-500 hover:bg-red-600 transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
               >
                 {t.account.logoutModal.confirm}
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Delete Account Modal -->
+        <div
+          id="delete-account-modal"
+          class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-black bg-opacity-50 backdrop-blur-sm transition-opacity duration-200"
+        >
+          <div
+            class="bg-white rounded-2xl shadow-2xl max-w-md w-full p-6 transform transition-all duration-200 scale-100 animate-fadeIn"
+          >
+            <!-- Header -->
+            <div class="mb-4">
+              <h3 class="text-2xl font-bold text-red-600">
+                {t.account.deleteAccountModal.title}
+              </h3>
+            </div>
+
+            <!-- Message -->
+            <div class="mb-4">
+              <p class="text-gray-700 font-semibold mb-3">
+                {t.account.deleteAccountModal.message}
+              </p>
+              <ul class="list-disc list-inside space-y-2 text-gray-600 mb-4">
+                <li>{t.account.deleteAccountModal.warning1}</li>
+                <li>{t.account.deleteAccountModal.warning2}</li>
+                <li>{t.account.deleteAccountModal.warning3}</li>
+              </ul>
+
+              <!-- Email Verification -->
+              <div
+                class="mt-6 p-4 bg-gray-50 rounded-lg border border-gray-200"
+              >
+                <label
+                  for="delete-email-verification"
+                  class="block text-sm font-semibold text-gray-700 mb-2"
+                >
+                  {t.account.deleteAccountModal.verificationLabel}
+                </label>
+                <p
+                  id="delete-user-email-display"
+                  class="text-sm font-mono mb-3 text-gray-900"
+                >
+                </p>
+                <input
+                  type="email"
+                  id="delete-email-verification"
+                  class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent"
+                  placeholder={t.account.deleteAccountModal
+                    .verificationPlaceholder}
+                />
+              </div>
+            </div>
+
+            <!-- Actions -->
+            <div class="flex gap-3 justify-end mt-6">
+              <button
+                id="delete-modal-cancel"
+                class="px-6 py-2.5 rounded-lg font-semibold text-gray-700 bg-gray-100 hover:bg-gray-200 transition-colors focus:outline-none focus:ring-2 focus:ring-gray-300"
+              >
+                {t.account.deleteAccountModal.cancel}
+              </button>
+              <button
+                id="delete-modal-confirm"
+                disabled
+                class="px-6 py-2.5 rounded-lg font-semibold text-white bg-red-600 hover:bg-red-700 transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-600 disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                {t.account.deleteAccountModal.confirm}
               </button>
             </div>
           </div>
@@ -199,13 +269,22 @@ const t = useTranslations(lang);
     const accountContainer = document.getElementById("account-container");
     const notLoggedIn = document.getElementById("not-logged-in");
     const userEmailEl = document.getElementById("user-email");
-    const usernameEl = document.getElementById("username");
     const membershipsList = document.getElementById("memberships-list");
     const noMemberships = document.getElementById("no-memberships");
     const logoutBtn = document.getElementById("logout-btn");
     const logoutModal = document.getElementById("logout-modal");
     const modalCancel = document.getElementById("modal-cancel");
     const modalConfirm = document.getElementById("modal-confirm");
+    const deleteAccountBtn = document.getElementById("delete-account-btn");
+    const deleteAccountModal = document.getElementById("delete-account-modal");
+    const deleteModalCancel = document.getElementById("delete-modal-cancel");
+    const deleteModalConfirm = document.getElementById("delete-modal-confirm");
+    const deleteEmailVerification = document.getElementById(
+      "delete-email-verification"
+    );
+    const deleteUserEmailDisplay = document.getElementById(
+      "delete-user-email-display"
+    );
 
     // Get auth data
     const auth = getAuth();
@@ -221,10 +300,6 @@ const t = useTranslations(lang);
 
       // Display user info
       if (userEmailEl) userEmailEl.textContent = auth.user.email;
-      if (usernameEl) {
-        const username = auth.user.email.split("@")[0];
-        usernameEl.textContent = username;
-      }
 
       // Load memberships
       loadMemberships();
@@ -383,6 +458,38 @@ const t = useTranslations(lang);
       }
     }
 
+    function openDeleteModal() {
+      if (deleteAccountModal) {
+        deleteAccountModal.classList.remove("hidden");
+        document.body.style.overflow = "hidden";
+
+        // Populate user email in modal
+        if (deleteUserEmailDisplay && auth?.user?.email) {
+          deleteUserEmailDisplay.textContent = auth.user.email;
+        }
+
+        // Reset verification input and disable confirm button
+        if (deleteEmailVerification) {
+          deleteEmailVerification.value = "";
+        }
+        if (deleteModalConfirm) {
+          deleteModalConfirm.disabled = true;
+        }
+      }
+    }
+
+    function closeDeleteModal() {
+      if (deleteAccountModal) {
+        deleteAccountModal.classList.add("hidden");
+        document.body.style.overflow = "unset";
+
+        // Clear verification input
+        if (deleteEmailVerification) {
+          deleteEmailVerification.value = "";
+        }
+      }
+    }
+
     // Logout button click
     if (logoutBtn) {
       logoutBtn.addEventListener("click", openModal);
@@ -429,14 +536,98 @@ const t = useTranslations(lang);
       });
     }
 
-    // Close modal on Escape key
+    // Delete account button click
+    if (deleteAccountBtn) {
+      deleteAccountBtn.addEventListener("click", openDeleteModal);
+    }
+
+    // Delete modal cancel button
+    if (deleteModalCancel) {
+      deleteModalCancel.addEventListener("click", closeDeleteModal);
+    }
+
+    // Email verification input - enable/disable confirm button
+    if (deleteEmailVerification && deleteModalConfirm) {
+      deleteEmailVerification.addEventListener("input", (e) => {
+        const inputValue = e.target.value.trim();
+        const userEmail = auth?.user?.email || "";
+
+        // Enable button only if input matches user email exactly
+        if (inputValue === userEmail) {
+          deleteModalConfirm.disabled = false;
+        } else {
+          deleteModalConfirm.disabled = true;
+        }
+      });
+    }
+
+    // Delete modal confirm button
+    if (deleteModalConfirm) {
+      deleteModalConfirm.addEventListener("click", async () => {
+        const originalText = deleteModalConfirm.textContent;
+        deleteModalConfirm.disabled = true;
+        deleteModalConfirm.textContent =
+          translations.account.deleteAccountModal.deleting;
+
+        try {
+          // Call delete account API
+          const response = await fetch("/api/auth/delete-account", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              userId: auth.user.id,
+              confirmDelete: true,
+            }),
+          });
+
+          if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(errorData.error || "Failed to delete account");
+          }
+
+          // Clear local auth data
+          clearAuth();
+
+          // Store success message in sessionStorage for toast
+          sessionStorage.setItem("toast_message", translations.account.deleteAccountModal.success);
+          sessionStorage.setItem("toast_type", "success");
+
+          // Redirect to home
+          window.location.href = lang === "fr" ? "/fr" : "/";
+        } catch (error) {
+          console.error("Error deleting account:", error);
+          alert(translations.account.deleteAccountModal.error);
+
+          // Re-enable button
+          deleteModalConfirm.disabled = false;
+          deleteModalConfirm.textContent = originalText;
+        }
+      });
+    }
+
+    // Close delete modal on backdrop click
+    if (deleteAccountModal) {
+      deleteAccountModal.addEventListener("click", (e) => {
+        if (e.target === deleteAccountModal) {
+          closeDeleteModal();
+        }
+      });
+    }
+
+    // Close modals on Escape key
     document.addEventListener("keydown", (e) => {
-      if (
-        e.key === "Escape" &&
-        logoutModal &&
-        !logoutModal.classList.contains("hidden")
-      ) {
-        closeModal();
+      if (e.key === "Escape") {
+        if (logoutModal && !logoutModal.classList.contains("hidden")) {
+          closeModal();
+        }
+        if (
+          deleteAccountModal &&
+          !deleteAccountModal.classList.contains("hidden")
+        ) {
+          closeDeleteModal();
+        }
       }
     });
   </script>

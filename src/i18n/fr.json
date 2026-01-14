@@ -286,11 +286,26 @@
     "browseCreators": "Parcourir les Créateurs →",
     "actions": "Actions",
     "logout": "Déconnexion",
+    "deleteAccount": "Supprimer le Compte",
     "logoutModal": {
       "title": "Confirmer la Déconnexion",
       "message": "Êtes-vous sûr de vouloir vous déconnecter ? Vous devrez vous reconnecter pour accéder à votre compte.",
       "cancel": "Annuler",
       "confirm": "Oui, Me Déconnecter"
+    },
+    "deleteAccountModal": {
+      "title": "Supprimer le Compte",
+      "message": "Êtes-vous sûr de vouloir supprimer votre compte ? Cette action est irréversible et va :",
+      "warning1": "Annuler tous vos abonnements actifs",
+      "warning2": "Supprimer définitivement toutes vos données",
+      "warning3": "Retirer l'accès à tous les contenus",
+      "verificationLabel": "Pour confirmer, veuillez saisir votre adresse email :",
+      "verificationPlaceholder": "Entrez votre email pour confirmer",
+      "cancel": "Annuler",
+      "confirm": "Oui, Supprimer Mon Compte",
+      "deleting": "Suppression...",
+      "success": "Votre compte a été supprimé avec succès",
+      "error": "Échec de la suppression du compte. Veuillez réessayer."
     },
     "notLoggedIn": {
       "icon": "🔒",
