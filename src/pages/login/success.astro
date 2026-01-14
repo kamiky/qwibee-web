@@ -3,9 +3,11 @@ import Layout from "@/layouts/Layout.astro";
 import Header from "@/components/Header.astro";
 import Footer from "@/components/Footer.astro";
 import LanguageSwitcher from "@/components/LanguageSwitcher.astro";
-import { useTranslations } from "@/i18n/translations";
+import { useTranslations, type Language } from "@/i18n/translations";
 
-const lang = "en";
+// Detect language from URL path
+const pathname = Astro.url.pathname;
+const lang: Language = pathname.startsWith('/fr/') || pathname === '/fr' || pathname.startsWith('/fr/login') ? 'fr' : 'en';
 const t = useTranslations(lang);
 ---
 
@@ -30,10 +32,10 @@ const t = useTranslations(lang);
           </div>
         </div>
         <h1 class="text-3xl font-bold mb-4 text-gray-900">
-          Verifying your magic link...
+          {t.auth.loginSuccess.verifying}
         </h1>
         <p class="text-xl text-gray-600">
-          Please wait a moment
+          {t.auth.loginSuccess.wait}
         </p>
       </div>
 
@@ -42,13 +44,13 @@ const t = useTranslations(lang);
         <div class="mb-8">
           <div class="text-6xl mb-6">✅</div>
           <h1 class="text-4xl sm:text-5xl font-extrabold mb-4 text-gray-900">
-            Successfully Logged In!
+            {t.auth.loginSuccess.successTitle}
           </h1>
           <p class="text-xl text-gray-700 mb-2">
-            Welcome back! Your authentication was successful.
+            {t.auth.loginSuccess.welcomeBack}
           </p>
           <p class="text-lg text-gray-600" id="redirect-message">
-            Redirecting you now...
+            {t.auth.loginSuccess.redirecting}
           </p>
         </div>
 
@@ -68,26 +70,26 @@ const t = useTranslations(lang);
               href="/"
               class="block w-full bg-brand-blue-500 hover:bg-brand-blue-600 text-white font-bold py-3 px-6 rounded-lg text-center transition-colors shadow-lg hover:shadow-xl"
             >
-              Continue
+              {t.auth.loginSuccess.continue}
             </a>
           </div>
         </div>
 
         <!-- Info Box -->
         <div class="bg-blue-50 border border-blue-200 rounded-xl p-6">
-          <h3 class="text-lg font-bold text-blue-700 mb-3">✨ What's Next?</h3>
+          <h3 class="text-lg font-bold text-blue-700 mb-3">{t.auth.loginSuccess.whatsNext}</h3>
           <ul class="space-y-2 text-gray-700">
             <li class="flex items-start gap-2">
               <span class="text-brand-blue-500 mt-1">•</span>
-              <span>Your authentication has been saved to this browser</span>
+              <span>{t.auth.loginSuccess.saved}</span>
             </li>
             <li class="flex items-start gap-2">
               <span class="text-brand-blue-500 mt-1">•</span>
-              <span>You can now access all your content</span>
+              <span>{t.auth.loginSuccess.accessContent}</span>
             </li>
             <li class="flex items-start gap-2">
               <span class="text-brand-blue-500 mt-1">•</span>
-              <span>Lost access? Just use the login page again</span>
+              <span>{t.auth.loginSuccess.lostAccess}</span>
             </li>
           </ul>
         </div>
@@ -99,7 +101,7 @@ const t = useTranslations(lang);
           href="/"
           class="text-brand-blue-500 hover:text-brand-blue-600 transition-colors"
         >
-          ← Back to Home
+          {t.auth.backLink}
         </a>
       </div>
     </div>
@@ -107,7 +109,7 @@ const t = useTranslations(lang);
 
   <Footer lang={lang} />
 
-  <script>
+  <script define:vars={{ translations: t }}>
     import { storeAuth } from "@/lib/auth";
 
     const loadingContainer = document.getElementById("loading-container");
@@ -194,11 +196,11 @@ const t = useTranslations(lang);
       if (redirectTo) {
         // Update UI
         if (redirectMessage) {
-          redirectMessage.textContent = "Redirecting you back to the creator page...";
+          redirectMessage.textContent = translations.auth.loginSuccess.redirectingToCreator;
         }
         if (continueLink) {
           continueLink.setAttribute("href", redirectTo);
-          continueLink.textContent = "Continue to Creator Page";
+          continueLink.textContent = translations.auth.loginSuccess.continueToCreator;
         }
 
         // Store flag if we need to open Stripe
@@ -213,10 +215,10 @@ const t = useTranslations(lang);
       } else {
         // No redirect URL, just show generic message
         if (redirectMessage) {
-          redirectMessage.textContent = "You can now browse all content!";
+          redirectMessage.textContent = translations.auth.loginSuccess.browse;
         }
         if (continueLink) {
-          continueLink.textContent = "Go to Home";
+          continueLink.textContent = translations.auth.loginSuccess.goToHome;
         }
       }
     }

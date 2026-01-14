@@ -46,12 +46,27 @@
     }
   },
   "profile": {
-    "membership": "Abonnement Mensuel",
+    "membership": "Abonnement",
     "perMonth": "/mois",
-    "subscribeCta": "S'abonner Maintenant",
+    "subscribeCta": "S'abonner",
+    "subscribed": "Abonné",
+    "renew": "Renouveler",
     "videos": "Vidéos",
     "buyVideo": "Acheter la Vidéo",
-    "watchNow": "Regarder Maintenant"
+    "watchNow": "Regarder Maintenant",
+    "unlocked": "DÉVERROUILLÉ",
+    "members": "Membres",
+    "free": "Gratuit",
+    "freeLabel": "🆓 GRATUIT",
+    "membersOnlyLabel": "👑 MEMBRES UNIQUEMENT",
+    "payPerViewLabel": "💎 PAIEMENT À LA SÉANCE",
+    "subscribe": "S'abonner",
+    "subscriptionSuccessTitle": "Abonnement réussi !",
+    "subscriptionSuccessMessage": "Merci de vous être abonné. Vous avez maintenant accès à tout le contenu réservé aux membres.",
+    "subscriptionCancelledTitle": "Abonnement annulé",
+    "subscriptionCancelledMessage": "Votre abonnement a été annulé. Vous pouvez réessayer à tout moment.",
+    "willRenew": "Renouvellement",
+    "endOfMembership": "Fin de l'abonnement :"
   },
   "footer": {
     "tagline": "Contenu premium de créateurs que vous aimez.",
@@ -180,7 +195,23 @@
       "tip3": "Toujours des problèmes ?",
       "contactSupport": "Contacter le support"
     },
-    "backLink": "← Retour à l'accueil"
+    "backLink": "← Retour à l'accueil",
+    "loginSuccess": {
+      "verifying": "Vérification de votre lien magique...",
+      "wait": "Veuillez patienter un instant",
+      "successTitle": "Connexion réussie !",
+      "welcomeBack": "Bienvenue ! Votre authentification a réussi.",
+      "redirecting": "Redirection en cours...",
+      "redirectingToCreator": "Redirection vers la page du créateur...",
+      "browse": "Vous pouvez maintenant parcourir tout le contenu !",
+      "continue": "Continuer",
+      "continueToCreator": "Continuer vers la page du créateur",
+      "goToHome": "Aller à l'accueil",
+      "whatsNext": "✨ Et maintenant ?",
+      "saved": "Votre authentification a été enregistrée dans ce navigateur",
+      "accessContent": "Vous pouvez maintenant accéder à tout votre contenu",
+      "lostAccess": "Accès perdu ? Utilisez simplement la page de connexion à nouveau"
+    }
   },
   "recoverAccess": {
     "title": "Récupérer votre Accès",
@@ -237,6 +268,46 @@
     "recoverAccess": {
       "title": "Récupérer l'accès - WatchMeFans",
       "description": "Vous avez perdu votre accès ? Entrez votre email pour récupérer votre contenu."
+    },
+    "account": {
+      "title": "Mon Compte - WatchMeFans",
+      "description": "Gérez votre compte WatchMeFans et vos abonnements"
+    }
+  },
+  "account": {
+    "loading": "Chargement de votre compte...",
+    "title": "Mon Compte",
+    "subtitle": "Gérez vos abonnements et paramètres de compte",
+    "accountInfo": "Informations du Compte",
+    "email": "Email",
+    "username": "Nom d'utilisateur",
+    "activeMemberships": "Abonnements Actifs",
+    "noMemberships": "Vous n'avez pas encore d'abonnements actifs.",
+    "browseCreators": "Parcourir les Créateurs →",
+    "actions": "Actions",
+    "logout": "Déconnexion",
+    "logoutModal": {
+      "title": "Confirmer la Déconnexion",
+      "message": "Êtes-vous sûr de vouloir vous déconnecter ? Vous devrez vous reconnecter pour accéder à votre compte.",
+      "cancel": "Annuler",
+      "confirm": "Oui, Me Déconnecter"
+    },
+    "notLoggedIn": {
+      "icon": "🔒",
+      "title": "Non Connecté",
+      "message": "Veuillez vous connecter pour voir votre compte.",
+      "loginButton": "Aller à la Connexion"
+    },
+    "membership": {
+      "status": "Statut",
+      "ends": "Se termine",
+      "renews": "Renouvellement",
+      "canceling": "Annulation",
+      "manage": "Gérer",
+      "viewProfile": "Voir le Profil",
+      "loading": "Chargement...",
+      "loginRequired": "Veuillez vous connecter pour gérer votre abonnement",
+      "manageFailed": "Échec de l'ouverture de la gestion de l'abonnement. Veuillez réessayer."
     }
   }
 }

@@ -3,9 +3,11 @@ import Layout from "@/layouts/Layout.astro";
 import Header from "@/components/Header.astro";
 import Footer from "@/components/Footer.astro";
 import LanguageSwitcher from "@/components/LanguageSwitcher.astro";
-import { useTranslations } from "@/i18n/translations";
+import { useTranslations, type Language } from "@/i18n/translations";
 
-const lang = "en";
+// Detect language from URL path
+const pathname = Astro.url.pathname;
+const lang: Language = pathname.startsWith('/fr/') || pathname === '/fr' || pathname.startsWith('/fr/login') ? 'fr' : 'en';
 const t = useTranslations(lang);
 ---
 
@@ -162,7 +164,7 @@ const t = useTranslations(lang);
 
   <Footer lang={lang} />
 
-  <script define:vars={{ t }}>
+  <script define:vars={{ t, lang }}>
     const authBtn = document.getElementById("auth-btn");
     const authBtnText = document.getElementById("auth-btn-text");
     const emailInput = document.getElementById("email");
@@ -196,7 +198,7 @@ const t = useTranslations(lang);
           if (errorContainer) errorContainer.classList.add("hidden");
 
           // Prepare request body
-          const requestBody = { email };
+          const requestBody = { email, language: lang };
           if (redirectUrl) {
             requestBody.redirectUrl = redirectUrl;
           }

@@ -6,17 +6,34 @@ interface Props {
 }
 
 const { lang } = Astro.props;
+
+// Get current pathname and preserve it when switching languages
+const pathname = Astro.url.pathname;
+
+// Function to get the path in the target language
+const getLocalizedPath = (targetLang: Language) => {
+  if (targetLang === 'en') {
+    // Remove /fr prefix if present
+    return pathname.startsWith('/fr/') ? pathname.slice(3) : (pathname === '/fr' ? '/' : pathname);
+  } else {
+    // Add /fr prefix if not present
+    return pathname.startsWith('/fr') ? pathname : `/fr${pathname === '/' ? '' : pathname}`;
+  }
+};
+
+const enPath = getLocalizedPath('en');
+const frPath = getLocalizedPath('fr');
 ---
 
 <div class="fixed bottom-6 right-6 z-50 flex items-center gap-2 bg-white/95 backdrop-blur-sm border border-gray-200 rounded-full px-3 py-2 shadow-lg">
   <a 
-    href="/" 
+    href={enPath}
     class={`text-sm px-3 py-1.5 rounded-full transition-all font-medium ${lang === 'en' ? 'bg-brand-blue-500 text-white' : 'text-gray-600 hover:text-gray-900 hover:bg-gray-100'}`}
   >
     EN
   </a>
   <a 
-    href="/fr" 
+    href={frPath}
     class={`text-sm px-3 py-1.5 rounded-full transition-all font-medium ${lang === 'fr' ? 'bg-brand-blue-500 text-white' : 'text-gray-600 hover:text-gray-900 hover:bg-gray-100'}`}
   >
     FR

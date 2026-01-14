@@ -3,11 +3,14 @@ import Layout from "@/layouts/Layout.astro";
 import Header from "@/components/Header.astro";
 import Footer from "@/components/Footer.astro";
 import LanguageSwitcher from "@/components/LanguageSwitcher.astro";
-import { useTranslations } from "@/i18n/translations";
+import { useTranslations, type Language } from "@/i18n/translations";
 import { profiles, type ContentType } from "@/data/profiles";
 
 const { profileId } = Astro.params;
-const lang = "en";
+
+// Detect language from URL path
+const pathname = Astro.url.pathname;
+const lang: Language = pathname.startsWith('/fr/') || pathname === '/fr' ? 'fr' : 'en';
 const t = useTranslations(lang);
 
 // Temporary constant for user plan - will be replaced with actual user data later
@@ -45,9 +48,9 @@ const getVideoFilename = (
 
 // Helper to get content label
 const getContentLabel = (contentType: ContentType) => {
-  if (contentType === "free") return "🆓 FREE";
-  if (contentType === "membership") return "👑 MEMBERS ONLY";
-  if (contentType === "paid") return "💎 PAY-PER-VIEW";
+  if (contentType === "free") return t.profile.freeLabel;
+  if (contentType === "membership") return t.profile.membersOnlyLabel;
+  if (contentType === "paid") return t.profile.payPerViewLabel;
   return "";
 };
 ---
@@ -84,10 +87,9 @@ const getContentLabel = (contentType: ContentType) => {
                 d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
             </svg>
             <div>
-              <h3 class="font-bold text-lg">Subscription Successful!</h3>
+              <h3 class="font-bold text-lg">{t.profile.subscriptionSuccessTitle}</h3>
               <p>
-                Thank you for subscribing. You now have access to all membership
-                content.
+                {t.profile.subscriptionSuccessMessage}
               </p>
             </div>
           </div>
@@ -111,8 +113,8 @@ const getContentLabel = (contentType: ContentType) => {
               ></path>
             </svg>
             <div>
-              <h3 class="font-bold text-lg">Subscription Cancelled</h3>
-              <p>Your subscription was cancelled. You can try again anytime.</p>
+              <h3 class="font-bold text-lg">{t.profile.subscriptionCancelledTitle}</h3>
+              <p>{t.profile.subscriptionCancelledMessage}</p>
             </div>
           </div>
         </div>
@@ -151,7 +153,7 @@ const getContentLabel = (contentType: ContentType) => {
               profile.membershipPrice && (
                 <div class="bg-white border border-gray-200 rounded-xl p-6 mb-4 shadow-sm">
                   <h3 class="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-3">
-                    Membership
+                    {t.profile.membership}
                   </h3>
                   
                   <!-- Full Width CTA Button -->
@@ -162,8 +164,8 @@ const getContentLabel = (contentType: ContentType) => {
                     data-is-subscribed="false"
                     class="w-full bg-brand-blue-500 hover:bg-brand-blue-600 text-white font-semibold py-4 px-6 rounded-lg transition-colors flex items-center justify-between mb-3"
                   >
-                    <span id="membership-cta-text">Subscribe</span>
-                    <span class="font-bold">{formatPrice(profile.membershipPrice)} per month</span>
+                    <span id="membership-cta-text">{t.profile.subscribeCta}</span>
+                    <span class="font-bold">{formatPrice(profile.membershipPrice)}{t.profile.perMonth}</span>
                   </button>
 
                   <!-- Membership Status Info -->
@@ -272,7 +274,7 @@ const getContentLabel = (contentType: ContentType) => {
                               clip-rule="evenodd"
                             />
                           </svg>
-                          UNLOCKED
+                          {t.profile.unlocked}
                         </span>
                       ) : (
                         <>
@@ -280,8 +282,8 @@ const getContentLabel = (contentType: ContentType) => {
                             {video.type === "paid"
                               ? formatPrice(video.price)
                               : video.type === "membership"
-                                ? "Members"
-                                : "Free"}
+                                ? t.profile.members
+                                : t.profile.free}
                           </span>
                           <span class="unlocked-badge text-green-600 font-bold text-sm items-center gap-1 hidden">
                             <svg
@@ -295,7 +297,7 @@ const getContentLabel = (contentType: ContentType) => {
                                 clip-rule="evenodd"
                               />
                             </svg>
-                            UNLOCKED
+                            {t.profile.unlocked}
                           </span>
                         </>
                       )}
@@ -306,8 +308,8 @@ const getContentLabel = (contentType: ContentType) => {
                           {video.type === "paid"
                             ? t.profile.buyVideo
                             : video.type === "membership"
-                              ? "Subscribe"
-                              : "Watch"}
+                              ? t.profile.subscribe
+                              : t.profile.watchNow}
                         </button>
                       )}
                     </div>
@@ -323,7 +325,7 @@ const getContentLabel = (contentType: ContentType) => {
 
   <Footer lang={lang} />
 
-  <script define:vars={{ profileId: profile.id }}>
+  <script define:vars={{ profileId: profile.id, translations: t }}>
     // Get current profile ID from URL
     const currentProfileId = profileId;
 
@@ -441,17 +443,17 @@ const getContentLabel = (contentType: ContentType) => {
       if (isSubscribed) {
         if (isCanceled || !renewalEnabled) {
           // Subscription canceled or renewal disabled - show "Renew" button
-          ctaText.textContent = "Renew";
+          ctaText.textContent = translations.profile.renew;
           ctaBtn.classList.remove("bg-brand-blue-500", "hover:bg-brand-blue-600");
           ctaBtn.classList.add("bg-orange-500", "hover:bg-orange-600");
-          statusLabel.textContent = "End of membership:";
+          statusLabel.textContent = translations.profile.endOfMembership;
           statusDate.textContent = endDate || "";
         } else {
           // Active subscription with renewal - show "Subscribed" button (still clickable to manage)
-          ctaText.textContent = "Subscribed";
+          ctaText.textContent = translations.profile.subscribed;
           ctaBtn.classList.remove("bg-orange-500", "hover:bg-orange-600");
           ctaBtn.classList.add("bg-brand-blue-500", "hover:bg-brand-blue-600");
-          statusLabel.textContent = "Will renew";
+          statusLabel.textContent = translations.profile.willRenew;
           statusDate.textContent = renewalDate || "";
         }
         
@@ -459,7 +461,7 @@ const getContentLabel = (contentType: ContentType) => {
         statusInfo.classList.remove("hidden");
       } else {
         // Not subscribed - show "Subscribe" button
-        ctaText.textContent = "Subscribe";
+        ctaText.textContent = translations.profile.subscribeCta;
         ctaBtn.classList.remove("bg-orange-500", "hover:bg-orange-600");
         ctaBtn.classList.add("bg-brand-blue-500", "hover:bg-brand-blue-600");
         statusInfo.classList.add("hidden");
@@ -636,7 +638,7 @@ const getContentLabel = (contentType: ContentType) => {
         
         // Show loading state
         const ctaText = document.getElementById("membership-cta-text");
-        const originalText = ctaText?.textContent || "Subscribe";
+        const originalText = ctaText?.textContent || translations.profile.subscribeCta;
         if (ctaText) ctaText.textContent = "Loading...";
 
         // Show loading message in the new tab

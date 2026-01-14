@@ -46,12 +46,27 @@
     }
   },
   "profile": {
-    "membership": "Monthly Membership",
+    "membership": "Membership",
     "perMonth": "/month",
-    "subscribeCta": "Subscribe Now",
+    "subscribeCta": "Subscribe",
+    "subscribed": "Subscribed",
+    "renew": "Renew",
     "videos": "Videos",
     "buyVideo": "Buy Video",
-    "watchNow": "Watch Now"
+    "watchNow": "Watch Now",
+    "unlocked": "UNLOCKED",
+    "members": "Members",
+    "free": "Free",
+    "freeLabel": "🆓 FREE",
+    "membersOnlyLabel": "👑 MEMBERS ONLY",
+    "payPerViewLabel": "💎 PAY-PER-VIEW",
+    "subscribe": "Subscribe",
+    "subscriptionSuccessTitle": "Subscription Successful!",
+    "subscriptionSuccessMessage": "Thank you for subscribing. You now have access to all membership content.",
+    "subscriptionCancelledTitle": "Subscription Cancelled",
+    "subscriptionCancelledMessage": "Your subscription was cancelled. You can try again anytime.",
+    "willRenew": "Will renew",
+    "endOfMembership": "End of membership:"
   },
   "footer": {
     "tagline": "Premium content from creators you love.",
@@ -180,7 +195,23 @@
       "tip3": "Still having issues?",
       "contactSupport": "Contact support"
     },
-    "backLink": "← Back to Home"
+    "backLink": "← Back to Home",
+    "loginSuccess": {
+      "verifying": "Verifying your magic link...",
+      "wait": "Please wait a moment",
+      "successTitle": "Successfully Logged In!",
+      "welcomeBack": "Welcome back! Your authentication was successful.",
+      "redirecting": "Redirecting you now...",
+      "redirectingToCreator": "Redirecting you back to the creator page...",
+      "browse": "You can now browse all content!",
+      "continue": "Continue",
+      "continueToCreator": "Continue to Creator Page",
+      "goToHome": "Go to Home",
+      "whatsNext": "✨ What's Next?",
+      "saved": "Your authentication has been saved to this browser",
+      "accessContent": "You can now access all your content",
+      "lostAccess": "Lost access? Just use the login page again"
+    }
   },
   "recoverAccess": {
     "title": "Recover Your Access",
@@ -237,6 +268,46 @@
     "recoverAccess": {
       "title": "Recover Access - WatchMeFans",
       "description": "Lost your access? Enter your email to retrieve your content."
+    },
+    "account": {
+      "title": "My Account - WatchMeFans",
+      "description": "Manage your WatchMeFans account and memberships"
+    }
+  },
+  "account": {
+    "loading": "Loading your account...",
+    "title": "My Account",
+    "subtitle": "Manage your memberships and account settings",
+    "accountInfo": "Account Information",
+    "email": "Email",
+    "username": "Username",
+    "activeMemberships": "Active Memberships",
+    "noMemberships": "You don't have any active memberships yet.",
+    "browseCreators": "Browse Creators →",
+    "actions": "Actions",
+    "logout": "Logout",
+    "logoutModal": {
+      "title": "Confirm Logout",
+      "message": "Are you sure you want to logout? You'll need to log in again to access your account.",
+      "cancel": "Cancel",
+      "confirm": "Yes, Logout"
+    },
+    "notLoggedIn": {
+      "icon": "🔒",
+      "title": "Not Logged In",
+      "message": "Please log in to view your account.",
+      "loginButton": "Go to Login"
+    },
+    "membership": {
+      "status": "Status",
+      "ends": "Ends",
+      "renews": "Renews",
+      "canceling": "Canceling",
+      "manage": "Manage",
+      "viewProfile": "View Profile",
+      "loading": "Loading...",
+      "loginRequired": "Please log in to manage your subscription",
+      "manageFailed": "Failed to open subscription management. Please try again."
     }
   }
 }

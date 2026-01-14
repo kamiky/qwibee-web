@@ -5,7 +5,7 @@ export const prerender = false;
 export const POST: APIRoute = async ({ request }) => {
   try {
     const body = await request.json();
-    const { email, redirectUrl, openStripe } = body;
+    const { email, redirectUrl, openStripe, language } = body;
 
     if (!email) {
       return new Response(
@@ -28,7 +28,8 @@ export const POST: APIRoute = async ({ request }) => {
       body: JSON.stringify({ 
         email,
         redirectUrl,
-        openStripe 
+        openStripe,
+        language 
       }),
     });
 
