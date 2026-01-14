@@ -25,6 +25,17 @@ export const POST: APIRoute = async ({ request, url }) => {
       );
     }
 
+    // Validate customer email if provided
+    if (customerEmail && !customerEmail.includes("@")) {
+      return new Response(
+        JSON.stringify({ error: "Invalid customerEmail" }),
+        {
+          status: 400,
+          headers: { "Content-Type": "application/json" },
+        }
+      );
+    }
+
     // Get the base URL
     const baseUrl = import.meta.env.PUBLIC_APP_URL || url.origin;
     const backendUrl = import.meta.env.PUBLIC_API_URL || "http://localhost:5002";
