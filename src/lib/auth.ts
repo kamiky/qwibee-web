@@ -67,6 +67,25 @@ export function getUser(): User | null {
 }
 
 /**
+ * Get all authentication data
+ */
+export function getAuth(): AuthTokens | null {
+  const accessToken = getAccessToken();
+  const refreshToken = getRefreshToken();
+  const user = getUser();
+
+  if (!accessToken || !refreshToken || !user) {
+    return null;
+  }
+
+  return {
+    accessToken,
+    refreshToken,
+    user,
+  };
+}
+
+/**
  * Clear all authentication data
  */
 export function clearAuth(): void {

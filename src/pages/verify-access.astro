@@ -9,15 +9,17 @@ const lang = "en";
 const t = useTranslations(lang);
 ---
 
-<Layout 
-  title={t.seo.verifyAccess.title} 
+<Layout
+  title={t.seo.verifyAccess.title}
   description={t.seo.verifyAccess.description}
   lang={lang}
 >
   <Header lang={lang} />
   <LanguageSwitcher lang={lang} />
 
-  <main class="pt-24 pb-12 min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
+  <main
+    class="pt-24 pb-12 min-h-screen bg-gradient-to-br from-gray-50 to-gray-100"
+  >
     <div class="max-w-2xl mx-auto px-6">
       <!-- Loading State -->
       <div id="loading-container" class="text-center">
@@ -53,9 +55,7 @@ const t = useTranslations(lang);
         <div
           class="bg-white rounded-2xl p-8 border border-gray-200 shadow-lg mb-8"
         >
-          <div
-            class="bg-green-50 border border-green-200 rounded-lg p-4 mb-6"
-          >
+          <div class="bg-green-50 border border-green-200 rounded-lg p-4 mb-6">
             <p class="text-sm text-green-700 mb-2">
               <strong>{t.verifyAccess.success.purchaseDate}</strong>
               <span id="purchase-date"></span>
@@ -111,9 +111,7 @@ const t = useTranslations(lang);
         <div
           class="bg-white rounded-2xl p-8 border border-gray-200 shadow-lg mb-8"
         >
-          <div
-            class="bg-red-50 border border-red-200 rounded-lg p-6 mb-6"
-          >
+          <div class="bg-red-50 border border-red-200 rounded-lg p-6 mb-6">
             <p class="text-red-700 mb-2">
               <strong>{t.verifyAccess.error.errorLabel}</strong>
             </p>
@@ -137,9 +135,7 @@ const t = useTranslations(lang);
         </div>
 
         <!-- Common Issues -->
-        <div
-          class="bg-white rounded-xl p-6 border border-gray-200 shadow-md"
-        >
+        <div class="bg-white rounded-xl p-6 border border-gray-200 shadow-md">
           <h3 class="text-lg font-bold mb-3 text-gray-900">
             {t.verifyAccess.error.commonIssues.title}
           </h3>
@@ -213,7 +209,6 @@ const t = useTranslations(lang);
         const accessToken = data.data.accessToken;
         const refreshToken = data.data.refreshToken;
         const user = data.data.user;
-        const profileId = data.data.profileId;
 
         // Store authentication data
         storeAuth({
@@ -223,34 +218,13 @@ const t = useTranslations(lang);
         });
         console.log("✓ Authentication stored successfully");
 
-        // Show success
-        if (loadingContainer) loadingContainer.classList.add("hidden");
-        if (successContainer) successContainer.classList.remove("hidden");
-
-        // Fill in details
-        const purchaseDateEl = document.getElementById("purchase-date");
-        const recoveredEmailEl = document.getElementById("recovered-email");
-
-        if (purchaseDateEl) {
-          purchaseDateEl.textContent = new Date().toLocaleDateString();
-        }
-        if (recoveredEmailEl) {
-          recoveredEmailEl.textContent = user.email;
-        }
-
-        // Update the view button to go to the profile
-        const viewButton = successContainer?.querySelector("a[href='/']");
-        if (viewButton) {
-          viewButton.setAttribute("href", `/${profileId}`);
-        }
-
-        // Redirect after 3 seconds
-        setTimeout(() => {
-          window.location.href = `/${profileId}`;
-        }, 3000);
+        // Redirect to login success page
+        window.location.href = "/login/success";
       } catch (error) {
         console.error("Verification error:", error);
-        showError(error instanceof Error ? error.message : "Failed to verify magic link");
+        showError(
+          error instanceof Error ? error.message : "Failed to verify magic link"
+        );
       }
     }
 
@@ -258,7 +232,8 @@ const t = useTranslations(lang);
     function showError(message) {
       if (loadingContainer) loadingContainer.classList.add("hidden");
       if (errorContainer) errorContainer.classList.remove("hidden");
-      if (errorMessage) errorMessage.textContent = String(message || "An error occurred");
+      if (errorMessage)
+        errorMessage.textContent = String(message || "An error occurred");
     }
 
     // Auto-verify on page load

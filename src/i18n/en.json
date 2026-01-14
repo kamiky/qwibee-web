@@ -1,6 +1,7 @@
 {
   "nav": {
     "login": "Login",
+    "account": "Account",
     "contact": "Contact"
   },
   "hero": {

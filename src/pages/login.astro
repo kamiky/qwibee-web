@@ -171,6 +171,11 @@ const t = useTranslations(lang);
     const errorContainer = document.getElementById("error-container");
     const errorMessage = document.getElementById("error-message");
 
+    // Get redirect parameters from URL
+    const urlParams = new URLSearchParams(window.location.search);
+    const redirectUrl = urlParams.get("redirect");
+    const openStripe = urlParams.get("openStripe");
+
     if (authBtn && emailInput) {
       authBtn.addEventListener("click", async () => {
         const email = emailInput.value.trim();
@@ -190,13 +195,22 @@ const t = useTranslations(lang);
           // Hide previous errors
           if (errorContainer) errorContainer.classList.add("hidden");
 
+          // Prepare request body
+          const requestBody = { email };
+          if (redirectUrl) {
+            requestBody.redirectUrl = redirectUrl;
+          }
+          if (openStripe === "true") {
+            requestBody.openStripe = true;
+          }
+
           // Call auth API
           const response = await fetch("/api/auth/send-magic-link", {
             method: "POST",
             headers: {
               "Content-Type": "application/json",
             },
-            body: JSON.stringify({ email }),
+            body: JSON.stringify(requestBody),
           });
 
           const data = await response.json();

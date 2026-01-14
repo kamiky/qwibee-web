@@ -1,0 +1,224 @@
+---
+import Layout from "@/layouts/Layout.astro";
+import Header from "@/components/Header.astro";
+import Footer from "@/components/Footer.astro";
+import LanguageSwitcher from "@/components/LanguageSwitcher.astro";
+import { useTranslations } from "@/i18n/translations";
+
+const lang = "en";
+const t = useTranslations(lang);
+---
+
+<Layout
+  title="Login Successful - WatchMeFans"
+  description="You've been successfully logged in"
+  lang={lang}
+>
+  <Header lang={lang} />
+  <LanguageSwitcher lang={lang} />
+
+  <main
+    class="pt-24 pb-12 min-h-screen bg-gradient-to-br from-gray-50 to-gray-100"
+  >
+    <div class="max-w-2xl mx-auto px-6">
+      <!-- Loading State -->
+      <div id="loading-container" class="text-center">
+        <div class="mb-8">
+          <div
+            class="inline-block animate-spin rounded-full h-16 w-16 border-b-2 border-brand-blue-500"
+          >
+          </div>
+        </div>
+        <h1 class="text-3xl font-bold mb-4 text-gray-900">
+          Verifying your magic link...
+        </h1>
+        <p class="text-xl text-gray-600">
+          Please wait a moment
+        </p>
+      </div>
+
+      <!-- Success State -->
+      <div id="success-container" class="text-center hidden">
+        <div class="mb-8">
+          <div class="text-6xl mb-6">✅</div>
+          <h1 class="text-4xl sm:text-5xl font-extrabold mb-4 text-gray-900">
+            Successfully Logged In!
+          </h1>
+          <p class="text-xl text-gray-700 mb-2">
+            Welcome back! Your authentication was successful.
+          </p>
+          <p class="text-lg text-gray-600" id="redirect-message">
+            Redirecting you now...
+          </p>
+        </div>
+
+        <div
+          class="bg-white rounded-2xl p-8 border border-gray-200 shadow-lg mb-8"
+        >
+          <div class="bg-green-50 border border-green-200 rounded-lg p-4 mb-6">
+            <p class="text-sm text-green-700">
+              <strong>Email:</strong>
+              <span id="user-email" class="ml-2"></span>
+            </p>
+          </div>
+
+          <div class="space-y-3">
+            <a
+              id="continue-link"
+              href="/"
+              class="block w-full bg-brand-blue-500 hover:bg-brand-blue-600 text-white font-bold py-3 px-6 rounded-lg text-center transition-colors shadow-lg hover:shadow-xl"
+            >
+              Continue
+            </a>
+          </div>
+        </div>
+
+        <!-- Info Box -->
+        <div class="bg-blue-50 border border-blue-200 rounded-xl p-6">
+          <h3 class="text-lg font-bold text-blue-700 mb-3">✨ What's Next?</h3>
+          <ul class="space-y-2 text-gray-700">
+            <li class="flex items-start gap-2">
+              <span class="text-brand-blue-500 mt-1">•</span>
+              <span>Your authentication has been saved to this browser</span>
+            </li>
+            <li class="flex items-start gap-2">
+              <span class="text-brand-blue-500 mt-1">•</span>
+              <span>You can now access all your content</span>
+            </li>
+            <li class="flex items-start gap-2">
+              <span class="text-brand-blue-500 mt-1">•</span>
+              <span>Lost access? Just use the login page again</span>
+            </li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Back Link -->
+      <div class="text-center mt-8">
+        <a
+          href="/"
+          class="text-brand-blue-500 hover:text-brand-blue-600 transition-colors"
+        >
+          ← Back to Home
+        </a>
+      </div>
+    </div>
+  </main>
+
+  <Footer lang={lang} />
+
+  <script>
+    import { storeAuth } from "@/lib/auth";
+
+    const loadingContainer = document.getElementById("loading-container");
+    const successContainer = document.getElementById("success-container");
+    const userEmailEl = document.getElementById("user-email");
+    const redirectMessage = document.getElementById("redirect-message");
+    const continueLink = document.getElementById("continue-link");
+
+    async function verifyMagicLink() {
+      try {
+        // Get token and redirect from URL params
+        const urlParams = new URLSearchParams(window.location.search);
+        const token = urlParams.get("token");
+        const redirectTo = urlParams.get("redirect");
+        const openStripe = urlParams.get("openStripe");
+
+        if (!token) {
+          // No token - user navigated directly here, check if already logged in
+          const existingAuth = localStorage.getItem("wmf_access_token");
+          if (!existingAuth) {
+            window.location.href = "/login";
+            return;
+          }
+          
+          // Already logged in, show success
+          showSuccess(null, redirectTo, openStripe === "true");
+          return;
+        }
+
+        // Verify the magic link
+        const response = await fetch("/api/auth/verify-magic-link", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ token }),
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+          throw new Error(data.error || "Failed to verify magic link");
+        }
+
+        const accessToken = data.data.accessToken;
+        const refreshToken = data.data.refreshToken;
+        const user = data.data.user;
+
+        // Store authentication data
+        storeAuth({
+          accessToken,
+          refreshToken,
+          user,
+        });
+        console.log("✓ Authentication stored successfully");
+
+        // Show success
+        showSuccess(user.email, redirectTo, openStripe === "true");
+
+      } catch (error) {
+        console.error("Verification error:", error);
+        // Redirect to login with error
+        window.location.href = "/login?error=" + encodeURIComponent(
+          error instanceof Error ? error.message : "Failed to verify magic link"
+        );
+      }
+    }
+
+    function showSuccess(email, redirectTo, shouldOpenStripe) {
+      // Hide loading, show success
+      if (loadingContainer) loadingContainer.classList.add("hidden");
+      if (successContainer) successContainer.classList.remove("hidden");
+
+      // Get email from params or storage
+      const finalEmail = email || JSON.parse(localStorage.getItem("wmf_user") || "{}").email;
+      if (userEmailEl && finalEmail) {
+        userEmailEl.textContent = finalEmail;
+      }
+
+      // Handle redirect
+      if (redirectTo) {
+        // Update UI
+        if (redirectMessage) {
+          redirectMessage.textContent = "Redirecting you back to the creator page...";
+        }
+        if (continueLink) {
+          continueLink.setAttribute("href", redirectTo);
+          continueLink.textContent = "Continue to Creator Page";
+        }
+
+        // Store flag if we need to open Stripe
+        if (shouldOpenStripe) {
+          sessionStorage.setItem("wmf_open_stripe_after_login", "true");
+        }
+
+        // Redirect after 2 seconds
+        setTimeout(() => {
+          window.location.href = redirectTo;
+        }, 2000);
+      } else {
+        // No redirect URL, just show generic message
+        if (redirectMessage) {
+          redirectMessage.textContent = "You can now browse all content!";
+        }
+        if (continueLink) {
+          continueLink.textContent = "Go to Home";
+        }
+      }
+    }
+
+    // Auto-verify on page load
+    verifyMagicLink();
+  </script>
+</Layout>

@@ -21,12 +21,63 @@ const t = useTranslations(lang);
     </a>
 
     <nav class="flex items-center gap-8">
+      <!-- Login Link (shown when not logged in) -->
       <a
+        id="login-link"
         href={lang === "en" ? "/login" : "/fr/login"}
         class="text-gray-700 hover:text-brand-blue-500 transition-all font-medium"
       >
         {t.nav.login}
       </a>
+      
+      <!-- Account Link (shown when logged in) -->
+      <a
+        id="account-link"
+        href="/account"
+        class="hidden text-gray-700 hover:text-brand-blue-500 transition-all font-medium items-center gap-2"
+      >
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
+        </svg>
+        <span id="account-username"></span>
+      </a>
     </nav>
   </div>
 </header>
+
+<script>
+  import { getAuth } from "@/lib/auth";
+
+  // Check if user is logged in and update header
+  function updateHeaderAuth() {
+    const auth = getAuth();
+    const loginLink = document.getElementById("login-link");
+    const accountLink = document.getElementById("account-link");
+    const accountUsername = document.getElementById("account-username");
+
+    if (auth && auth.user) {
+      // User is logged in - show account link
+      if (loginLink) loginLink.classList.add("hidden");
+      if (accountLink) {
+        accountLink.classList.remove("hidden");
+        accountLink.classList.add("flex");
+      }
+      
+      // Extract username from email (part before @)
+      if (accountUsername && auth.user.email) {
+        const username = auth.user.email.split("@")[0];
+        accountUsername.textContent = username;
+      }
+    } else {
+      // User is not logged in - show login link
+      if (loginLink) loginLink.classList.remove("hidden");
+      if (accountLink) accountLink.classList.add("hidden");
+    }
+  }
+
+  // Update on page load
+  updateHeaderAuth();
+
+  // Update when storage changes (e.g., login/logout in another tab)
+  window.addEventListener("storage", updateHeaderAuth);
+</script>

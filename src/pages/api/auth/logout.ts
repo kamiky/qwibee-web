@@ -5,36 +5,22 @@ export const prerender = false;
 export const POST: APIRoute = async ({ request }) => {
   try {
     const body = await request.json();
-    const { email, redirectUrl, openStripe } = body;
-
-    if (!email) {
-      return new Response(
-        JSON.stringify({ error: "Missing email" }),
-        {
-          status: 400,
-          headers: { "Content-Type": "application/json" },
-        }
-      );
-    }
+    const { refreshToken } = body;
 
     const backendUrl =
       import.meta.env.PUBLIC_API_URL || "http://localhost:5002";
 
-    const response = await fetch(`${backendUrl}/auth/send-magic-link`, {
+    const response = await fetch(`${backendUrl}/auth/logout`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ 
-        email,
-        redirectUrl,
-        openStripe 
-      }),
+      body: JSON.stringify({ refreshToken }),
     });
 
     if (!response.ok) {
       const errorData = await response.json();
-      throw new Error(errorData.message || "Failed to send magic link");
+      throw new Error(errorData.message || "Failed to logout");
     }
 
     const data = await response.json();
@@ -44,11 +30,11 @@ export const POST: APIRoute = async ({ request }) => {
       headers: { "Content-Type": "application/json" },
     });
   } catch (error: any) {
-    console.error("Send magic link error:", error);
+    console.error("Logout error:", error);
 
     return new Response(
       JSON.stringify({
-        error: error?.message || "Failed to send magic link",
+        error: error?.message || "Failed to logout",
       }),
       {
         status: 500,

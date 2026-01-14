@@ -609,6 +609,15 @@ const getContentLabel = (contentType: ContentType) => {
           return;
         }
 
+        // Check if user is logged in
+        const token = localStorage.getItem("wmf_access_token");
+        if (!token) {
+          // User not logged in - redirect to login with redirect URL in query params
+          const redirectUrl = encodeURIComponent(window.location.pathname);
+          window.location.href = `/login?redirect=${redirectUrl}&openStripe=true`;
+          return;
+        }
+
         // Disable button and show loading state
         membershipBtn.disabled = true;
         const originalText = membershipBtn.textContent;
@@ -639,9 +648,13 @@ const getContentLabel = (contentType: ContentType) => {
 
           const data = await response.json();
 
-          // Redirect to Stripe checkout
+          // Open Stripe checkout in new tab
           if (data.url) {
+            // window.open(data.url, "_blank");
             window.location.href = data.url;
+            // Re-enable button
+            membershipBtn.disabled = false;
+            membershipBtn.textContent = originalText;
           } else {
             throw new Error("No checkout URL received");
           }
@@ -654,6 +667,20 @@ const getContentLabel = (contentType: ContentType) => {
           membershipBtn.textContent = originalText;
         }
       });
+    }
+
+    // Check if we should open Stripe after login
+    const shouldOpenStripe = sessionStorage.getItem("wmf_open_stripe_after_login");
+    if (shouldOpenStripe === "true") {
+      sessionStorage.removeItem("wmf_open_stripe_after_login");
+      
+      // Wait a bit for the page to load, then click the subscribe button
+      setTimeout(() => {
+        const btn = document.getElementById("membership-subscribe-btn");
+        if (btn) {
+          btn.click();
+        }
+      }, 500);
     }
   </script>
 </Layout>
