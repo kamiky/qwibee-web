@@ -149,62 +149,27 @@ const getContentLabel = (contentType: ContentType) => {
             <!-- Membership Option -->
             {
               profile.membershipPrice && (
-                <div class="bg-gradient-to-r from-blue-50 to-purple-50 border border-brand-blue-200 rounded-xl p-6 mb-4 shadow-md">
-                  <!-- Member Status (shown when logged in) -->
-                  <div
-                    id="member-status"
-                    class="hidden items-center gap-3 bg-green-50 border border-green-200 text-green-800 px-4 py-3 rounded-lg mb-4"
+                <div class="bg-white border border-gray-200 rounded-xl p-6 mb-4 shadow-sm">
+                  <h3 class="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-3">
+                    Membership
+                  </h3>
+                  
+                  <!-- Full Width CTA Button -->
+                  <button
+                    id="membership-cta-btn"
+                    data-profile-id={profile.id}
+                    data-membership-price={profile.membershipPrice}
+                    data-is-subscribed="false"
+                    class="w-full bg-brand-blue-500 hover:bg-brand-blue-600 text-white font-semibold py-4 px-6 rounded-lg transition-colors flex items-center justify-between mb-3"
                   >
-                    <svg
-                      class="w-6 h-6 text-green-600"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                        stroke-width="2"
-                        d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
-                      />
-                    </svg>
-                    <div class="flex-1">
-                      <p class="font-bold">Active Membership</p>
-                      <p class="text-sm" id="member-email"></p>
-                    </div>
-                    <button
-                      id="manage-subscription-btn"
-                      class="bg-brand-blue-500 hover:bg-brand-blue-600 text-white font-semibold py-2 px-4 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-                    >
-                      Manage
-                    </button>
-                  </div>
+                    <span id="membership-cta-text">Subscribe</span>
+                    <span class="font-bold">{formatPrice(profile.membershipPrice)} per month</span>
+                  </button>
 
-                  <!-- Subscribe Section (shown when not logged in) -->
-                  <div id="subscribe-section">
-                    <div class="flex items-center justify-between">
-                      <div>
-                        <h3 class="text-2xl font-bold text-gray-900 mb-2">
-                          {t.profile.membership}
-                        </h3>
-                        <p class="text-gray-700">
-                          Access all videos for{" "}
-                          <span class="text-brand-blue-500 font-bold text-xl">
-                            {formatPrice(profile.membershipPrice)}
-                            {t.profile.perMonth}
-                          </span>
-                        </p>
-                      </div>
-                      <button
-                        id="membership-subscribe-btn"
-                        data-profile-id={profile.id}
-                        data-membership-price={profile.membershipPrice}
-                        class="bg-brand-blue-500 hover:bg-brand-blue-600 text-white font-bold py-3 px-8 rounded-full transition-all transform hover:scale-105 shadow-lg disabled:opacity-50 disabled:cursor-not-allowed"
-                      >
-                        {t.profile.subscribeCta}
-                      </button>
-                    </div>
-                    
+                  <!-- Membership Status Info -->
+                  <div id="membership-status-info" class="text-sm text-gray-600 hidden">
+                    <span id="membership-status-label"></span>
+                    <span id="membership-status-date" class="float-right font-medium text-gray-900"></span>
                   </div>
                 </div>
               )
@@ -443,33 +408,77 @@ const getContentLabel = (contentType: ContentType) => {
       console.log(`Unlocked ${membershipVideos.length} membership videos`);
     }
 
+    // Function to update membership UI
+    const updateMembershipUI = (subscriptionData) => {
+      const ctaBtn = document.getElementById("membership-cta-btn");
+      const ctaText = document.getElementById("membership-cta-text");
+      const statusInfo = document.getElementById("membership-status-info");
+      const statusLabel = document.getElementById("membership-status-label");
+      const statusDate = document.getElementById("membership-status-date");
+
+      if (!ctaBtn || !ctaText || !statusInfo || !statusLabel || !statusDate) return;
+
+      const { isSubscribed, isCanceled, renewalEnabled, renewalDate, endDate } = subscriptionData;
+
+      // Store subscription state in data attribute
+      ctaBtn.setAttribute("data-is-subscribed", isSubscribed ? "true" : "false");
+
+      if (isSubscribed) {
+        if (isCanceled || !renewalEnabled) {
+          // Subscription canceled or renewal disabled - show "Renew" button
+          ctaText.textContent = "Renew";
+          ctaBtn.classList.remove("bg-brand-blue-500", "hover:bg-brand-blue-600");
+          ctaBtn.classList.add("bg-orange-500", "hover:bg-orange-600");
+          statusLabel.textContent = "End of membership:";
+          statusDate.textContent = endDate || "";
+        } else {
+          // Active subscription with renewal - show "Subscribed" button (still clickable to manage)
+          ctaText.textContent = "Subscribed";
+          ctaBtn.classList.remove("bg-orange-500", "hover:bg-orange-600");
+          ctaBtn.classList.add("bg-brand-blue-500", "hover:bg-brand-blue-600");
+          statusLabel.textContent = "Will renew";
+          statusDate.textContent = renewalDate || "";
+        }
+        
+        // Show status info
+        statusInfo.classList.remove("hidden");
+      } else {
+        // Not subscribed - show "Subscribe" button
+        ctaText.textContent = "Subscribe";
+        ctaBtn.classList.remove("bg-orange-500", "hover:bg-orange-600");
+        ctaBtn.classList.add("bg-brand-blue-500", "hover:bg-brand-blue-600");
+        statusInfo.classList.add("hidden");
+      }
+    };
+
     // Check access on page load and update UI
     checkMembershipAccess().then((hasAccess) => {
-      const memberStatus = document.getElementById("member-status");
-      const subscribeSection = document.getElementById("subscribe-section");
-      const memberEmail = document.getElementById("member-email");
-
-      if (hasAccess && memberStatus && subscribeSection) {
-        // Show member status, hide subscribe section
-        memberStatus.classList.remove("hidden");
-        memberStatus.classList.add("flex");
-        subscribeSection.classList.add("hidden");
-
-        // Get email from token (decode JWT client-side - just for display)
-        const token = localStorage.getItem("wmf_access_token");
-        if (token && memberEmail) {
-          try {
-            const payload = JSON.parse(atob(token.split(".")[1]));
-            memberEmail.textContent = payload.email;
-          } catch (e) {
-            console.error("Error decoding token:", e);
-          }
-        }
-
+      if (hasAccess) {
         // Unlock membership videos
         unlockMembershipVideos();
 
+        // TODO: Fetch subscription details from backend
+        // For now, using mock data - replace with actual API call
+        const mockSubscriptionData = {
+          isSubscribed: true,
+          isCanceled: false,
+          renewalEnabled: true,
+          renewalDate: "Feb. 15, 2026",
+          endDate: "Jan. 15, 2026"
+        };
+
+        updateMembershipUI(mockSubscriptionData);
+
         console.log("User has active membership access");
+      } else {
+        // Not subscribed
+        updateMembershipUI({
+          isSubscribed: false,
+          isCanceled: false,
+          renewalEnabled: false,
+          renewalDate: null,
+          endDate: null
+        });
       }
     });
 
@@ -522,25 +531,14 @@ const getContentLabel = (contentType: ContentType) => {
             });
           }
 
-          // Update membership section
-          const memberStatus = document.getElementById("member-status");
-          const subscribeSection = document.getElementById("subscribe-section");
-          const memberEmail = document.getElementById("member-email");
-          
-          if (memberStatus && subscribeSection) {
-            memberStatus.classList.remove("hidden");
-            memberStatus.classList.add("flex");
-            subscribeSection.classList.add("hidden");
-            
-            if (memberEmail) {
-              try {
-                const payload = JSON.parse(atob(token.split(".")[1]));
-                memberEmail.textContent = payload.email;
-              } catch (e) {
-                console.error("Error decoding token:", e);
-              }
-            }
-          }
+          // Update membership UI
+          updateMembershipUI({
+            isSubscribed: true,
+            isCanceled: false,
+            renewalEnabled: true,
+            renewalDate: "Feb. 15, 2026", // TODO: Get from API response
+            endDate: null
+          });
 
           // Remove query params from URL
           window.history.replaceState(
@@ -589,16 +587,13 @@ const getContentLabel = (contentType: ContentType) => {
       });
     });
 
-    // Handle membership subscription
-    const membershipBtn = document.getElementById(
-      "membership-subscribe-btn"
-    );
-    if (membershipBtn) {
-      membershipBtn.addEventListener("click", async () => {
-        const profileId = membershipBtn.getAttribute("data-profile-id");
-        const membershipPrice = membershipBtn.getAttribute(
-          "data-membership-price"
-        );
+    // Handle membership CTA button click
+    const membershipCtaBtn = document.getElementById("membership-cta-btn");
+    if (membershipCtaBtn) {
+      membershipCtaBtn.addEventListener("click", async () => {
+        const isSubscribed = membershipCtaBtn.getAttribute("data-is-subscribed") === "true";
+        const profileId = membershipCtaBtn.getAttribute("data-profile-id");
+        const membershipPrice = membershipCtaBtn.getAttribute("data-membership-price");
 
         if (!profileId || !membershipPrice) {
           console.error("Missing profile data");
@@ -614,10 +609,10 @@ const getContentLabel = (contentType: ContentType) => {
           return;
         }
 
-        // Disable button and show loading state
-        membershipBtn.disabled = true;
-        const originalText = membershipBtn.textContent;
-        membershipBtn.textContent = "Loading...";
+        // Show loading state
+        const ctaText = document.getElementById("membership-cta-text");
+        const originalText = ctaText?.textContent || "Subscribe";
+        if (ctaText) ctaText.textContent = "Loading...";
 
         try {
           // Extract user email from token
@@ -629,48 +624,70 @@ const getContentLabel = (contentType: ContentType) => {
             console.error("Error decoding token:", e);
           }
 
-          // Call API to create checkout session
-          const response = await fetch(
-            "/api/stripe/create-membership-session",
-            {
+          if (isSubscribed) {
+            // User is subscribed - redirect to Stripe customer portal (manage subscription)
+            const response = await fetch("/api/stripe/create-portal-session", {
               method: "POST",
               headers: {
                 "Content-Type": "application/json",
               },
               body: JSON.stringify({
-                profileId,
-                membershipPrice: parseInt(membershipPrice),
                 customerEmail,
               }),
+            });
+
+            if (!response.ok) {
+              const errorData = await response.json();
+              throw new Error(errorData.error || "Failed to create portal session");
             }
-          );
 
-          if (!response.ok) {
-            const errorData = await response.json();
-            throw new Error(
-              errorData.error || "Failed to create checkout session"
-            );
-          }
+            const data = await response.json();
 
-          const data = await response.json();
-
-          // Open Stripe checkout in new tab
-          if (data.url) {
-            // window.open(data.url, "_blank");
-            window.location.href = data.url;
-            // Re-enable button
-            membershipBtn.disabled = false;
-            membershipBtn.textContent = originalText;
+            // Redirect to Stripe customer portal
+            if (data.url) {
+              window.location.href = data.url;
+            } else {
+              throw new Error("No portal URL received");
+            }
           } else {
-            throw new Error("No checkout URL received");
+            // User is not subscribed - redirect to Stripe checkout (payment page)
+            const response = await fetch(
+              "/api/stripe/create-membership-session",
+              {
+                method: "POST",
+                headers: {
+                  "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                  profileId,
+                  membershipPrice: parseInt(membershipPrice),
+                  customerEmail,
+                }),
+              }
+            );
+
+            if (!response.ok) {
+              const errorData = await response.json();
+              throw new Error(
+                errorData.error || "Failed to create checkout session"
+              );
+            }
+
+            const data = await response.json();
+
+            // Redirect to Stripe checkout
+            if (data.url) {
+              window.location.href = data.url;
+            } else {
+              throw new Error("No checkout URL received");
+            }
           }
         } catch (error) {
-          console.error("Error creating checkout session:", error);
-          alert("Failed to start checkout. Please try again.");
+          console.error("Error:", error);
+          alert(`Failed to ${isSubscribed ? "open subscription management" : "start checkout"}. Please try again.`);
 
-          // Re-enable button
-          membershipBtn.disabled = false;
-          membershipBtn.textContent = originalText;
+          // Restore original text
+          if (ctaText) ctaText.textContent = originalText;
         }
       });
     }
@@ -680,75 +697,13 @@ const getContentLabel = (contentType: ContentType) => {
     if (shouldOpenStripe === "true") {
       sessionStorage.removeItem("wmf_open_stripe_after_login");
       
-      // Wait a bit for the page to load, then click the subscribe button
+      // Wait a bit for the page to load, then click the CTA button
       setTimeout(() => {
-        const btn = document.getElementById("membership-subscribe-btn");
+        const btn = document.getElementById("membership-cta-btn");
         if (btn) {
           btn.click();
         }
       }, 500);
-    }
-
-    // Handle manage subscription button
-    const manageBtn = document.getElementById("manage-subscription-btn");
-    if (manageBtn) {
-      manageBtn.addEventListener("click", async () => {
-        // Disable button and show loading state
-        manageBtn.disabled = true;
-        const originalText = manageBtn.textContent;
-        manageBtn.textContent = "Loading...";
-
-        try {
-          // Get user email from token
-          const token = localStorage.getItem("wmf_access_token");
-          if (!token) {
-            alert("Please log in to manage your subscription");
-            return;
-          }
-
-          let customerEmail = null;
-          try {
-            const payload = JSON.parse(atob(token.split(".")[1]));
-            customerEmail = payload.email;
-          } catch (e) {
-            console.error("Error decoding token:", e);
-            alert("Failed to get user information");
-            return;
-          }
-
-          // Call API to create portal session
-          const response = await fetch("/api/stripe/create-portal-session", {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-              customerEmail,
-            }),
-          });
-
-          if (!response.ok) {
-            const errorData = await response.json();
-            throw new Error(errorData.error || "Failed to create portal session");
-          }
-
-          const data = await response.json();
-
-          // Redirect to Stripe customer portal
-          if (data.url) {
-            window.location.href = data.url;
-          } else {
-            throw new Error("No portal URL received");
-          }
-        } catch (error) {
-          console.error("Error creating portal session:", error);
-          alert("Failed to open subscription management. Please try again.");
-
-          // Re-enable button
-          manageBtn.disabled = false;
-          manageBtn.textContent = originalText;
-        }
-      });
     }
   </script>
 </Layout>
