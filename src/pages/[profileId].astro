@@ -162,10 +162,17 @@ const getContentLabel = (contentType: ContentType) => {
                     data-profile-id={profile.id}
                     data-membership-price={profile.membershipPrice}
                     data-is-subscribed="false"
-                    class="w-full bg-brand-blue-500 hover:bg-brand-blue-600 text-white font-semibold py-4 px-6 rounded-lg transition-colors flex items-center justify-between mb-3"
+                    class="w-full bg-gray-400 text-white font-semibold py-4 px-6 rounded-lg transition-colors flex items-center justify-between mb-3 cursor-wait"
+                    disabled
                   >
-                    <span id="membership-cta-text">{t.profile.subscribeCta}</span>
-                    <span class="font-bold">{formatPrice(profile.membershipPrice)}{t.profile.perMonth}</span>
+                    <span id="membership-cta-text" class="flex items-center gap-2">
+                      <svg class="animate-spin h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                      </svg>
+                      {t.profile.loading}
+                    </span>
+                    <span id="membership-price-display" class="font-bold">{formatPrice(profile.membershipPrice)}{t.profile.perMonth}</span>
                   </button>
 
                   <!-- Membership Status Info -->
@@ -437,22 +444,27 @@ const getContentLabel = (contentType: ContentType) => {
 
       const { isSubscribed, isCanceled, renewalEnabled, renewalDate, endDate } = subscriptionData;
 
+      // Remove loading state and enable button
+      ctaBtn.removeAttribute("disabled");
+      ctaBtn.classList.remove("cursor-wait", "bg-gray-400");
+      ctaBtn.classList.add("cursor-pointer");
+
       // Store subscription state in data attribute
       ctaBtn.setAttribute("data-is-subscribed", isSubscribed ? "true" : "false");
 
       if (isSubscribed) {
         if (isCanceled || !renewalEnabled) {
           // Subscription canceled or renewal disabled - show "Renew" button
-          ctaText.textContent = translations.profile.renew;
-          ctaBtn.classList.remove("bg-brand-blue-500", "hover:bg-brand-blue-600");
-          ctaBtn.classList.add("bg-orange-500", "hover:bg-orange-600");
+          ctaText.innerHTML = translations.profile.renew;
+          ctaBtn.classList.remove("bg-brand-blue-500", "hover:bg-brand-blue-600", "bg-orange-500", "hover:bg-orange-600");
+          ctaBtn.classList.add("bg-green-500", "hover:bg-green-600");
           statusLabel.textContent = translations.profile.endOfMembership;
           statusDate.textContent = endDate || "";
         } else {
           // Active subscription with renewal - show "Subscribed" button (still clickable to manage)
-          ctaText.textContent = translations.profile.subscribed;
-          ctaBtn.classList.remove("bg-orange-500", "hover:bg-orange-600");
-          ctaBtn.classList.add("bg-brand-blue-500", "hover:bg-brand-blue-600");
+          ctaText.innerHTML = translations.profile.subscribed;
+          ctaBtn.classList.remove("bg-brand-blue-500", "hover:bg-brand-blue-600", "bg-orange-500", "hover:bg-orange-600");
+          ctaBtn.classList.add("bg-green-500", "hover:bg-green-600");
           statusLabel.textContent = translations.profile.willRenew;
           statusDate.textContent = renewalDate || "";
         }
@@ -461,8 +473,8 @@ const getContentLabel = (contentType: ContentType) => {
         statusInfo.classList.remove("hidden");
       } else {
         // Not subscribed - show "Subscribe" button
-        ctaText.textContent = translations.profile.subscribeCta;
-        ctaBtn.classList.remove("bg-orange-500", "hover:bg-orange-600");
+        ctaText.innerHTML = translations.profile.subscribeCta;
+        ctaBtn.classList.remove("bg-orange-500", "hover:bg-orange-600", "bg-green-500", "hover:bg-green-600");
         ctaBtn.classList.add("bg-brand-blue-500", "hover:bg-brand-blue-600");
         statusInfo.classList.add("hidden");
       }
@@ -638,8 +650,17 @@ const getContentLabel = (contentType: ContentType) => {
         
         // Show loading state
         const ctaText = document.getElementById("membership-cta-text");
-        const originalText = ctaText?.textContent || translations.profile.subscribeCta;
-        if (ctaText) ctaText.textContent = "Loading...";
+        const originalText = ctaText?.innerHTML || translations.profile.subscribeCta;
+        if (ctaText) {
+          ctaText.innerHTML = `
+            <svg class="animate-spin h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+              <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+              <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+            </svg>
+            ${translations.profile.loading}
+          `;
+          ctaText.classList.add("flex", "items-center", "gap-2");
+        }
 
         // Show loading message in the new tab
         if (stripeWindow) {
@@ -761,7 +782,10 @@ const getContentLabel = (contentType: ContentType) => {
           }
           
           // Restore button text
-          if (ctaText) ctaText.textContent = originalText;
+          if (ctaText) {
+            ctaText.innerHTML = originalText;
+            ctaText.classList.remove("flex", "items-center", "gap-2");
+          }
         } catch (error) {
           console.error("Error:", error);
           
@@ -773,7 +797,10 @@ const getContentLabel = (contentType: ContentType) => {
           alert(`Failed to ${isSubscribed ? "open subscription management" : "start checkout"}. Please try again.`);
 
           // Restore original text
-          if (ctaText) ctaText.textContent = originalText;
+          if (ctaText) {
+            ctaText.innerHTML = originalText;
+            ctaText.classList.remove("flex", "items-center", "gap-2");
+          }
         }
       });
     }
