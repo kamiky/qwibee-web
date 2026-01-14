@@ -166,7 +166,7 @@
       },
       "important": {
         "title": "⏱️ Important:",
-        "message": "The magic link expires in 1 hour for security. If you don't see the email, check your spam folder or request a new link."
+        "message": "The magic link expires in 15 minutes for security. If you don't see the email, check your spam folder or request a new link."
       }
     },
     "error": {
@@ -204,7 +204,7 @@
       },
       "important": {
         "title": "⏱️ Important:",
-        "message": "The magic link expires in 1 hour for security. If you don't see the email, check your spam folder or request a new link."
+        "message": "The magic link expires in 15 minutes for security. If you don't see the email, check your spam folder or request a new link."
       }
     },
     "error": {
@@ -249,7 +249,7 @@
       "contactSupport": "Contact Support",
       "commonIssues": {
         "title": "Common Issues:",
-        "issue1": "Magic links expire after 1 hour for security",
+        "issue1": "Magic links expire after 15 minutes for security",
         "issue2": "Each link can only be used once",
         "issue3": "Make sure you're clicking the latest link we sent"
       }

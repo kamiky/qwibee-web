@@ -166,7 +166,7 @@
       },
       "important": {
         "title": "⏱️ Important :",
-        "message": "Le lien magique expire dans 1 heure pour des raisons de sécurité. Si vous ne voyez pas l'email, vérifiez votre dossier spam ou demandez un nouveau lien."
+        "message": "Le lien magique expire dans 15 minutes pour des raisons de sécurité. Si vous ne voyez pas l'email, vérifiez votre dossier spam ou demandez un nouveau lien."
       }
     },
     "error": {
@@ -204,7 +204,7 @@
       },
       "important": {
         "title": "⏱️ Important :",
-        "message": "Le lien magique expire dans 1 heure pour des raisons de sécurité. Si vous ne voyez pas l'email, vérifiez votre dossier spam ou demandez un nouveau lien."
+        "message": "Le lien magique expire dans 15 minutes pour des raisons de sécurité. Si vous ne voyez pas l'email, vérifiez votre dossier spam ou demandez un nouveau lien."
       }
     },
     "error": {
@@ -249,7 +249,7 @@
       "contactSupport": "Contacter le support",
       "commonIssues": {
         "title": "Problèmes courants :",
-        "issue1": "Les liens magiques expirent après 1 heure pour des raisons de sécurité",
+        "issue1": "Les liens magiques expirent après 15 minutes pour des raisons de sécurité",
         "issue2": "Chaque lien ne peut être utilisé qu'une seule fois",
         "issue3": "Assurez-vous de cliquer sur le dernier lien que nous avons envoyé"
       }
