@@ -332,7 +332,7 @@ const getContentLabel = (contentType: ContentType) => {
 
   <Footer lang={lang} />
 
-  <script define:vars={{ profileId: profile.id, translations: t }}>
+  <script define:vars={{ profileId: profile.id, profileVideos: profile.videos, translations: t }}>
     // Get current profile ID from URL
     const currentProfileId = profileId;
 
@@ -959,7 +959,7 @@ const getContentLabel = (contentType: ContentType) => {
         const videoId = card.getAttribute("data-video-id");
         
         // Get video price from profiles data
-        const videoData = ${JSON.stringify(profile.videos)}.find(v => v.id === videoId);
+        const videoData = profileVideos.find(v => v.id === videoId);
         if (!videoData) {
           console.error("Video data not found");
           return;
@@ -984,7 +984,7 @@ const getContentLabel = (contentType: ContentType) => {
 
         // Show loading message in the new tab
         if (stripeWindow) {
-          stripeWindow.document.write(\`
+          stripeWindow.document.write(`
             <html>
               <head>
                 <title>Loading...</title>
@@ -1023,7 +1023,7 @@ const getContentLabel = (contentType: ContentType) => {
                 </div>
               </body>
             </html>
-          \`);
+          `);
         }
 
         try {
@@ -1046,8 +1046,8 @@ const getContentLabel = (contentType: ContentType) => {
               profileId: currentProfileId,
               videoId: videoId,
               contentPrice: videoData.price,
-              successUrl: \`\${currentUrl}?content_purchase=success&video_id=\${videoId}\`,
-              cancelUrl: \`\${currentUrl}?content_purchase=canceled\`,
+              successUrl: `${currentUrl}?content_purchase=success&video_id=${videoId}`,
+              cancelUrl: `${currentUrl}?content_purchase=canceled`,
               customerEmail,
             }),
           });

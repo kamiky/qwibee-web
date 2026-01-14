@@ -7,7 +7,12 @@ import { useTranslations, type Language } from "@/i18n/translations";
 
 // Detect language from URL path
 const pathname = Astro.url.pathname;
-const lang: Language = pathname.startsWith('/fr/') || pathname === '/fr' || pathname.startsWith('/fr/login') ? 'fr' : 'en';
+const lang: Language =
+  pathname.startsWith("/fr/") ||
+  pathname === "/fr" ||
+  pathname.startsWith("/fr/login")
+    ? "fr"
+    : "en";
 const t = useTranslations(lang);
 ---
 
@@ -77,7 +82,9 @@ const t = useTranslations(lang);
 
         <!-- Info Box -->
         <div class="bg-blue-50 border border-blue-200 rounded-xl p-6">
-          <h3 class="text-lg font-bold text-blue-700 mb-3">{t.auth.loginSuccess.whatsNext}</h3>
+          <h3 class="text-lg font-bold text-blue-700 mb-3">
+            {t.auth.loginSuccess.whatsNext}
+          </h3>
           <ul class="space-y-2 text-gray-700">
             <li class="flex items-start gap-2">
               <span class="text-brand-blue-500 mt-1">•</span>
@@ -140,7 +147,7 @@ const t = useTranslations(lang);
             window.location.href = "/login";
             return;
           }
-          
+
           // Already logged in, show success
           showSuccess(null, redirectTo, openStripe === "true");
           return;
@@ -174,17 +181,20 @@ const t = useTranslations(lang);
         console.log("✓ Authentication stored successfully");
 
         // Trigger header update by dispatching storage event
-        window.dispatchEvent(new Event('storage'));
+        window.dispatchEvent(new Event("storage"));
 
         // Show success
         showSuccess(user.email, redirectTo, openStripe === "true");
-
       } catch (error) {
         console.error("Verification error:", error);
         // Redirect to login with error
-        window.location.href = "/login?error=" + encodeURIComponent(
-          error instanceof Error ? error.message : "Failed to verify magic link"
-        );
+        window.location.href =
+          "/login?error=" +
+          encodeURIComponent(
+            error instanceof Error
+              ? error.message
+              : "Failed to verify magic link"
+          );
       }
     }
 
@@ -194,7 +204,8 @@ const t = useTranslations(lang);
       if (successContainer) successContainer.classList.remove("hidden");
 
       // Get email from params or storage
-      const finalEmail = email || JSON.parse(localStorage.getItem("wmf_user") || "{}").email;
+      const finalEmail =
+        email || JSON.parse(localStorage.getItem("wmf_user") || "{}").email;
       if (userEmailEl && finalEmail) {
         userEmailEl.textContent = finalEmail;
       }
@@ -203,11 +214,13 @@ const t = useTranslations(lang);
       if (redirectTo) {
         // Update UI
         if (redirectMessage) {
-          redirectMessage.textContent = translations.auth.loginSuccess.redirectingToCreator;
+          redirectMessage.textContent =
+            translations.auth.loginSuccess.redirectingToCreator;
         }
         if (continueLink) {
           continueLink.setAttribute("href", redirectTo);
-          continueLink.textContent = translations.auth.loginSuccess.continueToCreator;
+          continueLink.textContent =
+            translations.auth.loginSuccess.continueToCreator;
         }
 
         // Store flag if we need to open Stripe
