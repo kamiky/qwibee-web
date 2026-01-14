@@ -324,6 +324,14 @@
       "loading": "Loading...",
       "loginRequired": "Please log in to manage your subscription",
       "manageFailed": "Failed to open subscription management. Please try again."
+    },
+    "purchasedContent": {
+      "title": "Purchased Content",
+      "noPurchasedContent": "You haven't purchased any content yet",
+      "browseCreators": "Browse creators",
+      "watchNow": "Watch Now",
+      "purchasedOn": "Purchased on",
+      "for": "for"
     }
   }
 }

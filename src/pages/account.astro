@@ -86,6 +86,30 @@ const t = useTranslations(lang);
           </div>
         </div>
 
+        <!-- Purchased Content Card -->
+        <div
+          class="bg-white rounded-2xl p-8 border border-gray-200 shadow-lg mb-6"
+        >
+          <h2 class="text-2xl font-bold mb-4 text-gray-900">
+            {t.account.purchasedContent.title}
+          </h2>
+          <div id="purchased-content-list" class="space-y-4">
+            <!-- Purchased content will be loaded here -->
+          </div>
+          <div id="no-purchased-content" class="hidden text-center py-8">
+            <div class="text-6xl mb-4">🎬</div>
+            <p class="text-gray-600 mb-4">
+              {t.account.purchasedContent.noPurchasedContent}
+            </p>
+            <a
+              href={lang === "fr" ? "/fr" : "/"}
+              class="text-brand-blue-500 hover:text-brand-blue-600 font-semibold"
+            >
+              {t.account.purchasedContent.browseCreators}
+            </a>
+          </div>
+        </div>
+
         <!-- Actions -->
         <div class="bg-white rounded-2xl p-8 border border-gray-200 shadow-lg">
           <h2 class="text-2xl font-bold mb-4 text-gray-900">
@@ -271,6 +295,10 @@ const t = useTranslations(lang);
     const userEmailEl = document.getElementById("user-email");
     const membershipsList = document.getElementById("memberships-list");
     const noMemberships = document.getElementById("no-memberships");
+    const purchasedContentList = document.getElementById(
+      "purchased-content-list"
+    );
+    const noPurchasedContent = document.getElementById("no-purchased-content");
     const logoutBtn = document.getElementById("logout-btn");
     const logoutModal = document.getElementById("logout-modal");
     const modalCancel = document.getElementById("modal-cancel");
@@ -301,8 +329,8 @@ const t = useTranslations(lang);
       // Display user info
       if (userEmailEl) userEmailEl.textContent = auth.user.email;
 
-      // Load memberships
-      loadMemberships();
+      // Load account data (memberships and purchased content in one call)
+      loadAccountData();
     }
 
     async function handleManageSubscription(event) {
@@ -355,7 +383,8 @@ const t = useTranslations(lang);
       }
     }
 
-    async function loadMemberships() {
+    // Load both memberships and purchased content in a single API call
+    async function loadAccountData() {
       try {
         const response = await fetch("/api/auth/verify-token", {
           method: "POST",
@@ -365,42 +394,104 @@ const t = useTranslations(lang);
           body: JSON.stringify({ token: auth.accessToken }),
         });
 
-        if (!response.ok) throw new Error("Failed to load memberships");
+        if (!response.ok) throw new Error("Failed to load account data");
 
         const data = await response.json();
         const memberships = data.data.memberships || [];
+        const purchasedContent = data.data.purchasedContent || [];
 
-        if (memberships.length === 0) {
-          if (membershipsList) membershipsList.classList.add("hidden");
-          if (noMemberships) noMemberships.classList.remove("hidden");
-        } else {
-          if (membershipsList) {
-            membershipsList.innerHTML = memberships
-              .map((m) => {
-                const statusColor =
-                  m.status === "active" || m.status === "trialing"
-                    ? "text-green-600"
-                    : m.status === "canceled"
-                      ? "text-red-600"
-                      : "text-yellow-600";
+        // Load memberships
+        loadMemberships(memberships);
 
-                const dateOptions = {
-                  year: "numeric",
-                  month: "short",
-                  day: "numeric",
-                };
-                const renewalText = m.cancelAtPeriodEnd
-                  ? `${translations.account.membership.ends}: ${new Date(m.currentPeriodEnd).toLocaleDateString(lang === "fr" ? "fr-FR" : "en-US", dateOptions)}`
-                  : `${translations.account.membership.renews}: ${new Date(m.currentPeriodEnd).toLocaleDateString(lang === "fr" ? "fr-FR" : "en-US", dateOptions)}`;
+        // Load purchased content
+        loadPurchasedContent(purchasedContent);
+      } catch (error) {
+        console.error("Error loading account data:", error);
+        if (membershipsList) membershipsList.classList.add("hidden");
+        if (noMemberships) noMemberships.classList.remove("hidden");
+        if (purchasedContentList) purchasedContentList.classList.add("hidden");
+        if (noPurchasedContent) noPurchasedContent.classList.remove("hidden");
+      }
+    }
 
-                const statusBadge = m.cancelAtPeriodEnd
-                  ? `<span class="text-xs bg-orange-100 text-orange-800 px-2 py-1 rounded-full ml-2">${translations.account.membership.canceling}</span>`
-                  : "";
+    function loadPurchasedContent(purchasedContent) {
+      if (purchasedContent.length === 0) {
+        if (purchasedContentList) purchasedContentList.classList.add("hidden");
+        if (noPurchasedContent) noPurchasedContent.classList.remove("hidden");
+      } else {
+        if (purchasedContentList) {
+          purchasedContentList.innerHTML = purchasedContent
+            .map((pc) => {
+              const dateOptions = {
+                year: "numeric",
+                month: "short",
+                day: "numeric",
+              };
+              const purchaseDate = new Date(pc.createdAt).toLocaleDateString(
+                lang === "fr" ? "fr-FR" : "en-US",
+                dateOptions
+              );
+              const price = `$${(pc.amount / 100).toFixed(2)}`;
+              const profileUrl =
+                lang === "fr" ? `/fr/${pc.profileId}` : `/${pc.profileId}`;
 
-                const profileUrl =
-                  lang === "fr" ? `/fr/${m.profileId}` : `/${m.profileId}`;
+              return `
+                <div class="border border-gray-200 rounded-lg p-4">
+                  <div class="flex items-center justify-between">
+                    <div>
+                      <h3 class="font-bold text-lg">
+                        ${pc.profileId} - ${pc.videoId}
+                      </h3>
+                      <p class="text-sm text-gray-600">
+                        ${translations.account.purchasedContent.purchasedOn} ${purchaseDate} ${translations.account.purchasedContent.for} ${price}
+                      </p>
+                    </div>
+                    <div>
+                      <a href="${profileUrl}" class="bg-brand-blue-500 hover:bg-brand-blue-600 text-white font-semibold py-2 px-4 rounded-lg transition-colors inline-block">
+                        ${translations.account.purchasedContent.watchNow}
+                      </a>
+                    </div>
+                  </div>
+                </div>
+              `;
+            })
+            .join("");
+        }
+      }
+    }
 
-                return `
+    function loadMemberships(memberships) {
+      if (memberships.length === 0) {
+        if (membershipsList) membershipsList.classList.add("hidden");
+        if (noMemberships) noMemberships.classList.remove("hidden");
+      } else {
+        if (membershipsList) {
+          membershipsList.innerHTML = memberships
+            .map((m) => {
+              const statusColor =
+                m.status === "active" || m.status === "trialing"
+                  ? "text-green-600"
+                  : m.status === "canceled"
+                    ? "text-red-600"
+                    : "text-yellow-600";
+
+              const dateOptions = {
+                year: "numeric",
+                month: "short",
+                day: "numeric",
+              };
+              const renewalText = m.cancelAtPeriodEnd
+                ? `${translations.account.membership.ends}: ${new Date(m.currentPeriodEnd).toLocaleDateString(lang === "fr" ? "fr-FR" : "en-US", dateOptions)}`
+                : `${translations.account.membership.renews}: ${new Date(m.currentPeriodEnd).toLocaleDateString(lang === "fr" ? "fr-FR" : "en-US", dateOptions)}`;
+
+              const statusBadge = m.cancelAtPeriodEnd
+                ? `<span class="text-xs bg-orange-100 text-orange-800 px-2 py-1 rounded-full ml-2">${translations.account.membership.canceling}</span>`
+                : "";
+
+              const profileUrl =
+                lang === "fr" ? `/fr/${m.profileId}` : `/${m.profileId}`;
+
+              return `
                     <div class="border border-gray-200 rounded-lg p-4">
                       <div class="flex items-center justify-between">
                         <div>
@@ -424,22 +515,17 @@ const t = useTranslations(lang);
                       </div>
                     </div>
                   `;
-              })
-              .join("");
+            })
+            .join("");
 
-            // Add event listeners to all manage buttons
-            const manageBtns = document.querySelectorAll(
-              ".manage-membership-btn"
-            );
-            manageBtns.forEach((btn) => {
-              btn.addEventListener("click", handleManageSubscription);
-            });
-          }
+          // Add event listeners to all manage buttons
+          const manageBtns = document.querySelectorAll(
+            ".manage-membership-btn"
+          );
+          manageBtns.forEach((btn) => {
+            btn.addEventListener("click", handleManageSubscription);
+          });
         }
-      } catch (error) {
-        console.error("Error loading memberships:", error);
-        if (membershipsList) membershipsList.classList.add("hidden");
-        if (noMemberships) noMemberships.classList.remove("hidden");
       }
     }
 
@@ -591,7 +677,10 @@ const t = useTranslations(lang);
           clearAuth();
 
           // Store success message in sessionStorage for toast
-          sessionStorage.setItem("toast_message", translations.account.deleteAccountModal.success);
+          sessionStorage.setItem(
+            "toast_message",
+            translations.account.deleteAccountModal.success
+          );
           sessionStorage.setItem("toast_type", "success");
 
           // Redirect to home

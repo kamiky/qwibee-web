@@ -324,6 +324,14 @@
       "loading": "Chargement...",
       "loginRequired": "Veuillez vous connecter pour gérer votre abonnement",
       "manageFailed": "Échec de l'ouverture de la gestion de l'abonnement. Veuillez réessayer."
+    },
+    "purchasedContent": {
+      "title": "Contenu Acheté",
+      "noPurchasedContent": "Vous n'avez pas encore acheté de contenu",
+      "browseCreators": "Parcourir les créateurs",
+      "watchNow": "Regarder Maintenant",
+      "purchasedOn": "Acheté le",
+      "for": "pour"
     }
   }
 }
