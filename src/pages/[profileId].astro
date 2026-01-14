@@ -530,7 +530,7 @@ const getContentLabel = (contentType: ContentType) => {
           }
 
           const data = await response.json();
-          const token = data.data.token;
+          const token = data.data.accessToken;
 
           // Store token in localStorage
           localStorage.setItem("wmf_access_token", token);
