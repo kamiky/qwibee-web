@@ -175,6 +175,8 @@ const t = useTranslations(lang);
   <Footer lang={lang} />
 
   <script>
+    import { storeAuth } from "@/lib/auth";
+
     const loadingContainer = document.getElementById("loading-container");
     const successContainer = document.getElementById("success-container");
     const errorContainer = document.getElementById("error-container");
@@ -208,14 +210,18 @@ const t = useTranslations(lang);
           throw new Error(data.error || "Failed to verify magic link");
         }
 
-        const accessToken = data.data.token;
-        const email = data.data.email;
+        const accessToken = data.data.accessToken;
+        const refreshToken = data.data.refreshToken;
+        const user = data.data.user;
         const profileId = data.data.profileId;
 
-        // Store the access token
-        localStorage.setItem("wmf_access_token", accessToken);
-        localStorage.setItem("wmf_profile_id", profileId);
-        console.log("✓ Access token stored successfully");
+        // Store authentication data
+        storeAuth({
+          accessToken,
+          refreshToken,
+          user,
+        });
+        console.log("✓ Authentication stored successfully");
 
         // Show success
         if (loadingContainer) loadingContainer.classList.add("hidden");
@@ -229,7 +235,7 @@ const t = useTranslations(lang);
           purchaseDateEl.textContent = new Date().toLocaleDateString();
         }
         if (recoveredEmailEl) {
-          recoveredEmailEl.textContent = email;
+          recoveredEmailEl.textContent = user.email;
         }
 
         // Update the view button to go to the profile

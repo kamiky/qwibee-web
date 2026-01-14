@@ -1,0 +1,318 @@
+---
+import Layout from "@/layouts/Layout.astro";
+import Header from "@/components/Header.astro";
+import Footer from "@/components/Footer.astro";
+import LanguageSwitcher from "@/components/LanguageSwitcher.astro";
+import { useTranslations } from "@/i18n/translations";
+
+const lang = "en";
+const t = useTranslations(lang);
+---
+
+<Layout 
+  title="My Account | WatchMeFans" 
+  description="Manage your WatchMeFans subscriptions and account settings"
+  lang={lang}
+>
+  <Header lang={lang} />
+  <LanguageSwitcher lang={lang} />
+
+  <main class="pt-24 pb-12 min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
+    <div class="max-w-4xl mx-auto px-6">
+      <!-- Logged Out State -->
+      <div id="logged-out-container" class="hidden">
+        <div class="text-center mb-12">
+          <h1 class="text-4xl sm:text-5xl font-extrabold mb-4 text-gray-900">
+            Sign In Required
+          </h1>
+          <p class="text-xl text-gray-600 mb-8">
+            Please sign in to view your account and subscriptions.
+          </p>
+          <a
+            href="/recover-access"
+            class="inline-block bg-brand-blue-500 hover:bg-brand-blue-600 text-white font-bold py-3 px-8 rounded-lg transition-colors shadow-lg hover:shadow-xl"
+          >
+            Sign In with Magic Link
+          </a>
+        </div>
+      </div>
+
+      <!-- Loading State -->
+      <div id="loading-container" class="text-center">
+        <div class="mb-8">
+          <div
+            class="inline-block animate-spin rounded-full h-16 w-16 border-b-2 border-brand-blue-500"
+          >
+          </div>
+        </div>
+        <h1 class="text-3xl font-bold mb-4 text-gray-900">
+          Loading your account...
+        </h1>
+      </div>
+
+      <!-- Logged In State -->
+      <div id="logged-in-container" class="hidden">
+        <!-- Header -->
+        <div class="text-center mb-12">
+          <h1 class="text-4xl sm:text-5xl font-extrabold mb-4 text-gray-900">
+            My Account
+          </h1>
+          <p class="text-xl text-gray-600" id="user-email"></p>
+        </div>
+
+        <!-- Account Info Card -->
+        <div class="bg-white rounded-2xl p-8 border border-gray-200 shadow-lg mb-8">
+          <h2 class="text-2xl font-bold mb-6 text-gray-900">
+            Account Information
+          </h2>
+          <div class="space-y-4">
+            <div class="flex items-start gap-3">
+              <div class="text-brand-blue-500 mt-1">
+                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                  <path d="M2.003 5.884L10 9.882l7.997-3.998A2 2 0 0016 4H4a2 2 0 00-1.997 1.884z"></path>
+                  <path d="M18 8.118l-8 4-8-4V14a2 2 0 002 2h12a2 2 0 002-2V8.118z"></path>
+                </svg>
+              </div>
+              <div>
+                <p class="text-sm text-gray-600">Email</p>
+                <p class="font-medium text-gray-900" id="account-email"></p>
+              </div>
+            </div>
+            <div class="flex items-start gap-3">
+              <div class="text-brand-blue-500 mt-1">
+                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                  <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clip-rule="evenodd"></path>
+                </svg>
+              </div>
+              <div>
+                <p class="text-sm text-gray-600">Member Since</p>
+                <p class="font-medium text-gray-900" id="member-since"></p>
+              </div>
+            </div>
+          </div>
+          
+          <div class="mt-6 pt-6 border-t border-gray-200">
+            <button
+              id="logout-button"
+              class="w-full sm:w-auto bg-gray-600 hover:bg-gray-700 text-white font-medium py-2 px-6 rounded-lg transition-colors"
+            >
+              Sign Out
+            </button>
+          </div>
+        </div>
+
+        <!-- Subscriptions Card -->
+        <div class="bg-white rounded-2xl p-8 border border-gray-200 shadow-lg mb-8">
+          <h2 class="text-2xl font-bold mb-6 text-gray-900">
+            My Subscriptions
+          </h2>
+          
+          <!-- Empty State -->
+          <div id="no-subscriptions" class="hidden text-center py-8">
+            <div class="text-6xl mb-4">📭</div>
+            <p class="text-lg text-gray-600 mb-4">
+              You don't have any active subscriptions yet.
+            </p>
+            <a
+              href="/"
+              class="inline-block bg-brand-blue-500 hover:bg-brand-blue-600 text-white font-bold py-3 px-6 rounded-lg transition-colors"
+            >
+              Browse Creators
+            </a>
+          </div>
+
+          <!-- Subscriptions List -->
+          <div id="subscriptions-list" class="space-y-4">
+            <!-- Will be populated by JavaScript -->
+          </div>
+        </div>
+
+        <!-- Help Card -->
+        <div class="bg-blue-50 border border-blue-200 rounded-xl p-6">
+          <h3 class="text-lg font-bold text-blue-700 mb-3">
+            Need Help?
+          </h3>
+          <ul class="space-y-2 text-gray-700">
+            <li class="flex items-start gap-2">
+              <span class="text-brand-blue-500 mt-1">•</span>
+              <span>Having trouble with your subscription? <a href="/contact" class="text-brand-blue-600 hover:underline">Contact support</a></span>
+            </li>
+            <li class="flex items-start gap-2">
+              <span class="text-brand-blue-500 mt-1">•</span>
+              <span>Manage your billing through the Stripe customer portal (link in each subscription)</span>
+            </li>
+            <li class="flex items-start gap-2">
+              <span class="text-brand-blue-500 mt-1">•</span>
+              <span>Lost access? <a href="/recover-access" class="text-brand-blue-600 hover:underline">Recover your account</a></span>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <Footer lang={lang} />
+
+  <script>
+    import { getUser, getMemberships, logout, verifyToken, isAuthenticated } from "@/lib/auth";
+    import { profiles } from "@/data/profiles";
+
+    const loadingContainer = document.getElementById("loading-container");
+    const loggedInContainer = document.getElementById("logged-in-container");
+    const loggedOutContainer = document.getElementById("logged-out-container");
+    const subscriptionsList = document.getElementById("subscriptions-list");
+    const noSubscriptions = document.getElementById("no-subscriptions");
+    const logoutButton = document.getElementById("logout-button");
+
+    async function loadAccount() {
+      try {
+        // Check if user is authenticated
+        if (!isAuthenticated()) {
+          showLoggedOut();
+          return;
+        }
+
+        // Verify token and get user info
+        const result = await verifyToken();
+        
+        if (!result.valid || !result.user) {
+          showLoggedOut();
+          return;
+        }
+
+        const user = result.user;
+        
+        // Show logged in state
+        if (loadingContainer) loadingContainer.classList.add("hidden");
+        if (loggedInContainer) loggedInContainer.classList.remove("hidden");
+
+        // Fill in user info
+        const userEmailEl = document.getElementById("user-email");
+        const accountEmailEl = document.getElementById("account-email");
+        const memberSinceEl = document.getElementById("member-since");
+
+        if (userEmailEl) userEmailEl.textContent = user.email;
+        if (accountEmailEl) accountEmailEl.textContent = user.email;
+        if (memberSinceEl) {
+          memberSinceEl.textContent = new Date().toLocaleDateString("en-US", {
+            year: "numeric",
+            month: "long",
+          });
+        }
+
+        // Load memberships
+        const memberships = await getMemberships();
+
+        if (memberships.length === 0) {
+          if (noSubscriptions) noSubscriptions.classList.remove("hidden");
+          if (subscriptionsList) subscriptionsList.innerHTML = "";
+        } else {
+          if (noSubscriptions) noSubscriptions.classList.add("hidden");
+          renderSubscriptions(memberships);
+        }
+      } catch (error) {
+        console.error("Error loading account:", error);
+        showLoggedOut();
+      }
+    }
+
+    function showLoggedOut() {
+      if (loadingContainer) loadingContainer.classList.add("hidden");
+      if (loggedOutContainer) loggedOutContainer.classList.remove("hidden");
+    }
+
+    function renderSubscriptions(memberships: any[]) {
+      if (!subscriptionsList) return;
+
+      subscriptionsList.innerHTML = memberships
+        .map((membership) => {
+          const profile = profiles.find((p) => p.id === membership.profileId);
+          const statusColor = getStatusColor(membership.status);
+          const statusText = getStatusText(membership.status);
+          
+          return `
+            <div class="border border-gray-200 rounded-lg p-6 hover:shadow-md transition-shadow">
+              <div class="flex items-start justify-between gap-4">
+                <div class="flex-1">
+                  <div class="flex items-center gap-3 mb-2">
+                    <h3 class="text-xl font-bold text-gray-900">
+                      ${profile?.name || membership.profileId}
+                    </h3>
+                    <span class="px-3 py-1 text-xs font-semibold rounded-full ${statusColor}">
+                      ${statusText}
+                    </span>
+                  </div>
+                  ${profile?.bio ? `<p class="text-gray-600 text-sm mb-3">${profile.bio}</p>` : ""}
+                  <div class="space-y-1 text-sm text-gray-600">
+                    <p>
+                      <strong>Next billing:</strong> 
+                      ${new Date(membership.currentPeriodEnd).toLocaleDateString("en-US", {
+                        year: "numeric",
+                        month: "long",
+                        day: "numeric",
+                      })}
+                    </p>
+                    ${membership.cancelAtPeriodEnd ? `
+                      <p class="text-orange-600 font-medium">
+                        ⚠️ Subscription will cancel at end of period
+                      </p>
+                    ` : ""}
+                  </div>
+                </div>
+                <div class="flex flex-col gap-2">
+                  <a
+                    href="/${membership.profileId}"
+                    class="inline-block bg-brand-blue-500 hover:bg-brand-blue-600 text-white font-medium py-2 px-4 rounded-lg text-center transition-colors text-sm whitespace-nowrap"
+                  >
+                    View Content
+                  </a>
+                </div>
+              </div>
+            </div>
+          `;
+        })
+        .join("");
+    }
+
+    function getStatusColor(status: string): string {
+      switch (status) {
+        case "active":
+          return "bg-green-100 text-green-800";
+        case "trialing":
+          return "bg-blue-100 text-blue-800";
+        case "past_due":
+          return "bg-orange-100 text-orange-800";
+        case "canceled":
+          return "bg-red-100 text-red-800";
+        default:
+          return "bg-gray-100 text-gray-800";
+      }
+    }
+
+    function getStatusText(status: string): string {
+      switch (status) {
+        case "active":
+          return "Active";
+        case "trialing":
+          return "Trial";
+        case "past_due":
+          return "Past Due";
+        case "canceled":
+          return "Canceled";
+        default:
+          return status;
+      }
+    }
+
+    // Logout handler
+    if (logoutButton) {
+      logoutButton.addEventListener("click", async () => {
+        await logout();
+        window.location.href = "/";
+      });
+    }
+
+    // Load account on page load
+    loadAccount();
+  </script>
+</Layout>
