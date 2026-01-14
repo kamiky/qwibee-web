@@ -235,25 +235,46 @@ const t = useTranslations(lang);
           if (membershipsList) {
             membershipsList.innerHTML = memberships
               .map(
-                (m: any) => `
-              <div class="border border-gray-200 rounded-lg p-4">
-                <div class="flex items-center justify-between">
-                  <div>
-                    <h3 class="font-bold text-lg">${m.profileId}</h3>
-                    <p class="text-sm text-gray-600">Status: <span class="text-green-600 font-semibold">${m.status}</span></p>
-                    <p class="text-xs text-gray-500">Renews: ${new Date(m.currentPeriodEnd).toLocaleDateString()}</p>
-                  </div>
-                  <div class="flex gap-2">
-                    <button class="manage-membership-btn bg-gray-500 hover:bg-gray-600 text-white font-semibold py-2 px-4 rounded-lg transition-colors">
-                      Manage
-                    </button>
-                    <a href="/${m.profileId}" class="bg-brand-blue-500 hover:bg-brand-blue-600 text-white font-semibold py-2 px-4 rounded-lg transition-colors inline-block">
-                      View Profile
-                    </a>
-                  </div>
-                </div>
-              </div>
-            `
+                (m: any) => {
+                  const statusColor = m.status === 'active' || m.status === 'trialing' 
+                    ? 'text-green-600' 
+                    : m.status === 'canceled' 
+                    ? 'text-red-600' 
+                    : 'text-yellow-600';
+                  
+                  const renewalText = m.cancelAtPeriodEnd 
+                    ? `Ends: ${new Date(m.currentPeriodEnd).toLocaleDateString()}`
+                    : `Renews: ${new Date(m.currentPeriodEnd).toLocaleDateString()}`;
+                  
+                  const statusBadge = m.cancelAtPeriodEnd 
+                    ? '<span class="text-xs bg-orange-100 text-orange-800 px-2 py-1 rounded-full ml-2">Canceling</span>'
+                    : '';
+                  
+                  return `
+                    <div class="border border-gray-200 rounded-lg p-4">
+                      <div class="flex items-center justify-between">
+                        <div>
+                          <h3 class="font-bold text-lg flex items-center">
+                            ${m.profileId}
+                            ${statusBadge}
+                          </h3>
+                          <p class="text-sm text-gray-600">
+                            Status: <span class="${statusColor} font-semibold">${m.status}</span>
+                          </p>
+                          <p class="text-xs text-gray-500">${renewalText}</p>
+                        </div>
+                        <div class="flex gap-2">
+                          <button class="manage-membership-btn bg-gray-500 hover:bg-gray-600 text-white font-semibold py-2 px-4 rounded-lg transition-colors">
+                            Manage
+                          </button>
+                          <a href="/${m.profileId}" class="bg-brand-blue-500 hover:bg-brand-blue-600 text-white font-semibold py-2 px-4 rounded-lg transition-colors inline-block">
+                            View Profile
+                          </a>
+                        </div>
+                      </div>
+                    </div>
+                  `;
+                }
               )
               .join("");
             

@@ -328,12 +328,13 @@ const getContentLabel = (contentType: ContentType) => {
     const currentProfileId = profileId;
 
     // Check if user has access token and verify it
+    // Returns { hasAccess: boolean, membership: object | null }
     const checkMembershipAccess = async () => {
       const token = localStorage.getItem("wmf_access_token");
       const storedProfileId = localStorage.getItem("wmf_profile_id");
 
       if (!token || storedProfileId !== currentProfileId) {
-        return false;
+        return { hasAccess: false, membership: null };
       }
 
       try {
@@ -346,14 +347,28 @@ const getContentLabel = (contentType: ContentType) => {
         });
 
         if (!response.ok) {
-          return false;
+          return { hasAccess: false, membership: null };
         }
 
         const data = await response.json();
-        return data.data.valid === true;
+        
+        // Check if user has active membership for this profile
+        if (data.data.valid && data.data.memberships) {
+          const membership = data.data.memberships.find(
+            m => m.profileId === currentProfileId && 
+                 (m.status === 'active' || m.status === 'trialing')
+          );
+          
+          return {
+            hasAccess: !!membership,
+            membership: membership || null
+          };
+        }
+        
+        return { hasAccess: false, membership: null };
       } catch (error) {
         console.error("Error verifying token:", error);
-        return false;
+        return { hasAccess: false, membership: null };
       }
     };
 
@@ -452,24 +467,31 @@ const getContentLabel = (contentType: ContentType) => {
     };
 
     // Check access on page load and update UI
-    checkMembershipAccess().then((hasAccess) => {
-      if (hasAccess) {
+    checkMembershipAccess().then(({ hasAccess, membership }) => {
+      if (hasAccess && membership) {
         // Unlock membership videos
         unlockMembershipVideos();
 
-        // TODO: Fetch subscription details from backend
-        // For now, using mock data - replace with actual API call
-        const mockSubscriptionData = {
+        // Use real subscription data from backend
+        const renewalDate = membership.currentPeriodEnd 
+          ? new Date(membership.currentPeriodEnd).toLocaleDateString('en-US', { 
+              year: 'numeric', 
+              month: 'short', 
+              day: 'numeric' 
+            })
+          : null;
+
+        const subscriptionData = {
           isSubscribed: true,
-          isCanceled: false,
-          renewalEnabled: true,
-          renewalDate: "Feb. 15, 2026",
-          endDate: "Jan. 15, 2026"
+          isCanceled: membership.cancelAtPeriodEnd || false,
+          renewalEnabled: !membership.cancelAtPeriodEnd,
+          renewalDate: renewalDate,
+          endDate: renewalDate
         };
 
-        updateMembershipUI(mockSubscriptionData);
+        updateMembershipUI(subscriptionData);
 
-        console.log("User has active membership access");
+        console.log("User has active membership access", membership);
       } else {
         // Not subscribed
         updateMembershipUI({
