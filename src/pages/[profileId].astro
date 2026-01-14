@@ -172,6 +172,12 @@ const getContentLabel = (contentType: ContentType) => {
                       <p class="font-bold">Active Membership</p>
                       <p class="text-sm" id="member-email"></p>
                     </div>
+                    <button
+                      id="manage-subscription-btn"
+                      class="bg-brand-blue-500 hover:bg-brand-blue-600 text-white font-semibold py-2 px-4 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                      Manage
+                    </button>
                   </div>
 
                   <!-- Subscribe Section (shown when not logged in) -->
@@ -681,6 +687,68 @@ const getContentLabel = (contentType: ContentType) => {
           btn.click();
         }
       }, 500);
+    }
+
+    // Handle manage subscription button
+    const manageBtn = document.getElementById("manage-subscription-btn");
+    if (manageBtn) {
+      manageBtn.addEventListener("click", async () => {
+        // Disable button and show loading state
+        manageBtn.disabled = true;
+        const originalText = manageBtn.textContent;
+        manageBtn.textContent = "Loading...";
+
+        try {
+          // Get user email from token
+          const token = localStorage.getItem("wmf_access_token");
+          if (!token) {
+            alert("Please log in to manage your subscription");
+            return;
+          }
+
+          let customerEmail = null;
+          try {
+            const payload = JSON.parse(atob(token.split(".")[1]));
+            customerEmail = payload.email;
+          } catch (e) {
+            console.error("Error decoding token:", e);
+            alert("Failed to get user information");
+            return;
+          }
+
+          // Call API to create portal session
+          const response = await fetch("/api/stripe/create-portal-session", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              customerEmail,
+            }),
+          });
+
+          if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(errorData.error || "Failed to create portal session");
+          }
+
+          const data = await response.json();
+
+          // Redirect to Stripe customer portal
+          if (data.url) {
+            window.location.href = data.url;
+          } else {
+            throw new Error("No portal URL received");
+          }
+        } catch (error) {
+          console.error("Error creating portal session:", error);
+          alert("Failed to open subscription management. Please try again.");
+
+          // Re-enable button
+          manageBtn.disabled = false;
+          manageBtn.textContent = originalText;
+        }
+      });
     }
   </script>
 </Layout>

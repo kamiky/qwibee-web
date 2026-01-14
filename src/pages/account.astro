@@ -163,6 +163,56 @@ const t = useTranslations(lang);
       loadMemberships();
     }
 
+    async function handleManageSubscription(event: Event) {
+      const button = event.target as HTMLButtonElement;
+      
+      // Disable button and show loading state
+      button.disabled = true;
+      const originalText = button.textContent;
+      button.textContent = "Loading...";
+
+      try {
+        // Get user email from auth
+        const customerEmail = auth?.user?.email;
+        if (!customerEmail) {
+          alert("Please log in to manage your subscription");
+          return;
+        }
+
+        // Call API to create portal session
+        const response = await fetch("/api/stripe/create-portal-session", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            customerEmail,
+          }),
+        });
+
+        if (!response.ok) {
+          const errorData = await response.json();
+          throw new Error(errorData.error || "Failed to create portal session");
+        }
+
+        const data = await response.json();
+
+        // Redirect to Stripe customer portal
+        if (data.url) {
+          window.location.href = data.url;
+        } else {
+          throw new Error("No portal URL received");
+        }
+      } catch (error) {
+        console.error("Error creating portal session:", error);
+        alert("Failed to open subscription management. Please try again.");
+
+        // Re-enable button
+        button.disabled = false;
+        button.textContent = originalText;
+      }
+    }
+
     async function loadMemberships() {
       try {
         const response = await fetch("/api/auth/verify-token", {
@@ -193,14 +243,25 @@ const t = useTranslations(lang);
                     <p class="text-sm text-gray-600">Status: <span class="text-green-600 font-semibold">${m.status}</span></p>
                     <p class="text-xs text-gray-500">Renews: ${new Date(m.currentPeriodEnd).toLocaleDateString()}</p>
                   </div>
-                  <a href="/${m.profileId}" class="bg-brand-blue-500 hover:bg-brand-blue-600 text-white font-semibold py-2 px-4 rounded-lg transition-colors">
-                    View Profile
-                  </a>
+                  <div class="flex gap-2">
+                    <button class="manage-membership-btn bg-gray-500 hover:bg-gray-600 text-white font-semibold py-2 px-4 rounded-lg transition-colors">
+                      Manage
+                    </button>
+                    <a href="/${m.profileId}" class="bg-brand-blue-500 hover:bg-brand-blue-600 text-white font-semibold py-2 px-4 rounded-lg transition-colors inline-block">
+                      View Profile
+                    </a>
+                  </div>
                 </div>
               </div>
             `
               )
               .join("");
+            
+            // Add event listeners to all manage buttons
+            const manageBtns = document.querySelectorAll(".manage-membership-btn");
+            manageBtns.forEach((btn) => {
+              btn.addEventListener("click", handleManageSubscription);
+            });
           }
         }
       } catch (error) {

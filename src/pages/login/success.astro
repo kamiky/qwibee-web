@@ -164,6 +164,9 @@ const t = useTranslations(lang);
         });
         console.log("✓ Authentication stored successfully");
 
+        // Trigger header update by dispatching storage event
+        window.dispatchEvent(new Event('storage'));
+
         // Show success
         showSuccess(user.email, redirectTo, openStripe === "true");
 
