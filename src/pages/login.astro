@@ -165,6 +165,32 @@ const t = useTranslations(lang);
   <Footer lang={lang} />
 
   <script define:vars={{ t, lang }}>
+    // Check if user is already logged in
+    function getAuth() {
+      const accessToken = localStorage.getItem("wmf_access_token");
+      const refreshToken = localStorage.getItem("wmf_refresh_token");
+      const userJson = localStorage.getItem("wmf_user");
+
+      if (!accessToken || !userJson) {
+        return null;
+      }
+
+      try {
+        const user = JSON.parse(userJson);
+        return { accessToken, refreshToken, user };
+      } catch {
+        return null;
+      }
+    }
+
+    // Redirect to account if already logged in
+    const auth = getAuth();
+    if (auth && auth.user) {
+      window.location.href = lang === "fr" ? "/fr/account" : "/account";
+      // Don't execute the rest of the script
+      throw new Error("Redirecting to account");
+    }
+
     const authBtn = document.getElementById("auth-btn");
     const authBtnText = document.getElementById("auth-btn-text");
     const emailInput = document.getElementById("email");

@@ -109,7 +109,13 @@ const t = useTranslations(lang);
 
   <Footer lang={lang} />
 
+  <!-- Pass translations to client-side -->
   <script define:vars={{ translations: t }}>
+    window.__translations = translations;
+  </script>
+
+  <!-- Main client-side logic as a module -->
+  <script>
     import { storeAuth } from "@/lib/auth";
 
     const loadingContainer = document.getElementById("loading-container");
@@ -117,6 +123,7 @@ const t = useTranslations(lang);
     const userEmailEl = document.getElementById("user-email");
     const redirectMessage = document.getElementById("redirect-message");
     const continueLink = document.getElementById("continue-link");
+    const translations = window.__translations;
 
     async function verifyMagicLink() {
       try {
