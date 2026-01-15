@@ -260,7 +260,7 @@ const sortedVideos = [...profile.videos].sort((a, b) => {
                       />
                     ) : (
                       <video
-                        class="w-full h-full object-cover video-player"
+                        class="w-full h-full object-contain video-player bg-black"
                         preload="metadata"
                         poster={video.thumbnail}
                         data-paid-src={`/uploads/${profile.id}/${video.paidFilename}#t=0.1`}
@@ -430,4 +430,15 @@ const sortedVideos = [...profile.videos].sort((a, b) => {
       initProfilePage(window.__profilePageData);
     }
   </script>
+
+  <!-- Fix fullscreen video aspect ratio -->
+  <style is:global>
+    /* Ensure videos use object-contain in fullscreen mode to preserve aspect ratio */
+    video:fullscreen,
+    video:-webkit-full-screen,
+    video:-moz-full-screen,
+    video:-ms-fullscreen {
+      object-fit: contain !important;
+    }
+  </style>
 </Layout>
