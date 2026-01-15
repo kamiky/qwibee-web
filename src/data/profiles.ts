@@ -32,6 +32,7 @@ export interface Profile {
   };
   avatar?: string;
   membershipPrice?: number; // Monthly membership price in cents
+  promotionPercentage?: number; // Promotion discount percentage (e.g., 20 for 20% off paid content)
   videos: Video[];
 }
 

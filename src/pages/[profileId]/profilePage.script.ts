@@ -9,11 +9,20 @@ interface VideoData {
 
 interface ProfilePageData {
   profileId: string;
+  promotionPercentage: number;
   videos: VideoData[];
 }
 
 export function initProfilePage(data: ProfilePageData) {
-  const { profileId: currentProfileId, videos: profileVideos } = data;
+  const { profileId: currentProfileId, promotionPercentage, videos: profileVideos } = data;
+  
+  // Helper function to calculate promotional price
+  const calculatePromotionalPrice = (originalPrice: number): number => {
+    if (!promotionPercentage || promotionPercentage === 0) {
+      return originalPrice;
+    }
+    return Math.round(originalPrice * (1 - promotionPercentage / 100));
+  };
 
   // Detect language from URL
   const lang: Language = window.location.pathname.startsWith("/fr")
@@ -838,6 +847,10 @@ export function initProfilePage(data: ProfilePageData) {
         }
 
         const currentUrl = window.location.origin + window.location.pathname;
+        
+        // Calculate the promotional price to send to Stripe
+        const finalPrice = calculatePromotionalPrice(videoData.price);
+        
         const response = await fetch(
           "/api/stripe/create-content-checkout-session",
           {
@@ -848,7 +861,7 @@ export function initProfilePage(data: ProfilePageData) {
             body: JSON.stringify({
               profileId: currentProfileId,
               videoId: videoId,
-              contentPrice: videoData.price,
+              contentPrice: finalPrice,
               successUrl: `${currentUrl}?content_purchase=success&video_id=${videoId}`,
               cancelUrl: `${currentUrl}?content_purchase=canceled`,
               customerEmail,

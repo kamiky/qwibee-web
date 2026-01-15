@@ -28,6 +28,14 @@ if (!profile) {
 // Format price helper
 const formatPrice = (cents: number) => `$${(cents / 100).toFixed(2)}`;
 
+// Calculate promotional price helper
+const calculatePromotionalPrice = (originalPrice: number): number => {
+  if (!profile.promotionPercentage || profile.promotionPercentage === 0) {
+    return originalPrice;
+  }
+  return Math.round(originalPrice * (1 - profile.promotionPercentage / 100));
+};
+
 // Helper to determine if user has access to content
 const hasAccess = (contentType: ContentType, videoId: string): boolean => {
   if (contentType === "free") return true;
@@ -246,7 +254,7 @@ const getContentLabel = (contentType: ContentType) => {
                       <div class={`content-type-badge absolute top-2 left-2 text-white text-xs font-bold px-2.5 py-1 rounded ${
                         video.type === "membership" ? "bg-blue-500" : "bg-orange-500"
                       }`} style="display: none;" data-video-type={video.type}>
-                        {video.type === "membership" ? "Members" : `-${Math.round((1 - video.price / (video.price * 1.2)) * 100)}%`}
+                        {video.type === "membership" ? "Members" : profile.promotionPercentage ? `-${profile.promotionPercentage}%` : ""}
                       </div>
                     )}
 
@@ -339,14 +347,16 @@ const getContentLabel = (contentType: ContentType) => {
                       {!userHasAccess && video.type === "paid" && (
                         <div class="paid-content-pricing flex items-center gap-4" style="display: none;">
                           <div class="flex items-baseline gap-2">
-                            <span class="text-gray-400 line-through text-sm">{formatPrice(Math.round(video.price * 1.2))}</span>
+                            {profile.promotionPercentage && profile.promotionPercentage > 0 && (
+                              <span class="text-gray-400 line-through text-sm">{formatPrice(video.price)}</span>
+                            )}
                             <span class="locked-label text-brand-blue-500 font-bold text-lg">
-                              {formatPrice(video.price)}
+                              {formatPrice(calculatePromotionalPrice(video.price))}
                             </span>
                           </div>
                           {/* Action Button for paid content */}
                           <button class="action-button bg-brand-blue-500 hover:bg-brand-blue-600 text-white font-semibold py-1.5 px-4 rounded-full transition-all text-sm">
-                            {t.profile.buyVideo}
+                            {isImage ? t.profile.buyImage : t.profile.buyVideo}
                           </button>
                         </div>
                       )}
@@ -368,7 +378,11 @@ const getContentLabel = (contentType: ContentType) => {
     define:vars={{
       pageData: {
         profileId: profile.id,
-        videos: profile.videos.map((v) => ({ id: v.id, price: v.price })),
+        promotionPercentage: profile.promotionPercentage || 0,
+        videos: profile.videos.map((v) => ({ 
+          id: v.id, 
+          price: v.price,
+        })),
       },
     }}
   >

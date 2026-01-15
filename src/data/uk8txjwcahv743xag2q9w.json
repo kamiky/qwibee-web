@@ -11,6 +11,7 @@
   },
   "avatar": "/uploads/uk8txjwcahv743xag2q9w/paid_mp9nr2q3_5kyag60veyup4qdokuxoox9sol4hfl.jpg",
   "membershipPrice": 999,
+  "promotionPercentage": 11,
   "videos": [
     {
       "id": "hygahghv",
@@ -74,7 +75,7 @@
         "fr": "Description de l'image 5"
       },
       "duration": "0:00",
-      "price": 999,
+      "price": 0,
       "paidFilename": "paid_mp9nr2q3_5kyag60veyup4qdokuxoox9sol4hfl.jpg",
       "previewFilename": "preview_mp9nr2q3_4exn4oz382de6mqi2kjdczd1v336cb.jpg",
       "type": "free",

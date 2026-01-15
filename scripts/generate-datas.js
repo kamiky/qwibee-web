@@ -91,6 +91,9 @@ function generateVideoMetadata(uniqueId, sequentialNumber, paidFilename, preview
   const contentTypeName = isImage ? 'Image' : 'Video';
   const contentTypeNameFr = isImage ? 'Image' : 'Vidéo';
   
+  // Generate random price between $4.99 and $14.99 for paid content
+  const basePrice = contentType === "paid" ? Math.floor(Math.random() * 1000) + 499 : 0;
+  
   return {
     id: uniqueId,
     title: {
@@ -102,7 +105,7 @@ function generateVideoMetadata(uniqueId, sequentialNumber, paidFilename, preview
       fr: `Description de l'${contentTypeNameFr.toLowerCase()} ${totalExisting + sequentialNumber}`,
     },
     duration: "0:00", // Placeholder - could be extracted with ffprobe
-    price: contentType === "paid" ? 999 : 0, // $9.99 for paid content
+    price: basePrice,
     paidFilename,
     previewFilename,
     type: contentType,
@@ -185,11 +188,23 @@ async function processFolderVideos(folderPath, profileId, existingProfile) {
       
       if (existingVideo) {
         // Keep existing video data, just ensure filenames match
-        videos.push({
+        const videoData = {
           ...existingVideo,
           paidFilename: group.paidFilename,
           previewFilename: group.previewFilename,
-        });
+        };
+        
+        // Remove priceAfterPromotion if it exists (deprecated field)
+        delete videoData.priceAfterPromotion;
+        
+        // Ensure price is set correctly
+        if (existingVideo.type === "paid") {
+          videoData.price = existingVideo.price || 999;
+        } else {
+          videoData.price = 0;
+        }
+        
+        videos.push(videoData);
         // Mark as processed
         existingVideosMap.delete(group.paidFilename);
       } else {
@@ -261,6 +276,11 @@ async function generateProfileJson(folderPath, profileId) {
   // Process videos (merging with existing data)
   const videos = await processFolderVideos(folderPath, profileId, existingProfile);
   
+  // Generate a random promotion percentage between 10% and 30% if not already set
+  const promotionPercentage = existingProfile?.promotionPercentage !== undefined 
+    ? existingProfile.promotionPercentage 
+    : Math.floor(Math.random() * 21) + 10;
+  
   // Create profile object, preserving existing data where available
   const profile = {
     id: profileId,
@@ -275,6 +295,7 @@ async function generateProfileJson(folderPath, profileId) {
     },
     ...(avatar && { avatar }),
     membershipPrice: existingProfile?.membershipPrice !== undefined ? existingProfile.membershipPrice : 999, // Preserve existing price or default to $9.99/month
+    promotionPercentage, // Promotion discount percentage for paid content
     videos,
   };
   
@@ -327,6 +348,7 @@ export interface Profile {
   };
   avatar?: string;
   membershipPrice?: number; // Monthly membership price in cents
+  promotionPercentage?: number; // Promotion discount percentage (e.g., 20 for 20% off paid content)
   videos: Video[];
 }
 

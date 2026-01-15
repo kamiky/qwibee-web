@@ -23,6 +23,7 @@ interface ImportMeta {
 interface Window {
   __profilePageData?: {
     profileId: string;
+    promotionPercentage: number;
     videos: Array<{ id: string; price: number }>;
   };
 }
