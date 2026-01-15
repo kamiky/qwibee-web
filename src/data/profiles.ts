@@ -37,12 +37,10 @@ export interface Profile {
   videos: Video[];
 }
 
-import uk8txjwcahv743xag2q9w from "./uk8txjwcahv743xag2q9w.json";
-import uku1q7t1ldosvb15kljos from "./uku1q7t1ldosvb15kljos.json";
-import us2o0a6rzzx8ycdlqvtet from "./us2o0a6rzzx8ycdlqvtet.json";
+import u1me293cbgiobr49v8ili from "./u1me293cbgiobr49v8ili.json";
+import uh29p8bfmxshdesr65zi6 from "./uh29p8bfmxshdesr65zi6.json";
 
 export const profiles: Record<string, Profile> = {
-  uk8txjwcahv743xag2q9w: uk8txjwcahv743xag2q9w as Profile,
-  uku1q7t1ldosvb15kljos: uku1q7t1ldosvb15kljos as Profile,
-  us2o0a6rzzx8ycdlqvtet: us2o0a6rzzx8ycdlqvtet as Profile,
+  u1me293cbgiobr49v8ili: u1me293cbgiobr49v8ili as Profile,
+  uh29p8bfmxshdesr65zi6: uh29p8bfmxshdesr65zi6 as Profile,
 };

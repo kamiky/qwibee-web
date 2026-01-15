@@ -13,6 +13,9 @@ const pathname = Astro.url.pathname;
 const lang: Language = pathname.startsWith('/fr/') || pathname === '/fr' ? 'fr' : 'en';
 const t = useTranslations(lang);
 
+// Debug mode: show all medias as unlocked in development with ?debug param
+const isDebugMode = import.meta.env.DEV && Astro.url.searchParams.has('debug');
+
 // Temporary constant for user plan - will be replaced with actual user data later
 const USER_PLAN = "free" as "free" | "membership"; // Options: 'free', 'membership', 'premium'
 let PURCHASED_VIDEO_IDS: string[] = []; // IDs of individually purchased videos - will be populated from backend
@@ -38,6 +41,9 @@ const calculatePromotionalPrice = (originalPrice: number): number => {
 
 // Helper to determine if user has access to content
 const hasAccess = (contentType: ContentType, videoId: string): boolean => {
+  // Debug mode: unlock all content in development with ?debug param
+  if (isDebugMode) return true;
+  
   if (contentType === "free") return true;
   if (contentType === "membership") return USER_PLAN === "membership";
   if (contentType === "paid") return PURCHASED_VIDEO_IDS.includes(videoId);
