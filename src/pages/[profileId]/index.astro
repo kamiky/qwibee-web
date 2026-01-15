@@ -238,6 +238,7 @@ const sortedVideos = [...profile.videos].sort((a, b) => {
                 video.paidFilename,
                 video.previewFilename
               );
+              // For thumbnails, only show what the user has access to (don't leak paid URLs)
               const thumbnailFilename = userHasAccess 
                 ? (video.paidThumbnail || video.paidFilename)
                 : (video.previewThumbnail || video.previewFilename);
@@ -268,17 +269,13 @@ const sortedVideos = [...profile.videos].sort((a, b) => {
                           class="video-thumbnail w-full h-full object-cover"
                           src={`/uploads/${profile.id}/${thumbnailFilename}`}
                           alt={video.title[lang]}
-                          data-paid-thumbnail={`/uploads/${profile.id}/${video.paidThumbnail || video.paidFilename}`}
-                          data-preview-thumbnail={`/uploads/${profile.id}/${video.previewThumbnail || video.previewFilename}`}
                         />
                         {/* Video player - hidden by default, loaded on click */}
                         <video
                           class="w-full h-full object-contain video-player bg-black hidden"
                           controls
                           preload="none"
-                          data-paid-src={`/uploads/${profile.id}/${video.paidFilename}`}
-                          data-preview-src={`/uploads/${profile.id}/${video.previewFilename}`}
-                          data-has-access={userHasAccess ? "true" : "false"}
+                          data-video-src={`/uploads/${profile.id}/${videoFilename}`}
                           data-mimetype={video.mimetype || "video/mp4"}
                         >
                         </video>

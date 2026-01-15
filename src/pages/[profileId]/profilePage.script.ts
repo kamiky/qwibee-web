@@ -127,81 +127,13 @@ export function initProfilePage(data: ProfilePageData) {
 
   // Function to unlock membership videos
   function unlockMembershipVideos() {
-    // Find all video cards with membership type
-    const membershipVideos = document.querySelectorAll(
-      '.video-card[data-video-type="membership"]'
-    );
-
-    membershipVideos.forEach((card) => {
-      // Remove lock icon
-      const lockIcon = card.querySelector(".lock-icon");
-      if (lockIcon) {
-        lockIcon.remove();
-      }
-
-      // Remove custom play icon (only exists for videos)
-      const customPlayIcon = card.querySelector(".custom-play-icon");
-      if (customPlayIcon) {
-        customPlayIcon.remove();
-      }
-
-      // Remove content type badge (Members)
-      const contentTypeBadge = card.querySelector(".content-type-badge");
-      if (contentTypeBadge) {
-        contentTypeBadge.remove();
-      }
-
-      // Update content source (video or image)
-      const mediaElement = card.querySelector(".video-player") as HTMLVideoElement | HTMLImageElement;
-      if (mediaElement) {
-        const paidSrc = mediaElement.getAttribute("data-paid-src");
-        if (paidSrc) {
-          // Check if it's a video or image
-          if (mediaElement.tagName === "VIDEO") {
-            (mediaElement as HTMLVideoElement).setAttribute("controls", "true");
-            const source = mediaElement.querySelector("source");
-            if (source) {
-              source.src = paidSrc;
-              (mediaElement as HTMLVideoElement).load(); // Reload video with new source
-            }
-            
-            // Hide duration label since video controls are now shown
-            const container = card.querySelector(".video-container");
-            if (container) {
-              const durationLabel = container.querySelector(".video-duration");
-              if (durationLabel) {
-                (durationLabel as HTMLElement).style.display = "none";
-              }
-            }
-          } else if (mediaElement.tagName === "IMG") {
-            // For images, update the src and data-has-access
-            (mediaElement as HTMLImageElement).src = paidSrc;
-            mediaElement.setAttribute("data-has-access", "true");
-          }
-        }
-      }
-
-      // Hide locked label
-      const lockedLabel = card.querySelector(".locked-label");
-      if (lockedLabel) {
-        lockedLabel.classList.add("hidden");
-      }
-
-      // Show unlocked badge
-      const unlockedBadge = card.querySelector(".unlocked-badge");
-      if (unlockedBadge) {
-        unlockedBadge.classList.remove("hidden");
-        unlockedBadge.classList.add("flex");
-      }
-
-      // Hide action button
-      const actionButton = card.querySelector(".action-button");
-      if (actionButton) {
-        actionButton.classList.add("hidden");
-      }
-    });
-
-    console.log(`Unlocked ${membershipVideos.length} membership videos`);
+    // Note: Since we're using server-side rendering, unlocking requires a page refresh
+    // to get the updated paid content URLs. For now, we just show visual indicators.
+    // In the future, we could fetch updated URLs via API.
+    console.log("Membership unlocked - page refresh recommended to load paid content");
+    
+    // For now, just reload the page to get the correct paid URLs
+    window.location.reload();
   }
 
   // Function to update membership UI
@@ -267,92 +199,14 @@ export function initProfilePage(data: ProfilePageData) {
 
   // Function to unlock paid content videos
   function unlockPaidContentVideos(purchasedVideoIds: string[]) {
-    // Find all video cards with paid type
-    const paidVideos = document.querySelectorAll(
-      '.video-card[data-video-type="paid"]'
-    );
-
-    paidVideos.forEach((card) => {
-      const videoId = card.getAttribute("data-video-id");
-
-      // Check if this video was purchased
-      if (videoId && purchasedVideoIds.includes(videoId)) {
-        // Remove lock icon
-        const lockIcon = card.querySelector(".lock-icon");
-        if (lockIcon) {
-          lockIcon.remove();
-        }
-
-        // Remove custom play icon (only exists for videos)
-        const customPlayIcon = card.querySelector(".custom-play-icon");
-        if (customPlayIcon) {
-          customPlayIcon.remove();
-        }
-
-        // Remove content type badge (-17%)
-        const contentTypeBadge = card.querySelector(".content-type-badge");
-        if (contentTypeBadge) {
-          contentTypeBadge.remove();
-        }
-
-        // Update content source to paid version (video or image)
-        const mediaElement = card.querySelector(".video-player") as HTMLVideoElement | HTMLImageElement;
-        if (mediaElement) {
-          const paidSrc = mediaElement.getAttribute("data-paid-src");
-          if (paidSrc) {
-            // Check if it's a video or image
-            if (mediaElement.tagName === "VIDEO") {
-              (mediaElement as HTMLVideoElement).setAttribute("controls", "true");
-              const source = mediaElement.querySelector("source");
-              if (source) {
-                source.src = paidSrc;
-                (mediaElement as HTMLVideoElement).load();
-              }
-              
-              // Hide duration label since video controls are now shown
-              const container = card.querySelector(".video-container");
-              if (container) {
-                const durationLabel = container.querySelector(".video-duration");
-                if (durationLabel) {
-                  (durationLabel as HTMLElement).style.display = "none";
-                }
-              }
-            } else if (mediaElement.tagName === "IMG") {
-              // For images, update the src and data-has-access
-              (mediaElement as HTMLImageElement).src = paidSrc;
-              mediaElement.setAttribute("data-has-access", "true");
-            }
-          }
-        }
-
-        // Hide locked label and pricing
-        const lockedLabel = card.querySelector(".locked-label");
-        if (lockedLabel) {
-          lockedLabel.classList.add("hidden");
-        }
-
-        // Hide paid content pricing section
-        const paidContentPricing = card.querySelector(".paid-content-pricing");
-        if (paidContentPricing) {
-          (paidContentPricing as HTMLElement).style.display = "none";
-        }
-
-        // Show unlocked badge
-        const unlockedBadge = card.querySelector(".unlocked-badge");
-        if (unlockedBadge) {
-          unlockedBadge.classList.remove("hidden");
-          unlockedBadge.classList.add("flex");
-        }
-
-        // Hide action button
-        const actionButton = card.querySelector(".action-button");
-        if (actionButton) {
-          actionButton.classList.add("hidden");
-        }
-      }
-    });
-
-    console.log(`Unlocked ${purchasedVideoIds.length} purchased videos`);
+    // Note: Since we're using server-side rendering, unlocking requires a page refresh
+    // to get the updated paid content URLs. For now, we just show visual indicators.
+    console.log(`${purchasedVideoIds.length} videos purchased - page refresh recommended to load paid content`);
+    
+    // For now, just reload the page to get the correct paid URLs
+    if (purchasedVideoIds.length > 0) {
+      window.location.reload();
+    }
   }
 
   // Function to show paid content pricing for subscribed users
@@ -1008,11 +862,8 @@ export function initProfilePage(data: ProfilePageData) {
       if (videoElement && videoElement.tagName === "VIDEO") {
         const video = videoElement as HTMLVideoElement;
         
-        // Get the appropriate video source based on access
-        const hasAccess = video.getAttribute("data-has-access") === "true";
-        const videoSrc = hasAccess 
-          ? video.getAttribute("data-paid-src")
-          : video.getAttribute("data-preview-src");
+        // Get the video source (already filtered by access on server side)
+        const videoSrc = video.getAttribute("data-video-src");
         const mimetype = video.getAttribute("data-mimetype") || "video/mp4";
         
         if (videoSrc) {
