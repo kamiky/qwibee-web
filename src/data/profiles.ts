@@ -35,9 +35,9 @@ export interface Profile {
 }
 
 export const profiles: Record<string, Profile> = {
-  profile1: {
-    id: "profile1",
-    username: "profile1",
+  uku1q7t1ldosvb15kljos: {
+    id: "uku1q7t1ldosvb15kljos",
+    username: "uku1q7t1ldosvb15kljos",
     displayName: {
       en: "Creator One",
       fr: "Créateur Un",
@@ -47,7 +47,7 @@ export const profiles: Record<string, Profile> = {
       fr: "Créateur de contenu exclusif partageant des vidéos premium",
     },
     avatar:
-      "/uploads/profile1/paid_mp9nr2q3_5kyag60veyup4qdokuxoox9sol4hfl.jpg",
+      "/uploads/uku1q7t1ldosvb15kljos/paid_mp9nr2q3_5kyag60veyup4qdokuxoox9sol4hfl.jpg",
     membershipPrice: 999, // $9.99/month
     videos: [
       {
@@ -116,9 +116,9 @@ export const profiles: Record<string, Profile> = {
       },
     ],
   },
-  profile2: {
-    id: "profile2",
-    username: "profile2",
+  uk8txjwcahv743xag2q9w: {
+    id: "uk8txjwcahv743xag2q9w",
+    username: "uk8txjwcahv743xag2q9w",
     displayName: {
       en: "Creator Two",
       fr: "Créateur Deux",
@@ -128,7 +128,7 @@ export const profiles: Record<string, Profile> = {
       fr: "Créateur de contenu exclusif partageant des vidéos premium",
     },
     avatar:
-      "/uploads/profile2/paid_mp9nr2q3_5kyag60veyup4qdokuxoox9sol4hfl.jpg",
+      "/uploads/uk8txjwcahv743xag2q9w/paid_mp9nr2q3_5kyag60veyup4qdokuxoox9sol4hfl.jpg",
     membershipPrice: 999, // $9.99/month
     videos: [
       {
