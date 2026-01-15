@@ -67,7 +67,9 @@
     "subscriptionCancelledTitle": "Abonnement annulé",
     "subscriptionCancelledMessage": "Votre abonnement a été annulé. Vous pouvez réessayer à tout moment.",
     "willRenew": "Renouvellement",
-    "endOfMembership": "Fin de l'abonnement :"
+    "endOfMembership": "Fin de l'abonnement :",
+    "willRenewOn": "Sera renouvelé le",
+    "membershipEndsOn": "L'abonnement se termine le"
   },
   "footer": {
     "tagline": "Contenu premium de créateurs que vous aimez.",

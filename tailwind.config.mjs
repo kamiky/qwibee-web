@@ -20,8 +20,12 @@ export default {
           600: "#bf40ff",
         },
         "brand-blue": {
-          500: "#4169e1",
-          600: "#3454c9",
+          500: "#0fbcf9",
+          600: "#09a8e0",
+        },
+        "secondary": {
+          500: "#34495e",
+          600: "#2c3e50",
         },
       },
       keyframes: {

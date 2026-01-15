@@ -67,7 +67,9 @@
     "subscriptionCancelledTitle": "Subscription Cancelled",
     "subscriptionCancelledMessage": "Your subscription was cancelled. You can try again anytime.",
     "willRenew": "Will renew",
-    "endOfMembership": "End of membership:"
+    "endOfMembership": "End of membership:",
+    "willRenewOn": "Will renew on",
+    "membershipEndsOn": "Membership ends on"
   },
   "footer": {
     "tagline": "Premium content from creators you love.",

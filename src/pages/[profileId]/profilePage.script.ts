@@ -130,11 +130,9 @@ export function initProfilePage(data: ProfilePageData) {
     const ctaBtn = document.getElementById("membership-cta-btn");
     const ctaText = document.getElementById("membership-cta-text");
     const statusInfo = document.getElementById("membership-status-info");
-    const statusLabel = document.getElementById("membership-status-label");
-    const statusDate = document.getElementById("membership-status-date");
+    const statusText = document.getElementById("membership-status-text");
 
-    if (!ctaBtn || !ctaText || !statusInfo || !statusLabel || !statusDate)
-      return;
+    if (!ctaBtn || !ctaText || !statusInfo || !statusText) return;
 
     const { isSubscribed, isCanceled, renewalEnabled, renewalDate, endDate } =
       subscriptionData;
@@ -158,8 +156,7 @@ export function initProfilePage(data: ProfilePageData) {
           "hover:bg-orange-600"
         );
         ctaBtn.classList.add("bg-green-500", "hover:bg-green-600");
-        statusLabel.textContent = translations.profile.endOfMembership;
-        statusDate.textContent = endDate || "";
+        statusText.textContent = `${translations.profile.membershipEndsOn} ${endDate || ""}`;
       } else {
         // Active subscription with renewal - show "Subscribed" button (still clickable to manage)
         ctaText.innerHTML = translations.profile.subscribed;
@@ -170,8 +167,7 @@ export function initProfilePage(data: ProfilePageData) {
           "hover:bg-orange-600"
         );
         ctaBtn.classList.add("bg-green-500", "hover:bg-green-600");
-        statusLabel.textContent = translations.profile.willRenew;
-        statusDate.textContent = renewalDate || "";
+        statusText.textContent = `${translations.profile.willRenewOn} ${renewalDate || ""}`;
       }
 
       // Show status info
