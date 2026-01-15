@@ -165,6 +165,24 @@ function calculateBlurRadius(width) {
 }
 
 /**
+ * Generate thumbnail for video file (frame at 1 second)
+ */
+function generateVideoThumbnail(inputPath, outputPath) {
+  console.log(`  → Generating video thumbnail: ${basename(outputPath)}`);
+  try {
+    // Extract a frame at 1 second and save as JPEG
+    execSync(
+      `ffmpeg -i "${inputPath}" -ss 00:00:01 -vframes 1 -q:v 2 -y "${outputPath}"`,
+      { stdio: "inherit" }
+    );
+    return true;
+  } catch (error) {
+    console.error(`  ✗ Error generating video thumbnail: ${error.message}`);
+    return false;
+  }
+}
+
+/**
  * Generate preview for video file (first 5 seconds, blurred)
  */
 function generateVideoPreview(inputPath, outputPath) {
@@ -219,21 +237,92 @@ function generateImagePreview(inputPath, outputPath) {
 }
 
 /**
+ * Extract unique ID and hash from already processed filename
+ */
+function extractProcessedFilenameInfo(filename) {
+  // Format: paid_UNIQUEID_HASH.ext or preview_UNIQUEID_HASH.ext
+  const parts = filename.split('_');
+  if (parts.length >= 3 && (parts[0] === 'paid' || parts[0] === 'preview')) {
+    const type = parts[0]; // 'paid' or 'preview'
+    const uniqueId = parts[1];
+    const hashWithExt = parts[2];
+    const ext = extname(hashWithExt);
+    const hash = hashWithExt.replace(ext, '');
+    return { type, uniqueId, hash, ext };
+  }
+  return null;
+}
+
+/**
  * Process a single file
  */
 async function processFile(folderPath, filename) {
   const filePath = join(folderPath, filename);
   const ext = extname(filename);
 
-  // Skip if already processed
-  if (isAlreadyProcessed(filename)) {
-    console.log(`  ⊘ Skipping (already processed): ${filename}`);
-    return;
-  }
-
   // Skip if not a media file
   if (!isVideo(filename) && !isImage(filename)) {
     console.log(`  ⊘ Skipping (not a media file): ${filename}`);
+    return;
+  }
+
+  // Check if already processed
+  if (isAlreadyProcessed(filename)) {
+    // For already processed files, check if thumbnails exist and generate if needed
+    const fileInfo = extractProcessedFilenameInfo(filename);
+    
+    if (!fileInfo) {
+      console.log(`  ⊘ Skipping (invalid format): ${filename}`);
+      return;
+    }
+
+    // Only generate thumbnails for paid files (not preview files)
+    if (fileInfo.type === 'preview') {
+      return;
+    }
+
+    // Check if this is a video (we only generate separate thumbnails for videos)
+    if (!isVideo(filename)) {
+      return;
+    }
+
+    console.log(`\n  Checking thumbnails for: ${filename}`);
+
+    const thumbnailExt = '.jpg';
+    const paidThumbnailFilename = `paid_${fileInfo.uniqueId}_${fileInfo.hash}_thumb${thumbnailExt}`;
+    const previewThumbnailFilename = `preview_${fileInfo.uniqueId}_${fileInfo.hash}_thumb${thumbnailExt}`;
+    
+    const paidPath = join(folderPath, filename);
+    const paidThumbnailPath = join(folderPath, paidThumbnailFilename);
+    const previewThumbnailPath = join(folderPath, previewThumbnailFilename);
+    
+    // Find the corresponding preview file
+    const previewFilename = `preview_${fileInfo.uniqueId}_${fileInfo.hash}${fileInfo.ext}`;
+    const previewPath = join(folderPath, previewFilename);
+    const previewFileExists = await fileExists(previewPath);
+
+    let generatedAny = false;
+
+    // Generate thumbnail for paid video if it doesn't exist
+    const paidThumbnailExists = await fileExists(paidThumbnailPath);
+    if (!paidThumbnailExists) {
+      generateVideoThumbnail(paidPath, paidThumbnailPath);
+      generatedAny = true;
+    }
+
+    // Generate thumbnail for preview video if it doesn't exist
+    const previewThumbnailExists = await fileExists(previewThumbnailPath);
+    if (!previewThumbnailExists && previewFileExists) {
+      generateVideoThumbnail(previewPath, previewThumbnailPath);
+      generatedAny = true;
+    }
+
+    if (!generatedAny) {
+      console.log(`  ✓ All thumbnails already exist`);
+    } else {
+      console.log(`  ✓ Thumbnail generation completed`);
+    }
+
     return;
   }
 
@@ -247,9 +336,16 @@ async function processFile(folderPath, filename) {
   // Generate new filenames
   const paidFilename = `paid_${uniqueId}_${paidHash}${ext}`;
   const previewFilename = `preview_${uniqueId}_${previewHash}${ext}`;
+  
+  // Thumbnail filenames (always .jpg for videos, same extension for images)
+  const thumbnailExt = isVideo(filename) ? '.jpg' : ext;
+  const paidThumbnailFilename = `paid_${uniqueId}_${paidHash}_thumb${thumbnailExt}`;
+  const previewThumbnailFilename = `preview_${uniqueId}_${previewHash}_thumb${thumbnailExt}`;
 
   const paidPath = join(folderPath, paidFilename);
   const previewPath = join(folderPath, previewFilename);
+  const paidThumbnailPath = join(folderPath, paidThumbnailFilename);
+  const previewThumbnailPath = join(folderPath, previewThumbnailFilename);
 
   // STEP 1: Rename original file to paid_
   console.log(`  → Renaming to: ${paidFilename}`);
@@ -265,6 +361,26 @@ async function processFile(folderPath, filename) {
     }
   } else {
     console.log(`  ⊘ Preview already exists: ${previewFilename}`);
+  }
+
+  // STEP 3: Generate thumbnails for videos only
+  // For images, the files themselves will be used as thumbnails
+  if (isVideo(filename)) {
+    // Generate thumbnail for paid video
+    const paidThumbnailExists = await fileExists(paidThumbnailPath);
+    if (!paidThumbnailExists) {
+      generateVideoThumbnail(paidPath, paidThumbnailPath);
+    } else {
+      console.log(`  ⊘ Paid thumbnail already exists: ${paidThumbnailFilename}`);
+    }
+
+    // Generate thumbnail for preview video
+    const previewThumbnailExists = await fileExists(previewThumbnailPath);
+    if (!previewThumbnailExists) {
+      generateVideoThumbnail(previewPath, previewThumbnailPath);
+    } else {
+      console.log(`  ⊘ Preview thumbnail already exists: ${previewThumbnailFilename}`);
+    }
   }
 
   console.log(`  ✓ Completed: ${basename(folderPath)}/${filename}`);

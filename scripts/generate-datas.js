@@ -53,6 +53,13 @@ function extractUniqueId(filename) {
 }
 
 /**
+ * Check if a file is a thumbnail file
+ */
+function isThumbnailFile(filename) {
+  return filename.includes("_thumb.");
+}
+
+/**
  * Get MIME type from file extension
  */
 function getMimeType(filename) {
@@ -114,7 +121,7 @@ function determineContentType(index, totalVideos) {
 /**
  * Generate default video metadata
  */
-async function generateVideoMetadata(uniqueId, sequentialNumber, paidFilename, previewFilename, totalExisting, profileId) {
+async function generateVideoMetadata(uniqueId, sequentialNumber, paidFilename, previewFilename, paidThumbnail, previewThumbnail, totalExisting, profileId) {
   const contentType = determineContentType(totalExisting + sequentialNumber - 1, 0);
   const mimetype = getMimeType(paidFilename);
   const isImage = mimetype.startsWith('image/');
@@ -134,7 +141,7 @@ async function generateVideoMetadata(uniqueId, sequentialNumber, paidFilename, p
     }
   }
   
-  return {
+  const metadata = {
     id: uniqueId,
     title: {
       en: `${contentTypeName} ${totalExisting + sequentialNumber}`,
@@ -152,6 +159,17 @@ async function generateVideoMetadata(uniqueId, sequentialNumber, paidFilename, p
     mimetype,
     uploadedAt: new Date().toISOString(),
   };
+  
+  // Add thumbnails if they exist (for videos) or use the image files themselves (for images)
+  if (isImage) {
+    metadata.paidThumbnail = paidFilename;
+    metadata.previewThumbnail = previewFilename;
+  } else {
+    if (paidThumbnail) metadata.paidThumbnail = paidThumbnail;
+    if (previewThumbnail) metadata.previewThumbnail = previewThumbnail;
+  }
+  
+  return metadata;
 }
 
 /**
@@ -195,15 +213,27 @@ async function processFolderVideos(folderPath, profileId, existingProfile) {
           videoGroups.set(uniqueId, {
             paidFilename: null,
             previewFilename: null,
+            paidThumbnail: null,
+            previewThumbnail: null,
           });
         }
         
         const group = videoGroups.get(uniqueId);
         
-        if (isPaidFile(file)) {
-          group.paidFilename = file;
-        } else if (isPreviewFile(file)) {
-          group.previewFilename = file;
+        if (isThumbnailFile(file)) {
+          // This is a thumbnail file
+          if (isPaidFile(file)) {
+            group.paidThumbnail = file;
+          } else if (isPreviewFile(file)) {
+            group.previewThumbnail = file;
+          }
+        } else {
+          // This is a video/image file
+          if (isPaidFile(file)) {
+            group.paidFilename = file;
+          } else if (isPreviewFile(file)) {
+            group.previewFilename = file;
+          }
         }
       }
     }
@@ -228,7 +258,7 @@ async function processFolderVideos(folderPath, profileId, existingProfile) {
       const existingVideo = existingVideosMap.get(group.paidFilename);
       
       if (existingVideo) {
-        // Keep existing video data, just ensure filenames match
+        // Keep existing video data, just ensure filenames and thumbnails match
         const videoData = {
           ...existingVideo,
           paidFilename: group.paidFilename,
@@ -260,6 +290,15 @@ async function processFolderVideos(folderPath, profileId, existingProfile) {
           }
         }
         
+        // Update thumbnails (for videos, use thumbnail files; for images, use the image files themselves)
+        if (isImage) {
+          videoData.paidThumbnail = group.paidFilename;
+          videoData.previewThumbnail = group.previewFilename;
+        } else {
+          if (group.paidThumbnail) videoData.paidThumbnail = group.paidThumbnail;
+          if (group.previewThumbnail) videoData.previewThumbnail = group.previewThumbnail;
+        }
+        
         videos.push(videoData);
         // Mark as processed
         existingVideosMap.delete(group.paidFilename);
@@ -268,6 +307,8 @@ async function processFolderVideos(folderPath, profileId, existingProfile) {
         newVideos.push({
           paidFilename: group.paidFilename,
           previewFilename: group.previewFilename,
+          paidThumbnail: group.paidThumbnail,
+          previewThumbnail: group.previewThumbnail,
         });
       }
     } else {
@@ -287,6 +328,8 @@ async function processFolderVideos(folderPath, profileId, existingProfile) {
       index + 1,
       newVideo.paidFilename,
       newVideo.previewFilename,
+      newVideo.paidThumbnail,
+      newVideo.previewThumbnail,
       existingCount,
       profileId
     );
@@ -383,11 +426,12 @@ export interface Video {
     en: string;
     fr: string;
   };
-  thumbnail?: string;
   duration?: string;
   price: number; // Price in cents (e.g., 999 = $9.99) - only applies to 'paid' type
   paidFilename: string; // Paid content filename in /public/uploads/[profileId]/
   previewFilename: string; // Preview/blurred filename in /public/uploads/[profileId]/
+  paidThumbnail?: string; // Thumbnail for paid content (video frame or image itself)
+  previewThumbnail?: string; // Thumbnail for preview content (video frame or blurred image)
   type: ContentType; // 'free' = always accessible, 'membership' = requires subscription, 'paid' = requires individual purchase
   mimetype: string; // MIME type of the content (e.g., 'video/mp4', 'image/jpeg', 'image/png')
   uploadedAt: string; // ISO 8601 timestamp of when the content was uploaded

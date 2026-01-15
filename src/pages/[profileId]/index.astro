@@ -238,6 +238,9 @@ const sortedVideos = [...profile.videos].sort((a, b) => {
                 video.paidFilename,
                 video.previewFilename
               );
+              const thumbnailFilename = userHasAccess 
+                ? (video.paidThumbnail || video.paidFilename)
+                : (video.previewThumbnail || video.previewFilename);
               const contentLabel = getContentLabel(video.type);
               const isImage = video.mimetype?.startsWith('image/');
 
@@ -259,19 +262,27 @@ const sortedVideos = [...profile.videos].sort((a, b) => {
                         data-has-access={userHasAccess ? "true" : "false"}
                       />
                     ) : (
-                      <video
-                        class="w-full h-full object-contain video-player bg-black"
-                        preload="metadata"
-                        poster={video.thumbnail}
-                        data-paid-src={`/uploads/${profile.id}/${video.paidFilename}#t=0.1`}
-                        data-preview-src={`/uploads/${profile.id}/${video.previewFilename}#t=0.1`}
-                        data-has-access={userHasAccess ? "true" : "false"}
-                      >
-                        <source
-                          src={`/uploads/${profile.id}/${videoFilename}#t=0.1`}
-                          type={video.mimetype || "video/mp4"}
+                      <>
+                        {/* Thumbnail image - shown by default */}
+                        <img
+                          class="video-thumbnail w-full h-full object-cover"
+                          src={`/uploads/${profile.id}/${thumbnailFilename}`}
+                          alt={video.title[lang]}
+                          data-paid-thumbnail={`/uploads/${profile.id}/${video.paidThumbnail || video.paidFilename}`}
+                          data-preview-thumbnail={`/uploads/${profile.id}/${video.previewThumbnail || video.previewFilename}`}
                         />
-                      </video>
+                        {/* Video player - hidden by default, loaded on click */}
+                        <video
+                          class="w-full h-full object-contain video-player bg-black hidden"
+                          controls
+                          preload="none"
+                          data-paid-src={`/uploads/${profile.id}/${video.paidFilename}`}
+                          data-preview-src={`/uploads/${profile.id}/${video.previewFilename}`}
+                          data-has-access={userHasAccess ? "true" : "false"}
+                          data-mimetype={video.mimetype || "video/mp4"}
+                        >
+                        </video>
+                      </>
                     )}
 
                     {/* Content Type Badge - Hidden by default, shown only for subscribed users, removed when unlocked */}

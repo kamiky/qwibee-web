@@ -999,31 +999,51 @@ export function initProfilePage(data: ProfilePageData) {
       const container = (playButton as HTMLElement).closest(".video-container");
       if (!container) return;
 
-      const mediaElement = container.querySelector(".video-player");
+      const videoElement = container.querySelector(".video-player");
+      const thumbnail = container.querySelector(".video-thumbnail");
       const lockIcon = container.querySelector(".lock-icon");
       const durationLabel = container.querySelector(".video-duration");
 
       // Only handle video elements, skip images
-      if (mediaElement && mediaElement.tagName === "VIDEO") {
-        const video = mediaElement as HTMLVideoElement;
-        // Load and play the video
-        video.setAttribute("controls", "true");
-        video.load();
-        video.play().catch((error) => {
-          console.error("Error playing video:", error);
-        });
+      if (videoElement && videoElement.tagName === "VIDEO") {
+        const video = videoElement as HTMLVideoElement;
+        
+        // Get the appropriate video source based on access
+        const hasAccess = video.getAttribute("data-has-access") === "true";
+        const videoSrc = hasAccess 
+          ? video.getAttribute("data-paid-src")
+          : video.getAttribute("data-preview-src");
+        const mimetype = video.getAttribute("data-mimetype") || "video/mp4";
+        
+        if (videoSrc) {
+          // Create and add source element
+          video.innerHTML = `<source src="${videoSrc}" type="${mimetype}">`;
+          
+          // Load and play the video
+          video.setAttribute("controls", "true");
+          video.classList.remove("hidden");
+          video.load();
+          video.play().catch((error) => {
+            console.error("Error playing video:", error);
+          });
 
-        // Hide the custom play icon
-        (playButton as HTMLElement).style.display = "none";
+          // Hide the thumbnail
+          if (thumbnail) {
+            (thumbnail as HTMLElement).style.display = "none";
+          }
 
-        // Hide the lock icon when video starts playing
-        if (lockIcon) {
-          (lockIcon as HTMLElement).style.display = "none";
-        }
+          // Hide the custom play icon
+          (playButton as HTMLElement).style.display = "none";
 
-        // Hide the duration label when controls are shown
-        if (durationLabel) {
-          (durationLabel as HTMLElement).style.display = "none";
+          // Hide the lock icon when video starts playing
+          if (lockIcon) {
+            (lockIcon as HTMLElement).style.display = "none";
+          }
+
+          // Hide the duration label when controls are shown
+          if (durationLabel) {
+            (durationLabel as HTMLElement).style.display = "none";
+          }
         }
       }
     });
