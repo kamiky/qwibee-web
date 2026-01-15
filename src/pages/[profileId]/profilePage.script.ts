@@ -127,6 +127,12 @@ export function initProfilePage(data: ProfilePageData) {
 
   // Function to unlock membership videos
   function unlockMembershipVideos() {
+    // In debug mode, access is already simulated server-side, so no need to reload
+    if (debug.isDebugMode) {
+      console.log("Debug mode: Membership access already simulated server-side, skipping reload");
+      return;
+    }
+    
     // Note: Since we're using server-side rendering, unlocking requires a page refresh
     // to get the updated paid content URLs. For now, we just show visual indicators.
     // In the future, we could fetch updated URLs via API.
@@ -199,6 +205,12 @@ export function initProfilePage(data: ProfilePageData) {
 
   // Function to unlock paid content videos
   function unlockPaidContentVideos(purchasedVideoIds: string[]) {
+    // In debug mode, access is already simulated server-side, so no need to reload
+    if (debug.isDebugMode) {
+      console.log("Debug mode: Purchased content access already simulated server-side, skipping reload");
+      return;
+    }
+    
     // Note: Since we're using server-side rendering, unlocking requires a page refresh
     // to get the updated paid content URLs. For now, we just show visual indicators.
     console.log(`${purchasedVideoIds.length} videos purchased - page refresh recommended to load paid content`);
