@@ -13,8 +13,9 @@ const pathname = Astro.url.pathname;
 const lang: Language = pathname.startsWith('/fr/') || pathname === '/fr' ? 'fr' : 'en';
 const t = useTranslations(lang);
 
-// Debug mode: show all medias as unlocked in development with ?debug param
+// Debug mode: simulate different membership levels in development with ?debug=true&simulate=membership|all
 const isDebugMode = import.meta.env.DEV && Astro.url.searchParams.has('debug');
+const simulateMode = isDebugMode ? Astro.url.searchParams.get('simulate') : null;
 
 // Temporary constant for user plan - will be replaced with actual user data later
 const USER_PLAN = "free" as "free" | "membership"; // Options: 'free', 'membership', 'premium'
@@ -41,8 +42,19 @@ const calculatePromotionalPrice = (originalPrice: number): number => {
 
 // Helper to determine if user has access to content
 const hasAccess = (contentType: ContentType, videoId: string): boolean => {
-  // Debug mode: unlock all content in development with ?debug param
-  if (isDebugMode) return true;
+  // Debug mode: simulate different membership levels
+  if (isDebugMode) {
+    if (simulateMode === 'all') {
+      // Unlock all content (free, membership, and paid)
+      return true;
+    } else if (simulateMode === 'membership') {
+      // Unlock free and membership content only
+      return contentType === 'free' || contentType === 'membership';
+    } else {
+      // Default debug mode: unlock only free content
+      return contentType === 'free';
+    }
+  }
   
   if (contentType === "free") return true;
   if (contentType === "membership") return USER_PLAN === "membership";
@@ -306,7 +318,7 @@ const sortedVideos = [...profile.videos].sort((a, b) => {
                     )}
 
                     {video.duration && !isImage && (
-                      <div class="absolute bottom-2 right-2 bg-black/70 text-white text-xs px-2 py-0.5 rounded">
+                      <div class="video-duration absolute bottom-2 right-2 bg-black/70 text-white text-xs px-2 py-0.5 rounded">
                         {video.duration}
                       </div>
                     )}
@@ -398,6 +410,10 @@ const sortedVideos = [...profile.videos].sort((a, b) => {
           title: v.title,
           price: v.price,
         })),
+        debug: {
+          isDebugMode,
+          simulateMode,
+        },
       },
     }}
   >

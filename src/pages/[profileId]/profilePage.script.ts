@@ -19,10 +19,14 @@ interface ProfilePageData {
   };
   promotionPercentage: number;
   videos: VideoData[];
+  debug: {
+    isDebugMode: boolean;
+    simulateMode: string | null;
+  };
 }
 
 export function initProfilePage(data: ProfilePageData) {
-  const { profileId: currentProfileId, displayName, promotionPercentage, videos: profileVideos } = data;
+  const { profileId: currentProfileId, displayName, promotionPercentage, videos: profileVideos, debug } = data;
   
   // Helper function to calculate promotional price
   const calculatePromotionalPrice = (originalPrice: number): number => {
@@ -41,6 +45,37 @@ export function initProfilePage(data: ProfilePageData) {
   // Check if user has access token and verify it
   // Returns { hasAccess: boolean, membership: object | null, purchasedContent: array }
   const checkMembershipAccess = async () => {
+    // Debug mode: simulate different membership levels
+    if (debug.isDebugMode) {
+      console.log(`🔧 Debug mode active: simulate=${debug.simulateMode || 'free-only'}`);
+      
+      if (debug.simulateMode === 'all') {
+        // Simulate having membership + all content purchased
+        console.log('  → Simulating: membership + all paid content unlocked');
+        return { 
+          hasAccess: true, 
+          membership: { status: 'active', profileId: currentProfileId }, 
+          purchasedContent: profileVideos.map(v => v.id) 
+        };
+      } else if (debug.simulateMode === 'membership') {
+        // Simulate having membership only (no paid content)
+        console.log('  → Simulating: membership only (free + membership content)');
+        return { 
+          hasAccess: true, 
+          membership: { status: 'active', profileId: currentProfileId }, 
+          purchasedContent: [] 
+        };
+      } else {
+        // Default debug mode: no membership, no purchased content (free only)
+        console.log('  → Simulating: no membership (free content only)');
+        return { 
+          hasAccess: false, 
+          membership: null, 
+          purchasedContent: [] 
+        };
+      }
+    }
+
     const token = localStorage.getItem("wmf_access_token");
 
     if (!token) {
@@ -128,6 +163,15 @@ export function initProfilePage(data: ProfilePageData) {
             if (source) {
               source.src = paidSrc;
               (mediaElement as HTMLVideoElement).load(); // Reload video with new source
+            }
+            
+            // Hide duration label since video controls are now shown
+            const container = card.querySelector(".video-container");
+            if (container) {
+              const durationLabel = container.querySelector(".video-duration");
+              if (durationLabel) {
+                (durationLabel as HTMLElement).style.display = "none";
+              }
             }
           } else if (mediaElement.tagName === "IMG") {
             // For images, update the src and data-has-access
@@ -263,6 +307,15 @@ export function initProfilePage(data: ProfilePageData) {
               if (source) {
                 source.src = paidSrc;
                 (mediaElement as HTMLVideoElement).load();
+              }
+              
+              // Hide duration label since video controls are now shown
+              const container = card.querySelector(".video-container");
+              if (container) {
+                const durationLabel = container.querySelector(".video-duration");
+                if (durationLabel) {
+                  (durationLabel as HTMLElement).style.display = "none";
+                }
               }
             } else if (mediaElement.tagName === "IMG") {
               // For images, update the src and data-has-access
@@ -948,6 +1001,7 @@ export function initProfilePage(data: ProfilePageData) {
 
       const mediaElement = container.querySelector(".video-player");
       const lockIcon = container.querySelector(".lock-icon");
+      const durationLabel = container.querySelector(".video-duration");
 
       // Only handle video elements, skip images
       if (mediaElement && mediaElement.tagName === "VIDEO") {
@@ -965,6 +1019,11 @@ export function initProfilePage(data: ProfilePageData) {
         // Hide the lock icon when video starts playing
         if (lockIcon) {
           (lockIcon as HTMLElement).style.display = "none";
+        }
+
+        // Hide the duration label when controls are shown
+        if (durationLabel) {
+          (durationLabel as HTMLElement).style.display = "none";
         }
       }
     });
