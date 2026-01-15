@@ -113,8 +113,9 @@ export function initProfilePage(data: ProfilePageData) {
               (mediaElement as HTMLVideoElement).load(); // Reload video with new source
             }
           } else if (mediaElement.tagName === "IMG") {
-            // For images, just update the src
+            // For images, update the src and data-has-access
             (mediaElement as HTMLImageElement).src = paidSrc;
+            mediaElement.setAttribute("data-has-access", "true");
           }
         }
       }
@@ -247,8 +248,9 @@ export function initProfilePage(data: ProfilePageData) {
                 (mediaElement as HTMLVideoElement).load();
               }
             } else if (mediaElement.tagName === "IMG") {
-              // For images, just update the src
+              // For images, update the src and data-has-access
               (mediaElement as HTMLImageElement).src = paidSrc;
+              mediaElement.setAttribute("data-has-access", "true");
             }
           }
         }
@@ -940,5 +942,86 @@ export function initProfilePage(data: ProfilePageData) {
         }
       }
     });
+  });
+
+  // Create fullscreen image viewer modal
+  const createFullscreenViewer = () => {
+    const modal = document.createElement("div");
+    modal.id = "fullscreen-image-viewer";
+    modal.className = "fixed inset-0 z-50 hidden items-center justify-center";
+    modal.style.backgroundColor = "rgba(0, 0, 0, 0.9)";
+    modal.innerHTML = `
+      <button id="close-fullscreen-viewer" class="absolute top-4 right-4 text-white hover:text-gray-300 transition-colors z-10" aria-label="Close">
+        <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+        </svg>
+      </button>
+      <img id="fullscreen-image" class="object-contain" style="max-width: 80%; max-height: 80%;" alt="Fullscreen image" />
+    `;
+    document.body.appendChild(modal);
+
+    const closeBtn = modal.querySelector("#close-fullscreen-viewer");
+    const image = modal.querySelector("#fullscreen-image") as HTMLImageElement;
+
+    // Close on button click
+    closeBtn?.addEventListener("click", () => {
+      modal.classList.add("hidden");
+      modal.classList.remove("flex");
+    });
+
+    // Close on background click
+    modal.addEventListener("click", (e) => {
+      if (e.target === modal) {
+        modal.classList.add("hidden");
+        modal.classList.remove("flex");
+      }
+    });
+
+    // Close on Escape key
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Escape" && !modal.classList.contains("hidden")) {
+        modal.classList.add("hidden");
+        modal.classList.remove("flex");
+      }
+    });
+
+    return { modal, image };
+  };
+
+  // Initialize fullscreen viewer
+  const { modal: fullscreenModal, image: fullscreenImage } = createFullscreenViewer();
+
+  // Add click handlers to all images
+  const imageCards = document.querySelectorAll(".video-card");
+  imageCards.forEach((card) => {
+    const mediaElement = card.querySelector(".video-player");
+    
+    // Only handle images
+    if (mediaElement && mediaElement.tagName === "IMG") {
+      const img = mediaElement as HTMLImageElement;
+      const container = img.closest(".video-container");
+      
+      // Make the entire container clickable for images
+      if (container) {
+        (container as HTMLElement).style.cursor = "pointer";
+        
+        container.addEventListener("click", (e) => {
+          e.stopPropagation();
+          
+          const hasAccess = img.getAttribute("data-has-access") === "true";
+          const paidSrc = img.getAttribute("data-paid-src");
+          const previewSrc = img.getAttribute("data-preview-src");
+          
+          // Show the appropriate image (unlocked or blurred preview)
+          const imageSrc = hasAccess ? paidSrc : previewSrc;
+          
+          if (imageSrc) {
+            fullscreenImage.src = imageSrc;
+            fullscreenModal.classList.remove("hidden");
+            fullscreenModal.classList.add("flex");
+          }
+        });
+      }
+    }
   });
 }
