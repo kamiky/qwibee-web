@@ -4,6 +4,10 @@ import type { Language } from "@/i18n/translations";
 // Type definitions
 interface VideoData {
   id: string;
+  title: {
+    en: string;
+    fr: string;
+  };
   price: number;
 }
 
@@ -871,6 +875,9 @@ export function initProfilePage(data: ProfilePageData) {
               successUrl: `${currentUrl}?content_purchase=success&video_id=${videoId}`,
               cancelUrl: `${currentUrl}?content_purchase=canceled`,
               customerEmail,
+              language: lang,
+              videoTitle: videoData.title[lang],
+              creatorDisplayName: displayName[lang],
             }),
           }
         );

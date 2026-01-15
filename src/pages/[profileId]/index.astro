@@ -382,6 +382,7 @@ const getContentLabel = (contentType: ContentType) => {
         promotionPercentage: profile.promotionPercentage || 0,
         videos: profile.videos.map((v) => ({ 
           id: v.id, 
+          title: v.title,
           price: v.price,
         })),
       },

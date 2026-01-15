@@ -5,7 +5,7 @@ export const prerender = false;
 export const POST: APIRoute = async ({ request, url }) => {
   try {
     const body = await request.json();
-    const { profileId, videoId, contentPrice, customerEmail } = body;
+    const { profileId, videoId, contentPrice, customerEmail, language, videoTitle, creatorDisplayName } = body;
 
     // Validate required fields
     if (!profileId) {
@@ -66,6 +66,9 @@ export const POST: APIRoute = async ({ request, url }) => {
           successUrl,
           cancelUrl,
           customerEmail,
+          language,
+          videoTitle,
+          creatorDisplayName,
         }),
       }
     );
