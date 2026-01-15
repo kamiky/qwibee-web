@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 
-import { readdir, stat, writeFile } from "fs/promises";
+import { readdir, stat, writeFile, readFile } from "fs/promises";
 import { join, extname, basename } from "path";
 import { fileURLToPath } from "url";
 import { dirname } from "path";
@@ -84,19 +84,22 @@ function determineContentType(index, totalVideos) {
 /**
  * Generate default video metadata
  */
-function generateVideoMetadata(videoId, index, paidFilename, previewFilename) {
-  const contentType = determineContentType(index, 0);
+function generateVideoMetadata(uniqueId, sequentialNumber, paidFilename, previewFilename, totalExisting) {
+  const contentType = determineContentType(totalExisting + sequentialNumber - 1, 0);
   const mimetype = getMimeType(paidFilename);
+  const isImage = mimetype.startsWith('image/');
+  const contentTypeName = isImage ? 'Image' : 'Video';
+  const contentTypeNameFr = isImage ? 'Image' : 'Vidéo';
   
   return {
-    id: videoId,
+    id: uniqueId,
     title: {
-      en: `Video ${index + 1}`,
-      fr: `Vidéo ${index + 1}`,
+      en: `${contentTypeName} ${totalExisting + sequentialNumber}`,
+      fr: `${contentTypeNameFr} ${totalExisting + sequentialNumber}`,
     },
     description: {
-      en: `Description for video ${index + 1}`,
-      fr: `Description de la vidéo ${index + 1}`,
+      en: `Description for ${contentTypeName.toLowerCase()} ${totalExisting + sequentialNumber}`,
+      fr: `Description de l'${contentTypeNameFr.toLowerCase()} ${totalExisting + sequentialNumber}`,
     },
     duration: "0:00", // Placeholder - could be extracted with ffprobe
     price: contentType === "paid" ? 999 : 0, // $9.99 for paid content
@@ -108,10 +111,28 @@ function generateVideoMetadata(videoId, index, paidFilename, previewFilename) {
 }
 
 /**
- * Process a single folder and generate its video list
+ * Read existing profile JSON if it exists
  */
-async function processFolderVideos(folderPath, profileId) {
-  console.log(`  📹 Processing videos in folder: ${profileId}`);
+async function readExistingProfile(profileId) {
+  const jsonPath = join(DATA_DIR, `${profileId}.json`);
+  try {
+    const exists = await fileExists(jsonPath);
+    if (exists) {
+      const content = await readFile(jsonPath, "utf-8");
+      return JSON.parse(content);
+    }
+  } catch (error) {
+    console.log(`    ℹ️  No existing profile found or error reading: ${error.message}`);
+  }
+  return null;
+}
+
+/**
+ * Process a single folder and generate its video list
+ * Merges with existing data if available
+ */
+async function processFolderVideos(folderPath, profileId, existingProfile) {
+  console.log(`  📹 Processing content in folder: ${profileId}`);
   
   const files = await readdir(folderPath);
   
@@ -144,23 +165,40 @@ async function processFolderVideos(folderPath, profileId) {
     }
   }
   
-  // Convert grouped files to video objects
-  const videos = [];
-  let index = 0;
+  // Create a map of existing videos by their filenames for quick lookup
+  const existingVideosMap = new Map();
+  if (existingProfile && existingProfile.videos) {
+    existingProfile.videos.forEach(video => {
+      // Use paidFilename as the key since it's unique
+      existingVideosMap.set(video.paidFilename, video);
+    });
+  }
   
+  // Collect all videos: existing ones + new ones
+  const videos = [];
+  const newVideos = [];
+  
+  // First, add all existing videos that still have matching files
   for (const [uniqueId, group] of videoGroups.entries()) {
-    // Only create video entry if we have both paid and preview files
     if (group.paidFilename && group.previewFilename) {
-      const videoId = `video${index + 1}`;
-      videos.push(
-        generateVideoMetadata(
-          videoId,
-          index,
-          group.paidFilename,
-          group.previewFilename
-        )
-      );
-      index++;
+      const existingVideo = existingVideosMap.get(group.paidFilename);
+      
+      if (existingVideo) {
+        // Keep existing video data, just ensure filenames match
+        videos.push({
+          ...existingVideo,
+          paidFilename: group.paidFilename,
+          previewFilename: group.previewFilename,
+        });
+        // Mark as processed
+        existingVideosMap.delete(group.paidFilename);
+      } else {
+        // This is a new video/image pair
+        newVideos.push({
+          paidFilename: group.paidFilename,
+          previewFilename: group.previewFilename,
+        });
+      }
     } else {
       console.log(
         `    ⚠️  Incomplete pair for ${uniqueId}: paid=${group.paidFilename}, preview=${group.previewFilename}`
@@ -168,49 +206,75 @@ async function processFolderVideos(folderPath, profileId) {
     }
   }
   
-  console.log(`    ✓ Found ${videos.length} complete video pair(s)`);
+  // Add new videos with generated metadata
+  const existingCount = videos.length;
+  newVideos.forEach((newVideo, index) => {
+    const uniqueId = extractUniqueId(newVideo.paidFilename);
+    videos.push(
+      generateVideoMetadata(
+        uniqueId,
+        index + 1,
+        newVideo.paidFilename,
+        newVideo.previewFilename,
+        existingCount
+      )
+    );
+  });
+  
+  console.log(`    ✓ Found ${videos.length} complete content pair(s) (${videos.length - newVideos.length} existing, ${newVideos.length} new)`);
   
   return videos;
 }
 
 /**
  * Generate profile JSON for a folder
+ * Merges with existing profile data if available
  */
 async function generateProfileJson(folderPath, profileId) {
   console.log(`\n📁 Generating JSON for profile: ${profileId}`);
+  
+  // Read existing profile if it exists
+  const existingProfile = await readExistingProfile(profileId);
   
   // Find avatar (first image file with paid_ prefix)
   const files = await readdir(folderPath);
   let avatar = null;
   
-  for (const file of files) {
-    if (isPaidFile(file)) {
-      const ext = extname(file).toLowerCase();
-      if ([".jpg", ".jpeg", ".png", ".gif", ".webp"].includes(ext)) {
-        avatar = `/uploads/${profileId}/${file}`;
-        console.log(`  🖼️  Found avatar: ${file}`);
-        break;
+  // Use existing avatar if available
+  if (existingProfile && existingProfile.avatar) {
+    avatar = existingProfile.avatar;
+    console.log(`  🖼️  Using existing avatar: ${existingProfile.avatar}`);
+  } else {
+    // Find new avatar
+    for (const file of files) {
+      if (isPaidFile(file)) {
+        const ext = extname(file).toLowerCase();
+        if ([".jpg", ".jpeg", ".png", ".gif", ".webp"].includes(ext)) {
+          avatar = `/uploads/${profileId}/${file}`;
+          console.log(`  🖼️  Found avatar: ${file}`);
+          break;
+        }
       }
     }
   }
   
-  // Process videos
-  const videos = await processFolderVideos(folderPath, profileId);
+  // Process videos (merging with existing data)
+  const videos = await processFolderVideos(folderPath, profileId, existingProfile);
   
-  // Create profile object
+  // Create profile object, preserving existing data where available
   const profile = {
     id: profileId,
-    username: profileId,
-    displayName: {
+    username: existingProfile?.username || profileId,
+    displayName: existingProfile?.displayName || {
       en: `Creator ${profileId.substring(0, 8)}`,
       fr: `Créateur ${profileId.substring(0, 8)}`,
     },
-    bio: {
+    bio: existingProfile?.bio || {
       en: "Exclusive content creator sharing premium videos",
       fr: "Créateur de contenu exclusif partageant des vidéos premium",
     },
     ...(avatar && { avatar }),
-    membershipPrice: 999, // $9.99/month - default value
+    membershipPrice: existingProfile?.membershipPrice !== undefined ? existingProfile.membershipPrice : 999, // Preserve existing price or default to $9.99/month
     videos,
   };
   
