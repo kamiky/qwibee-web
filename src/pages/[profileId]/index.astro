@@ -214,14 +214,14 @@ const getContentLabel = (contentType: ContentType) => {
                   data-video-id={video.id}
                 >
                   {/* Video Preview */}
-                  <div class="aspect-video bg-gray-100 relative rounded-lg overflow-hidden mb-3">
+                  <div class="aspect-video bg-gray-100 relative rounded-lg overflow-hidden mb-3 video-container">
                     <video
                       class="w-full h-full object-cover video-player"
                       preload="metadata"
                       poster={video.thumbnail}
-                      controls={userHasAccess}
                       data-paid-src={`/uploads/${profile.id}/${video.paidFilename}#t=0.1`}
                       data-preview-src={`/uploads/${profile.id}/${video.previewFilename}#t=0.1`}
+                      data-has-access={userHasAccess ? "true" : "false"}
                     >
                       <source
                         src={`/uploads/${profile.id}/${videoFilename}#t=0.1`}
@@ -229,20 +229,33 @@ const getContentLabel = (contentType: ContentType) => {
                       />
                     </video>
 
-                    {/* Content Type Badge */}
+                    {/* Content Type Badge - Hidden by default, shown only for subscribed users */}
                     {(video.type === "membership" || video.type === "paid") && (
-                      <div class={`absolute top-2 left-2 text-white text-xs font-bold px-2.5 py-1 rounded ${
+                      <div class={`content-type-badge absolute top-2 left-2 text-white text-xs font-bold px-2.5 py-1 rounded ${
                         video.type === "membership" ? "bg-blue-500" : "bg-orange-500"
-                      }`}>
+                      }`} style="display: none;" data-video-type={video.type}>
                         {video.type === "membership" ? "Members" : `-${Math.round((1 - video.price / (video.price * 1.2)) * 100)}%`}
                       </div>
                     )}
 
-                    {/* Lock Icon for locked content */}
+                    {/* Custom Play Icon - shown in center, clickable */}
+                    <div class="custom-play-icon absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-black/60 text-white p-4 rounded-full cursor-pointer hover:bg-black/75 transition-all">
+                      <svg
+                        class="w-8 h-8"
+                        fill="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          d="M8 5v14l11-7z"
+                        />
+                      </svg>
+                    </div>
+
+                    {/* Lock Icon - shown in bottom left for locked content */}
                     {!userHasAccess && (
-                      <div class="lock-icon absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-black/50 text-white p-3 rounded-full">
+                      <div class="lock-icon absolute bottom-2 left-2 bg-black/70 text-white p-2 rounded-full">
                         <svg
-                          class="w-6 h-6"
+                          class="w-4 h-4"
                           fill="none"
                           stroke="currentColor"
                           viewBox="0 0 24 24"
@@ -270,38 +283,12 @@ const getContentLabel = (contentType: ContentType) => {
                       {video.title[lang]}
                     </h3>
                     
-                    <div class="flex items-center justify-between mb-1.5">
-                      {/* Price Info */}
-                      {userHasAccess ? (
-                        <span class="unlocked-badge text-green-600 font-medium text-sm flex items-center gap-1">
-                          <svg
-                            class="w-4 h-4"
-                            fill="currentColor"
-                            viewBox="0 0 20 20"
-                          >
-                            <path
-                              fill-rule="evenodd"
-                              d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
-                              clip-rule="evenodd"
-                            />
-                          </svg>
-                          {t.profile.unlocked}
-                        </span>
-                      ) : (
-                        <>
-                          {video.type === "paid" ? (
-                            <div class="flex items-baseline gap-2">
-                              <span class="text-gray-400 line-through text-sm">{formatPrice(Math.round(video.price * 1.2))}</span>
-                              <span class="locked-label text-brand-blue-500 font-bold text-lg">
-                                {formatPrice(video.price)}
-                              </span>
-                            </div>
-                          ) : (
-                            <span class="locked-label text-brand-blue-500 font-semibold text-base">
-                              {video.type === "membership" ? t.profile.members : t.profile.free}
-                            </span>
-                          )}
-                          <span class="unlocked-badge text-green-600 font-medium text-sm items-center gap-1 hidden">
+                    {/* Only show pricing line for unlocked content or paid content (not membership) */}
+                    {(userHasAccess || video.type === "paid") && (
+                      <div class="flex items-center justify-between mb-1.5 paid-content-pricing" data-video-type={video.type} style={video.type === "paid" && !userHasAccess ? "display: none;" : ""}>
+                        {/* Price Info */}
+                        {userHasAccess ? (
+                          <span class="unlocked-badge text-green-600 font-medium text-sm flex items-center gap-1">
                             <svg
                               class="w-4 h-4"
                               fill="currentColor"
@@ -315,20 +302,26 @@ const getContentLabel = (contentType: ContentType) => {
                             </svg>
                             {t.profile.unlocked}
                           </span>
-                        </>
-                      )}
-
-                      {/* Action Button */}
-                      {!userHasAccess && (
-                        <button class="action-button bg-brand-blue-500 hover:bg-brand-blue-600 text-white font-semibold py-1.5 px-4 rounded-full transition-all text-sm">
-                          {video.type === "paid"
-                            ? t.profile.buyVideo
-                            : video.type === "membership"
-                              ? t.profile.subscribe
-                              : t.profile.watchNow}
-                        </button>
-                      )}
-                    </div>
+                        ) : (
+                          <>
+                            {video.type === "paid" && (
+                              <>
+                                <div class="flex items-baseline gap-2">
+                                  <span class="text-gray-400 line-through text-sm">{formatPrice(Math.round(video.price * 1.2))}</span>
+                                  <span class="locked-label text-brand-blue-500 font-bold text-lg">
+                                    {formatPrice(video.price)}
+                                  </span>
+                                </div>
+                                {/* Action Button for paid content */}
+                                <button class="action-button bg-brand-blue-500 hover:bg-brand-blue-600 text-white font-semibold py-1.5 px-4 rounded-full transition-all text-sm">
+                                  {t.profile.buyVideo}
+                                </button>
+                              </>
+                            )}
+                          </>
+                        )}
+                      </div>
+                    )}
                   </div>
                 </div>
               );

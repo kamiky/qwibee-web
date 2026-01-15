@@ -88,6 +88,12 @@ export function initProfilePage(data: ProfilePageData) {
         lockIcon.remove();
       }
 
+      // Remove custom play icon
+      const customPlayIcon = card.querySelector(".custom-play-icon");
+      if (customPlayIcon) {
+        customPlayIcon.remove();
+      }
+
       // Enable video controls and update source
       const video = card.querySelector(".video-player") as HTMLVideoElement;
       if (video) {
@@ -204,7 +210,13 @@ export function initProfilePage(data: ProfilePageData) {
           lockIcon.remove();
         }
 
-        // Enable video controls and update source
+        // Remove custom play icon
+        const customPlayIcon = card.querySelector(".custom-play-icon");
+        if (customPlayIcon) {
+          customPlayIcon.remove();
+        }
+
+        // Update video source to paid version and enable controls
         const video = card.querySelector(".video-player") as HTMLVideoElement;
         if (video) {
           video.setAttribute("controls", "true");
@@ -242,6 +254,32 @@ export function initProfilePage(data: ProfilePageData) {
     console.log(`Unlocked ${purchasedVideoIds.length} purchased videos`);
   }
 
+  // Function to show paid content pricing for subscribed users
+  function showPaidContentPricing() {
+    // Find all paid content pricing divs that are hidden
+    const paidContentPricingDivs = document.querySelectorAll(
+      '.paid-content-pricing[data-video-type="paid"]'
+    );
+
+    paidContentPricingDivs.forEach((div) => {
+      (div as HTMLElement).style.display = "flex";
+    });
+
+    console.log(`Showed pricing for ${paidContentPricingDivs.length} paid videos`);
+  }
+
+  // Function to show content type badges (Members/-17%) for subscribed users
+  function showContentTypeBadges() {
+    // Find all content type badges (both membership and paid)
+    const badges = document.querySelectorAll('.content-type-badge');
+
+    badges.forEach((badge) => {
+      (badge as HTMLElement).style.display = "block";
+    });
+
+    console.log(`Showed ${badges.length} content type badges`);
+  }
+
   // Check access on page load and update UI
   checkMembershipAccess().then(
     ({ hasAccess, membership, purchasedContent }) => {
@@ -253,6 +291,12 @@ export function initProfilePage(data: ProfilePageData) {
       if (hasAccess && membership) {
         // Unlock membership videos
         unlockMembershipVideos();
+
+        // Show paid content pricing for subscribed users
+        showPaidContentPricing();
+
+        // Show content type badges for subscribed users
+        showContentTypeBadges();
 
         // Use real subscription data from backend
         const renewalDate = membership.currentPeriodEnd
@@ -403,6 +447,12 @@ export function initProfilePage(data: ProfilePageData) {
 
         // Unlock membership videos immediately
         unlockMembershipVideos();
+
+        // Show paid content pricing for subscribed users
+        showPaidContentPricing();
+
+        // Show content type badges for subscribed users
+        showContentTypeBadges();
 
         // Show success message
         const statusContainer = document.getElementById(
@@ -820,4 +870,35 @@ export function initProfilePage(data: ProfilePageData) {
       }
     }, 500);
   }
+
+  // Handle custom play button clicks
+  const customPlayButtons = document.querySelectorAll(".custom-play-icon");
+  customPlayButtons.forEach((playButton) => {
+    playButton.addEventListener("click", (e) => {
+      e.stopPropagation();
+      
+      const container = (playButton as HTMLElement).closest(".video-container");
+      if (!container) return;
+
+      const video = container.querySelector(".video-player") as HTMLVideoElement;
+      const lockIcon = container.querySelector(".lock-icon");
+
+      if (video) {
+        // Load and play the video
+        video.setAttribute("controls", "true");
+        video.load();
+        video.play().catch((error) => {
+          console.error("Error playing video:", error);
+        });
+
+        // Hide the custom play icon
+        (playButton as HTMLElement).style.display = "none";
+
+        // Hide the lock icon when video starts playing
+        if (lockIcon) {
+          (lockIcon as HTMLElement).style.display = "none";
+        }
+      }
+    });
+  });
 }

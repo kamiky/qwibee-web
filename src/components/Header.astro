@@ -16,7 +16,9 @@ const t = useTranslations(lang);
   <div class="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
     <a href={lang === "en" ? "/" : "/fr"} class="flex items-center gap-3">
       <h1 class="text-2xl font-bold">
-        <span class="text-gray-900">Watch</span><span class="text-brand-blue-500">Me</span><span class="text-purple-600">Fans</span>
+        <span class="text-gray-900">WatchMe</span><span
+          class="text-brand-blue-500">Fans</span
+        >
       </h1>
     </a>
 
@@ -29,15 +31,25 @@ const t = useTranslations(lang);
       >
         {t.nav.login}
       </a>
-      
+
       <!-- Account Link (shown when logged in) -->
       <a
         id="account-link"
         href="/account"
         class="hidden text-gray-700 hover:text-brand-blue-500 transition-all font-medium items-center gap-2"
       >
-        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
+        <svg
+          class="w-5 h-5"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
+          ></path>
         </svg>
         <span id="account-username"></span>
       </a>
@@ -62,7 +74,7 @@ const t = useTranslations(lang);
         accountLink.classList.remove("hidden");
         accountLink.classList.add("flex");
       }
-      
+
       // Extract username from email (part before @)
       if (accountUsername && auth.user.email) {
         const username = auth.user.email.split("@")[0];
