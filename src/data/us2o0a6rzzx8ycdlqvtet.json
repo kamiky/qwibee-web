@@ -9,7 +9,7 @@
     "en": "Exclusive content creator sharing premium videos",
     "fr": "Créateur de contenu exclusif partageant des vidéos premium"
   },
-  "avatar": "/uploads/us2o0a6rzzx8ycdlqvtet/paid_9rzdiwov_iqry125ili7wj89pmc5w4kc3dtz260.JPEG",
+  "avatar": "/uploads/us2o0a6rzzx8ycdlqvtet/paid_3gvnja0y_drxp63dfun6tqze64ggjaq0ya38tz5.JPEG",
   "membershipPrice": 999,
   "videos": [
     {
@@ -146,23 +146,6 @@
       "paidFilename": "paid_pey275vc_yq79147hgxfgvmwqtro1z3hpuas4aw.JPEG",
       "previewFilename": "preview_pey275vc_g2wxxmlfmg42umqboj062h38q2yykz.JPEG",
       "type": "membership",
-      "mimetype": "image/jpeg"
-    },
-    {
-      "id": "wviyzegr",
-      "title": {
-        "en": "Image 9",
-        "fr": "Image 9"
-      },
-      "description": {
-        "en": "Description for image 9",
-        "fr": "Description de l'image 9"
-      },
-      "duration": "0:00",
-      "price": 999,
-      "paidFilename": "paid_wviyzegr_uda8engbs7mrtsi7hq9zdvrlozix31.JPEG",
-      "previewFilename": "preview_wviyzegr_5dw96vpvgarj29aaw9gufwllgom1oo.JPEG",
-      "type": "paid",
       "mimetype": "image/jpeg"
     }
   ]
