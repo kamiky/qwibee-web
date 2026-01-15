@@ -26,6 +26,81 @@ function generateRandomString(length) {
 }
 
 /**
+ * Check if a folder name matches the format u[20-length-hash]
+ */
+function isValidUserIdFormat(folderName) {
+  // Match: u followed by exactly 20 alphanumeric characters
+  const pattern = /^u[a-z0-9]{20}$/;
+  return pattern.test(folderName);
+}
+
+/**
+ * Generate a new user ID in the format u[20-length-hash]
+ */
+function generateUserId() {
+  return "u" + generateRandomString(20);
+}
+
+/**
+ * Rename folders that don't respect the format u[20-length-hash]
+ * Returns a mapping of old names to new names
+ */
+async function renameFoldersToUserIdFormat(uploadsDir) {
+  console.log("🔄 Checking folder names for user ID format...\n");
+
+  const renameMap = {};
+  
+  try {
+    const entries = await readdir(uploadsDir);
+    
+    for (const entry of entries) {
+      const entryPath = join(uploadsDir, entry);
+      const stats = await stat(entryPath);
+      
+      // Only process directories
+      if (stats.isDirectory()) {
+        if (!isValidUserIdFormat(entry)) {
+          // Generate a new user ID
+          let newUserId = generateUserId();
+          
+          // Ensure the new ID doesn't already exist
+          let newPath = join(uploadsDir, newUserId);
+          while (await fileExists(newPath)) {
+            newUserId = generateUserId();
+            newPath = join(uploadsDir, newUserId);
+          }
+          
+          // Rename the folder
+          console.log(`  📝 Renaming: "${entry}" → "${newUserId}"`);
+          await rename(entryPath, newPath);
+          renameMap[entry] = newUserId;
+        } else {
+          console.log(`  ✓ Already valid format: ${entry}`);
+        }
+      }
+    }
+    
+    if (Object.keys(renameMap).length > 0) {
+      console.log("\n📋 Folder Rename Summary:");
+      console.log("────────────────────────────────────────");
+      for (const [oldName, newName] of Object.entries(renameMap)) {
+        console.log(`  "${oldName}" → "${newName}"`);
+      }
+      console.log("────────────────────────────────────────");
+      console.log("\n⚠️  IMPORTANT: Update these folder names in src/data/profiles.ts");
+      console.log("   These IDs will be used for Stripe payment references.\n");
+    } else {
+      console.log("\n✅ All folders already follow the correct format.\n");
+    }
+    
+    return renameMap;
+  } catch (error) {
+    console.error(`✗ Error renaming folders: ${error.message}`);
+    throw error;
+  }
+}
+
+/**
  * Check if file exists
  */
 async function fileExists(path) {
@@ -186,7 +261,14 @@ async function main() {
       process.exit(1);
     }
 
-    // Get all folders in uploads directory
+    // STEP 1: Rename folders to user ID format (u[20-length-hash])
+    // This must happen BEFORE processing media files
+    const renameMap = await renameFoldersToUserIdFormat(UPLOADS_DIR);
+
+    // STEP 2: Process media files in each folder
+    console.log("🎬 Processing media files...\n");
+    
+    // Get all folders in uploads directory (after renaming)
     const entries = await readdir(UPLOADS_DIR);
 
     for (const entry of entries) {
@@ -200,6 +282,11 @@ async function main() {
     }
 
     console.log("\n\n✅ Media preparation completed successfully!");
+    
+    // Remind user to update profiles.ts if any folders were renamed
+    if (Object.keys(renameMap).length > 0) {
+      console.log("\n⚠️  REMINDER: Don't forget to update the folder names in src/data/profiles.ts!");
+    }
   } catch (error) {
     console.error(`\n✗ Error: ${error.message}`);
     process.exit(1);
