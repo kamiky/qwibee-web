@@ -1,0 +1,493 @@
+import { useTranslations } from "@/i18n/translations";
+import type { Language } from "@/i18n/translations";
+
+// Type definitions
+interface AuthData {
+  accessToken: string;
+  refreshToken: string | null;
+  user: {
+    id: string;
+    email: string;
+  };
+}
+
+interface Membership {
+  profileId: string;
+  status: string;
+  cancelAtPeriodEnd: boolean;
+  currentPeriodEnd: string;
+}
+
+interface PurchasedContent {
+  profileId: string;
+  videoId: string;
+  amount: number;
+  createdAt: string;
+}
+
+export function initAccountPage() {
+  // Detect language from URL
+  const lang: Language = window.location.pathname.startsWith("/fr")
+    ? "fr"
+    : "en";
+  const translations = useTranslations(lang);
+
+  // Auth utility functions
+  function getAuth(): AuthData | null {
+    const accessToken = localStorage.getItem("wmf_access_token");
+    const refreshToken = localStorage.getItem("wmf_refresh_token");
+    const userJson = localStorage.getItem("wmf_user");
+
+    if (!accessToken || !userJson) {
+      return null;
+    }
+
+    try {
+      const user = JSON.parse(userJson);
+      return { accessToken, refreshToken, user };
+    } catch {
+      return null;
+    }
+  }
+
+  function clearAuth() {
+    localStorage.removeItem("wmf_access_token");
+    localStorage.removeItem("wmf_refresh_token");
+    localStorage.removeItem("wmf_user");
+    localStorage.removeItem("wmf_profile_id");
+  }
+
+  // Get DOM elements
+  const loadingContainer = document.getElementById("loading-container");
+  const accountContainer = document.getElementById("account-container");
+  const notLoggedIn = document.getElementById("not-logged-in");
+  const userEmailEl = document.getElementById("user-email");
+  const membershipsList = document.getElementById("memberships-list");
+  const noMemberships = document.getElementById("no-memberships");
+  const purchasedContentList = document.getElementById(
+    "purchased-content-list"
+  );
+  const noPurchasedContent = document.getElementById("no-purchased-content");
+  const logoutBtn = document.getElementById("logout-btn");
+  const logoutModal = document.getElementById("logout-modal");
+  const modalCancel = document.getElementById("modal-cancel");
+  const modalConfirm = document.getElementById("modal-confirm");
+  const deleteAccountBtn = document.getElementById("delete-account-btn");
+  const deleteAccountModal = document.getElementById("delete-account-modal");
+  const deleteModalCancel = document.getElementById("delete-modal-cancel");
+  const deleteModalConfirm = document.getElementById("delete-modal-confirm");
+  const deleteEmailVerification = document.getElementById(
+    "delete-email-verification"
+  ) as HTMLInputElement | null;
+  const deleteUserEmailDisplay = document.getElementById(
+    "delete-user-email-display"
+  );
+
+  // Get auth data
+  const auth = getAuth();
+
+  if (!auth || !auth.user) {
+    // Not logged in
+    if (loadingContainer) loadingContainer.classList.add("hidden");
+    if (notLoggedIn) notLoggedIn.classList.remove("hidden");
+  } else {
+    // Logged in - show account info
+    if (loadingContainer) loadingContainer.classList.add("hidden");
+    if (accountContainer) accountContainer.classList.remove("hidden");
+
+    // Display user info
+    if (userEmailEl) userEmailEl.textContent = auth.user.email;
+
+    // Load account data (memberships and purchased content in one call)
+    loadAccountData();
+  }
+
+  async function handleManageSubscription(event: Event) {
+    const button = event.target as HTMLButtonElement;
+
+    // Disable button and show loading state
+    button.disabled = true;
+    const originalText = button.textContent;
+    button.textContent = translations.account.membership.loading;
+
+    try {
+      // Get user email from auth
+      const customerEmail = auth?.user?.email;
+      if (!customerEmail) {
+        alert(translations.account.membership.loginRequired);
+        return;
+      }
+
+      // Call API to create portal session
+      const response = await fetch("/api/stripe/create-portal-session", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          customerEmail,
+        }),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || "Failed to create portal session");
+      }
+
+      const data = await response.json();
+
+      // Redirect to Stripe customer portal
+      if (data.url) {
+        window.location.href = data.url;
+      } else {
+        throw new Error("No portal URL received");
+      }
+    } catch (error) {
+      console.error("Error creating portal session:", error);
+      alert(translations.account.membership.manageFailed);
+
+      // Re-enable button
+      button.disabled = false;
+      button.textContent = originalText;
+    }
+  }
+
+  // Load both memberships and purchased content in a single API call
+  async function loadAccountData() {
+    if (!auth) return;
+
+    try {
+      const response = await fetch("/api/auth/verify-token", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ token: auth.accessToken }),
+      });
+
+      if (!response.ok) throw new Error("Failed to load account data");
+
+      const data = await response.json();
+      const memberships = data.data.memberships || [];
+      const purchasedContent = data.data.purchasedContent || [];
+
+      // Load memberships
+      loadMemberships(memberships);
+
+      // Load purchased content
+      loadPurchasedContent(purchasedContent);
+    } catch (error) {
+      console.error("Error loading account data:", error);
+      if (membershipsList) membershipsList.classList.add("hidden");
+      if (noMemberships) noMemberships.classList.remove("hidden");
+      if (purchasedContentList) purchasedContentList.classList.add("hidden");
+      if (noPurchasedContent) noPurchasedContent.classList.remove("hidden");
+    }
+  }
+
+  function loadPurchasedContent(purchasedContent: PurchasedContent[]) {
+    if (purchasedContent.length === 0) {
+      if (purchasedContentList) purchasedContentList.classList.add("hidden");
+      if (noPurchasedContent) noPurchasedContent.classList.remove("hidden");
+    } else {
+      if (purchasedContentList) {
+        purchasedContentList.innerHTML = purchasedContent
+          .map((pc) => {
+            const dateOptions: Intl.DateTimeFormatOptions = {
+              year: "numeric",
+              month: "short",
+              day: "numeric",
+            };
+            const purchaseDate = new Date(pc.createdAt).toLocaleDateString(
+              lang === "fr" ? "fr-FR" : "en-US",
+              dateOptions
+            );
+            const price = `$${(pc.amount / 100).toFixed(2)}`;
+            const profileUrl =
+              lang === "fr" ? `/fr/${pc.profileId}` : `/${pc.profileId}`;
+
+            return `
+              <div class="border border-gray-200 rounded-lg p-4">
+                <div class="flex items-center justify-between">
+                  <div>
+                    <h3 class="font-bold text-lg">
+                      ${pc.profileId} - ${pc.videoId}
+                    </h3>
+                    <p class="text-sm text-gray-600">
+                      ${translations.account.purchasedContent.purchasedOn} ${purchaseDate} ${translations.account.purchasedContent.for} ${price}
+                    </p>
+                  </div>
+                  <div>
+                    <a href="${profileUrl}" class="bg-brand-blue-500 hover:bg-brand-blue-600 text-white font-semibold py-2 px-4 rounded-lg transition-colors inline-block">
+                      ${translations.account.purchasedContent.watchNow}
+                    </a>
+                  </div>
+                </div>
+              </div>
+            `;
+          })
+          .join("");
+      }
+    }
+  }
+
+  function loadMemberships(memberships: Membership[]) {
+    if (memberships.length === 0) {
+      if (membershipsList) membershipsList.classList.add("hidden");
+      if (noMemberships) noMemberships.classList.remove("hidden");
+    } else {
+      if (membershipsList) {
+        membershipsList.innerHTML = memberships
+          .map((m) => {
+            const statusColor =
+              m.status === "active" || m.status === "trialing"
+                ? "text-green-600"
+                : m.status === "canceled"
+                  ? "text-red-600"
+                  : "text-yellow-600";
+
+            const dateOptions: Intl.DateTimeFormatOptions = {
+              year: "numeric",
+              month: "short",
+              day: "numeric",
+            };
+            const renewalText = m.cancelAtPeriodEnd
+              ? `${translations.account.membership.ends}: ${new Date(m.currentPeriodEnd).toLocaleDateString(lang === "fr" ? "fr-FR" : "en-US", dateOptions)}`
+              : `${translations.account.membership.renews}: ${new Date(m.currentPeriodEnd).toLocaleDateString(lang === "fr" ? "fr-FR" : "en-US", dateOptions)}`;
+
+            const statusBadge = m.cancelAtPeriodEnd
+              ? `<span class="text-xs bg-orange-100 text-orange-800 px-2 py-1 rounded-full ml-2">${translations.account.membership.canceling}</span>`
+              : "";
+
+            const profileUrl =
+              lang === "fr" ? `/fr/${m.profileId}` : `/${m.profileId}`;
+
+            return `
+              <div class="border border-gray-200 rounded-lg p-4">
+                <div class="flex items-center justify-between">
+                  <div>
+                    <h3 class="font-bold text-lg flex items-center">
+                      ${m.profileId}
+                      ${statusBadge}
+                    </h3>
+                    <p class="text-sm text-gray-600">
+                      ${translations.account.membership.status}: <span class="${statusColor} font-semibold">${m.status}</span>
+                    </p>
+                    <p class="text-xs text-gray-500">${renewalText}</p>
+                  </div>
+                  <div class="flex gap-2">
+                    <button class="manage-membership-btn bg-gray-500 hover:bg-gray-600 text-white font-semibold py-2 px-4 rounded-lg transition-colors">
+                      ${translations.account.membership.manage}
+                    </button>
+                    <a href="${profileUrl}" class="bg-brand-blue-500 hover:bg-brand-blue-600 text-white font-semibold py-2 px-4 rounded-lg transition-colors inline-block">
+                      ${translations.account.membership.viewProfile}
+                    </a>
+                  </div>
+                </div>
+              </div>
+            `;
+          })
+          .join("");
+
+        // Add event listeners to all manage buttons
+        const manageBtns = document.querySelectorAll(".manage-membership-btn");
+        manageBtns.forEach((btn) => {
+          btn.addEventListener("click", handleManageSubscription);
+        });
+      }
+    }
+  }
+
+  // Modal functions
+  function openModal() {
+    if (logoutModal) {
+      logoutModal.classList.remove("hidden");
+      document.body.style.overflow = "hidden";
+    }
+  }
+
+  function closeModal() {
+    if (logoutModal) {
+      logoutModal.classList.add("hidden");
+      document.body.style.overflow = "unset";
+    }
+  }
+
+  function openDeleteModal() {
+    if (deleteAccountModal) {
+      deleteAccountModal.classList.remove("hidden");
+      document.body.style.overflow = "hidden";
+
+      // Populate user email in modal
+      if (deleteUserEmailDisplay && auth?.user?.email) {
+        deleteUserEmailDisplay.textContent = auth.user.email;
+      }
+
+      // Reset verification input and disable confirm button
+      if (deleteEmailVerification) {
+        deleteEmailVerification.value = "";
+      }
+      if (deleteModalConfirm) {
+        (deleteModalConfirm as HTMLButtonElement).disabled = true;
+      }
+    }
+  }
+
+  function closeDeleteModal() {
+    if (deleteAccountModal) {
+      deleteAccountModal.classList.add("hidden");
+      document.body.style.overflow = "unset";
+
+      // Clear verification input
+      if (deleteEmailVerification) {
+        deleteEmailVerification.value = "";
+      }
+    }
+  }
+
+  // Logout button click
+  if (logoutBtn) {
+    logoutBtn.addEventListener("click", openModal);
+  }
+
+  // Modal cancel button
+  if (modalCancel) {
+    modalCancel.addEventListener("click", closeModal);
+  }
+
+  // Modal confirm button
+  if (modalConfirm) {
+    modalConfirm.addEventListener("click", async () => {
+      try {
+        // Call logout API
+        const refreshToken = localStorage.getItem("wmf_refresh_token");
+        if (refreshToken) {
+          await fetch("/api/auth/logout", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ refreshToken }),
+          });
+        }
+      } catch (error) {
+        console.error("Error during logout:", error);
+      }
+
+      // Clear local auth data
+      clearAuth();
+
+      // Redirect to home
+      window.location.href = lang === "fr" ? "/fr" : "/";
+    });
+  }
+
+  // Close modal on backdrop click
+  if (logoutModal) {
+    logoutModal.addEventListener("click", (e) => {
+      if (e.target === logoutModal) {
+        closeModal();
+      }
+    });
+  }
+
+  // Delete account button click
+  if (deleteAccountBtn) {
+    deleteAccountBtn.addEventListener("click", openDeleteModal);
+  }
+
+  // Delete modal cancel button
+  if (deleteModalCancel) {
+    deleteModalCancel.addEventListener("click", closeDeleteModal);
+  }
+
+  // Email verification input - enable/disable confirm button
+  if (deleteEmailVerification && deleteModalConfirm) {
+    deleteEmailVerification.addEventListener("input", (e) => {
+      const inputValue = (e.target as HTMLInputElement).value.trim();
+      const userEmail = auth?.user?.email || "";
+
+      // Enable button only if input matches user email exactly
+      if (inputValue === userEmail) {
+        (deleteModalConfirm as HTMLButtonElement).disabled = false;
+      } else {
+        (deleteModalConfirm as HTMLButtonElement).disabled = true;
+      }
+    });
+  }
+
+  // Delete modal confirm button
+  if (deleteModalConfirm) {
+    deleteModalConfirm.addEventListener("click", async () => {
+      const originalText = deleteModalConfirm.textContent;
+      (deleteModalConfirm as HTMLButtonElement).disabled = true;
+      deleteModalConfirm.textContent =
+        translations.account.deleteAccountModal.deleting;
+
+      try {
+        if (!auth) throw new Error("Not authenticated");
+
+        // Call delete account API
+        const response = await fetch("/api/auth/delete-account", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            userId: auth.user.id,
+            confirmDelete: true,
+          }),
+        });
+
+        if (!response.ok) {
+          const errorData = await response.json();
+          throw new Error(errorData.error || "Failed to delete account");
+        }
+
+        // Clear local auth data
+        clearAuth();
+
+        // Store success message in sessionStorage for toast
+        sessionStorage.setItem(
+          "toast_message",
+          translations.account.deleteAccountModal.success
+        );
+        sessionStorage.setItem("toast_type", "success");
+
+        // Redirect to home
+        window.location.href = lang === "fr" ? "/fr" : "/";
+      } catch (error) {
+        console.error("Error deleting account:", error);
+        alert(translations.account.deleteAccountModal.error);
+
+        // Re-enable button
+        (deleteModalConfirm as HTMLButtonElement).disabled = false;
+        deleteModalConfirm.textContent = originalText;
+      }
+    });
+  }
+
+  // Close delete modal on backdrop click
+  if (deleteAccountModal) {
+    deleteAccountModal.addEventListener("click", (e) => {
+      if (e.target === deleteAccountModal) {
+        closeDeleteModal();
+      }
+    });
+  }
+
+  // Close modals on Escape key
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape") {
+      if (logoutModal && !logoutModal.classList.contains("hidden")) {
+        closeModal();
+      }
+      if (
+        deleteAccountModal &&
+        !deleteAccountModal.classList.contains("hidden")
+      ) {
+        closeDeleteModal();
+      }
+    }
+  });
+}

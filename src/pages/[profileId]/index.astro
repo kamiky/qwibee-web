@@ -347,7 +347,8 @@ const getContentLabel = (contentType: ContentType) => {
 
   <!-- Initialize the page with the external script -->
   <script>
-    import { initProfilePage } from "./profilePage.script.ts";
+    /* import to keep the full path for generated /fr files */
+    import { initProfilePage } from "@/pages/[profileId]/profilePage.script.ts";
     
     if (window.__profilePageData) {
       initProfilePage(window.__profilePageData);
