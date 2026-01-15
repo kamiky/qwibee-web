@@ -49,27 +49,27 @@ async function renameFoldersToUserIdFormat(uploadsDir) {
   console.log("🔄 Checking folder names for user ID format...\n");
 
   const renameMap = {};
-  
+
   try {
     const entries = await readdir(uploadsDir);
-    
+
     for (const entry of entries) {
       const entryPath = join(uploadsDir, entry);
       const stats = await stat(entryPath);
-      
+
       // Only process directories
       if (stats.isDirectory()) {
         if (!isValidUserIdFormat(entry)) {
           // Generate a new user ID
           let newUserId = generateUserId();
-          
+
           // Ensure the new ID doesn't already exist
           let newPath = join(uploadsDir, newUserId);
           while (await fileExists(newPath)) {
             newUserId = generateUserId();
             newPath = join(uploadsDir, newUserId);
           }
-          
+
           // Rename the folder
           console.log(`  📝 Renaming: "${entry}" → "${newUserId}"`);
           await rename(entryPath, newPath);
@@ -79,7 +79,7 @@ async function renameFoldersToUserIdFormat(uploadsDir) {
         }
       }
     }
-    
+
     if (Object.keys(renameMap).length > 0) {
       console.log("\n📋 Folder Rename Summary:");
       console.log("────────────────────────────────────────");
@@ -87,12 +87,14 @@ async function renameFoldersToUserIdFormat(uploadsDir) {
         console.log(`  "${oldName}" → "${newName}"`);
       }
       console.log("────────────────────────────────────────");
-      console.log("\n⚠️  IMPORTANT: Update these folder names in src/data/profiles.ts");
+      console.log(
+        "\n⚠️  IMPORTANT: Update these folder names in src/data/profiles.ts"
+      );
       console.log("   These IDs will be used for Stripe payment references.\n");
     } else {
       console.log("\n✅ All folders already follow the correct format.\n");
     }
-    
+
     return renameMap;
   } catch (error) {
     console.error(`✗ Error renaming folders: ${error.message}`);
@@ -170,11 +172,11 @@ function generateVideoPreview(inputPath, outputPath) {
   try {
     // Get video dimensions to calculate proportional blur
     const dimensions = getMediaDimensions(inputPath);
-    const blurRadius = dimensions
-      ? calculateBlurRadius(dimensions.width)
-      : 20; // fallback to 20 if dimensions can't be determined
+    const blurRadius = dimensions ? calculateBlurRadius(dimensions.width) : 20; // fallback to 20 if dimensions can't be determined
 
-    console.log(`  → Applying blur radius: ${blurRadius}px (video width: ${dimensions?.width || "unknown"}px)`);
+    console.log(
+      `  → Applying blur radius: ${blurRadius}px (video width: ${dimensions?.width || "unknown"}px)`
+    );
 
     // Extract first 5 seconds and apply blur filter
     execSync(
@@ -196,16 +198,19 @@ function generateImagePreview(inputPath, outputPath) {
   try {
     // Get image dimensions to calculate proportional blur
     const dimensions = getMediaDimensions(inputPath);
-    const blurRadius = dimensions
-      ? calculateBlurRadius(dimensions.width)
-      : 20; // fallback to 20 if dimensions can't be determined
+    const blurRadius = dimensions ? calculateBlurRadius(dimensions.width) : 20; // fallback to 20 if dimensions can't be determined
 
-    console.log(`  → Applying blur radius: ${blurRadius}px (image width: ${dimensions?.width || "unknown"}px)`);
+    console.log(
+      `  → Applying blur radius: ${blurRadius}px (image width: ${dimensions?.width || "unknown"}px)`
+    );
 
     // Apply blur filter to image
-    execSync(`ffmpeg -i "${inputPath}" -vf "boxblur=${blurRadius}:5" -y "${outputPath}"`, {
-      stdio: "inherit",
-    });
+    execSync(
+      `ffmpeg -i "${inputPath}" -vf "boxblur=${blurRadius}:5" -y "${outputPath}"`,
+      {
+        stdio: "inherit",
+      }
+    );
     return true;
   } catch (error) {
     console.error(`  ✗ Error generating image preview: ${error.message}`);
@@ -310,7 +315,7 @@ async function main() {
 
     // STEP 2: Process media files in each folder
     console.log("🎬 Processing media files...\n");
-    
+
     // Get all folders in uploads directory (after renaming)
     const entries = await readdir(UPLOADS_DIR);
 
@@ -325,10 +330,12 @@ async function main() {
     }
 
     console.log("\n\n✅ Media preparation completed successfully!");
-    
+
     // Remind user to update profiles.ts if any folders were renamed
     if (Object.keys(renameMap).length > 0) {
-      console.log("\n⚠️  REMINDER: Don't forget to update the folder names in src/data/profiles.ts!");
+      console.log(
+        "\n⚠️  REMINDER: Don't forget to update the folder names in src/data/profiles.ts!"
+      );
     }
   } catch (error) {
     console.error(`\n✗ Error: ${error.message}`);

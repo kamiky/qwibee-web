@@ -17,6 +17,7 @@ export interface Video {
   previewFilename: string; // Preview/blurred filename in /public/uploads/[profileId]/
   type: ContentType; // 'free' = always accessible, 'membership' = requires subscription, 'paid' = requires individual purchase
   mimetype: string; // MIME type of the content (e.g., 'video/mp4', 'image/jpeg', 'image/png')
+  uploadedAt: string; // ISO 8601 timestamp of when the content was uploaded
 }
 
 export interface Profile {

@@ -110,6 +110,7 @@ function generateVideoMetadata(uniqueId, sequentialNumber, paidFilename, preview
     previewFilename,
     type: contentType,
     mimetype,
+    uploadedAt: new Date().toISOString(),
   };
 }
 
@@ -202,6 +203,11 @@ async function processFolderVideos(folderPath, profileId, existingProfile) {
           videoData.price = existingVideo.price || 999;
         } else {
           videoData.price = 0;
+        }
+        
+        // Preserve uploadedAt if it exists, otherwise set it now
+        if (!videoData.uploadedAt) {
+          videoData.uploadedAt = new Date().toISOString();
         }
         
         videos.push(videoData);
@@ -333,6 +339,7 @@ export interface Video {
   previewFilename: string; // Preview/blurred filename in /public/uploads/[profileId]/
   type: ContentType; // 'free' = always accessible, 'membership' = requires subscription, 'paid' = requires individual purchase
   mimetype: string; // MIME type of the content (e.g., 'video/mp4', 'image/jpeg', 'image/png')
+  uploadedAt: string; // ISO 8601 timestamp of when the content was uploaded
 }
 
 export interface Profile {

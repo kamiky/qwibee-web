@@ -61,6 +61,13 @@ const getContentLabel = (contentType: ContentType) => {
   if (contentType === "paid") return t.profile.payPerViewLabel;
   return "";
 };
+
+// Sort videos by uploadedAt (most recent first)
+const sortedVideos = [...profile.videos].sort((a, b) => {
+  const dateA = a.uploadedAt ? new Date(a.uploadedAt).getTime() : 0;
+  const dateB = b.uploadedAt ? new Date(b.uploadedAt).getTime() : 0;
+  return dateB - dateA; // Descending order (most recent first)
+});
 ---
 
 <Layout
@@ -205,7 +212,7 @@ const getContentLabel = (contentType: ContentType) => {
         </h2>
         <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
           {
-            profile.videos.map((video) => {
+            sortedVideos.map((video) => {
               const userHasAccess = hasAccess(video.type, video.id);
               const videoFilename = getVideoFilename(
                 video.type,
@@ -380,7 +387,7 @@ const getContentLabel = (contentType: ContentType) => {
         profileId: profile.id,
         displayName: profile.displayName,
         promotionPercentage: profile.promotionPercentage || 0,
-        videos: profile.videos.map((v) => ({ 
+        videos: sortedVideos.map((v) => ({ 
           id: v.id, 
           title: v.title,
           price: v.price,
