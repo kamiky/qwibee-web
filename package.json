@@ -15,7 +15,8 @@
     "deploy:medias": "./bin/deploy.medias.sh",
     "restart:prod": "./bin/restart.prod.sh",
     "translate": "node scripts/generate-translations.js",
-    "prepare:medias": "node scripts/prepare-medias.js"
+    "prepare:medias": "node scripts/prepare-medias.js",
+    "generate:datas": "node scripts/generate-datas.js"
   },
   "dependencies": {
     "@astrojs/check": "^0.9.6",
