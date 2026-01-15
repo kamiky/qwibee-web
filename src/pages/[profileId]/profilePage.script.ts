@@ -93,6 +93,12 @@ export function initProfilePage(data: ProfilePageData) {
         customPlayIcon.remove();
       }
 
+      // Remove content type badge (Members)
+      const contentTypeBadge = card.querySelector(".content-type-badge");
+      if (contentTypeBadge) {
+        contentTypeBadge.remove();
+      }
+
       // Enable video controls and update source
       const video = card.querySelector(".video-player") as HTMLVideoElement;
       if (video) {
@@ -215,6 +221,12 @@ export function initProfilePage(data: ProfilePageData) {
           customPlayIcon.remove();
         }
 
+        // Remove content type badge (-17%)
+        const contentTypeBadge = card.querySelector(".content-type-badge");
+        if (contentTypeBadge) {
+          contentTypeBadge.remove();
+        }
+
         // Update video source to paid version and enable controls
         const video = card.querySelector(".video-player") as HTMLVideoElement;
         if (video) {
@@ -229,10 +241,16 @@ export function initProfilePage(data: ProfilePageData) {
           }
         }
 
-        // Hide locked label
+        // Hide locked label and pricing
         const lockedLabel = card.querySelector(".locked-label");
         if (lockedLabel) {
           lockedLabel.classList.add("hidden");
+        }
+
+        // Hide paid content pricing section
+        const paidContentPricing = card.querySelector(".paid-content-pricing");
+        if (paidContentPricing) {
+          (paidContentPricing as HTMLElement).style.display = "none";
         }
 
         // Show unlocked badge
@@ -255,16 +273,25 @@ export function initProfilePage(data: ProfilePageData) {
 
   // Function to show paid content pricing for subscribed users
   function showPaidContentPricing() {
-    // Find all paid content pricing divs that are hidden
-    const paidContentPricingDivs = document.querySelectorAll(
-      '.paid-content-pricing[data-video-type="paid"]'
+    // Find all paid content pricing divs that are hidden (only show for locked paid videos)
+    const paidVideos = document.querySelectorAll(
+      '.video-card[data-video-type="paid"]'
     );
 
-    paidContentPricingDivs.forEach((div) => {
-      (div as HTMLElement).style.display = "flex";
+    let count = 0;
+    paidVideos.forEach((card) => {
+      // Only show pricing if the video still has a lock icon (not purchased yet)
+      const lockIcon = card.querySelector(".lock-icon");
+      if (lockIcon) {
+        const pricingDiv = card.querySelector(".paid-content-pricing");
+        if (pricingDiv) {
+          (pricingDiv as HTMLElement).style.display = "flex";
+          count++;
+        }
+      }
     });
 
-    console.log(`Showed pricing for ${paidContentPricingDivs.length} paid videos`);
+    console.log(`Showed pricing for ${count} locked paid videos`);
   }
 
   // Function to show content type badges (Members/-17%) for subscribed users

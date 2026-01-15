@@ -229,8 +229,8 @@ const getContentLabel = (contentType: ContentType) => {
                       />
                     </video>
 
-                    {/* Content Type Badge - Hidden by default, shown only for subscribed users */}
-                    {(video.type === "membership" || video.type === "paid") && (
+                    {/* Content Type Badge - Hidden by default, shown only for subscribed users, removed when unlocked */}
+                    {(video.type === "membership" || video.type === "paid") && !userHasAccess && (
                       <div class={`content-type-badge absolute top-2 left-2 text-white text-xs font-bold px-2.5 py-1 rounded ${
                         video.type === "membership" ? "bg-blue-500" : "bg-orange-500"
                       }`} style="display: none;" data-video-type={video.type}>
@@ -283,12 +283,28 @@ const getContentLabel = (contentType: ContentType) => {
                       {video.title[lang]}
                     </h3>
                     
-                    {/* Only show pricing line for unlocked content or paid content (not membership) */}
-                    {(userHasAccess || video.type === "paid") && (
-                      <div class="flex items-center justify-between mb-1.5 paid-content-pricing" data-video-type={video.type} style={video.type === "paid" && !userHasAccess ? "display: none;" : ""}>
-                        {/* Price Info */}
-                        {userHasAccess ? (
-                          <span class="unlocked-badge text-green-600 font-medium text-sm flex items-center gap-1">
+                    {/* Pricing/Status line - show for unlocked content or paid content */}
+                    <div class="flex items-center justify-between mb-1.5 video-status-line">
+                      {/* Unlocked badge - shown for unlocked content */}
+                      {userHasAccess ? (
+                        <span class="unlocked-badge text-green-600 font-medium text-sm flex items-center gap-1">
+                          <svg
+                            class="w-4 h-4"
+                            fill="currentColor"
+                            viewBox="0 0 20 20"
+                          >
+                            <path
+                              fill-rule="evenodd"
+                              d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                              clip-rule="evenodd"
+                            />
+                          </svg>
+                          {t.profile.unlocked}
+                        </span>
+                      ) : (
+                        <>
+                          {/* Hidden unlocked badge - will be shown by JS when content is unlocked */}
+                          <span class="unlocked-badge text-green-600 font-medium text-sm items-center gap-1 hidden">
                             <svg
                               class="w-4 h-4"
                               fill="currentColor"
@@ -302,26 +318,25 @@ const getContentLabel = (contentType: ContentType) => {
                             </svg>
                             {t.profile.unlocked}
                           </span>
-                        ) : (
-                          <>
-                            {video.type === "paid" && (
-                              <>
-                                <div class="flex items-baseline gap-2">
-                                  <span class="text-gray-400 line-through text-sm">{formatPrice(Math.round(video.price * 1.2))}</span>
-                                  <span class="locked-label text-brand-blue-500 font-bold text-lg">
-                                    {formatPrice(video.price)}
-                                  </span>
-                                </div>
-                                {/* Action Button for paid content */}
-                                <button class="action-button bg-brand-blue-500 hover:bg-brand-blue-600 text-white font-semibold py-1.5 px-4 rounded-full transition-all text-sm">
-                                  {t.profile.buyVideo}
-                                </button>
-                              </>
-                            )}
-                          </>
-                        )}
-                      </div>
-                    )}
+                        </>
+                      )}
+                      
+                      {/* Pricing and buy button for locked paid content - hidden by default, shown only when subscribed */}
+                      {!userHasAccess && video.type === "paid" && (
+                        <div class="paid-content-pricing flex items-center gap-4" style="display: none;">
+                          <div class="flex items-baseline gap-2">
+                            <span class="text-gray-400 line-through text-sm">{formatPrice(Math.round(video.price * 1.2))}</span>
+                            <span class="locked-label text-brand-blue-500 font-bold text-lg">
+                              {formatPrice(video.price)}
+                            </span>
+                          </div>
+                          {/* Action Button for paid content */}
+                          <button class="action-button bg-brand-blue-500 hover:bg-brand-blue-600 text-white font-semibold py-1.5 px-4 rounded-full transition-all text-sm">
+                            {t.profile.buyVideo}
+                          </button>
+                        </div>
+                      )}
+                    </div>
                   </div>
                 </div>
               );
