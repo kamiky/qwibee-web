@@ -49,6 +49,28 @@ function extractUniqueId(filename) {
 }
 
 /**
+ * Get MIME type from file extension
+ */
+function getMimeType(filename) {
+  const ext = extname(filename).toLowerCase();
+  const mimeTypes = {
+    // Video formats
+    ".mp4": "video/mp4",
+    ".webm": "video/webm",
+    ".mov": "video/quicktime",
+    ".avi": "video/x-msvideo",
+    ".mkv": "video/x-matroska",
+    // Image formats
+    ".jpg": "image/jpeg",
+    ".jpeg": "image/jpeg",
+    ".png": "image/png",
+    ".gif": "image/gif",
+    ".webp": "image/webp",
+  };
+  return mimeTypes[ext] || "application/octet-stream";
+}
+
+/**
  * Determine content type based on filename or default logic
  * This is a placeholder - you may want to customize this logic
  */
@@ -64,6 +86,7 @@ function determineContentType(index, totalVideos) {
  */
 function generateVideoMetadata(videoId, index, paidFilename, previewFilename) {
   const contentType = determineContentType(index, 0);
+  const mimetype = getMimeType(paidFilename);
   
   return {
     id: videoId,
@@ -80,6 +103,7 @@ function generateVideoMetadata(videoId, index, paidFilename, previewFilename) {
     paidFilename,
     previewFilename,
     type: contentType,
+    mimetype,
   };
 }
 
@@ -223,6 +247,7 @@ export interface Video {
   paidFilename: string; // Paid content filename in /public/uploads/[profileId]/
   previewFilename: string; // Preview/blurred filename in /public/uploads/[profileId]/
   type: ContentType; // 'free' = always accessible, 'membership' = requires subscription, 'paid' = requires individual purchase
+  mimetype: string; // MIME type of the content (e.g., 'video/mp4', 'image/jpeg', 'image/png')
 }
 
 export interface Profile {

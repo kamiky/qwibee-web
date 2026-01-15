@@ -16,6 +16,7 @@ export interface Video {
   paidFilename: string; // Paid content filename in /public/uploads/[profileId]/
   previewFilename: string; // Preview/blurred filename in /public/uploads/[profileId]/
   type: ContentType; // 'free' = always accessible, 'membership' = requires subscription, 'paid' = requires individual purchase
+  mimetype: string; // MIME type of the content (e.g., 'video/mp4', 'image/jpeg', 'image/png')
 }
 
 export interface Profile {

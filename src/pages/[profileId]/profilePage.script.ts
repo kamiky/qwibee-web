@@ -87,7 +87,7 @@ export function initProfilePage(data: ProfilePageData) {
         lockIcon.remove();
       }
 
-      // Remove custom play icon
+      // Remove custom play icon (only exists for videos)
       const customPlayIcon = card.querySelector(".custom-play-icon");
       if (customPlayIcon) {
         customPlayIcon.remove();
@@ -99,16 +99,22 @@ export function initProfilePage(data: ProfilePageData) {
         contentTypeBadge.remove();
       }
 
-      // Enable video controls and update source
-      const video = card.querySelector(".video-player") as HTMLVideoElement;
-      if (video) {
-        video.setAttribute("controls", "true");
-        const paidSrc = video.getAttribute("data-paid-src");
+      // Update content source (video or image)
+      const mediaElement = card.querySelector(".video-player") as HTMLVideoElement | HTMLImageElement;
+      if (mediaElement) {
+        const paidSrc = mediaElement.getAttribute("data-paid-src");
         if (paidSrc) {
-          const source = video.querySelector("source");
-          if (source) {
-            source.src = paidSrc;
-            video.load(); // Reload video with new source
+          // Check if it's a video or image
+          if (mediaElement.tagName === "VIDEO") {
+            (mediaElement as HTMLVideoElement).setAttribute("controls", "true");
+            const source = mediaElement.querySelector("source");
+            if (source) {
+              source.src = paidSrc;
+              (mediaElement as HTMLVideoElement).load(); // Reload video with new source
+            }
+          } else if (mediaElement.tagName === "IMG") {
+            // For images, just update the src
+            (mediaElement as HTMLImageElement).src = paidSrc;
           }
         }
       }
@@ -215,7 +221,7 @@ export function initProfilePage(data: ProfilePageData) {
           lockIcon.remove();
         }
 
-        // Remove custom play icon
+        // Remove custom play icon (only exists for videos)
         const customPlayIcon = card.querySelector(".custom-play-icon");
         if (customPlayIcon) {
           customPlayIcon.remove();
@@ -227,16 +233,22 @@ export function initProfilePage(data: ProfilePageData) {
           contentTypeBadge.remove();
         }
 
-        // Update video source to paid version and enable controls
-        const video = card.querySelector(".video-player") as HTMLVideoElement;
-        if (video) {
-          video.setAttribute("controls", "true");
-          const paidSrc = video.getAttribute("data-paid-src");
+        // Update content source to paid version (video or image)
+        const mediaElement = card.querySelector(".video-player") as HTMLVideoElement | HTMLImageElement;
+        if (mediaElement) {
+          const paidSrc = mediaElement.getAttribute("data-paid-src");
           if (paidSrc) {
-            const source = video.querySelector("source");
-            if (source) {
-              source.src = paidSrc;
-              video.load();
+            // Check if it's a video or image
+            if (mediaElement.tagName === "VIDEO") {
+              (mediaElement as HTMLVideoElement).setAttribute("controls", "true");
+              const source = mediaElement.querySelector("source");
+              if (source) {
+                source.src = paidSrc;
+                (mediaElement as HTMLVideoElement).load();
+              }
+            } else if (mediaElement.tagName === "IMG") {
+              // For images, just update the src
+              (mediaElement as HTMLImageElement).src = paidSrc;
             }
           }
         }
@@ -897,7 +909,7 @@ export function initProfilePage(data: ProfilePageData) {
     }, 500);
   }
 
-  // Handle custom play button clicks
+  // Handle custom play button clicks (only for videos, not images)
   const customPlayButtons = document.querySelectorAll(".custom-play-icon");
   customPlayButtons.forEach((playButton) => {
     playButton.addEventListener("click", (e) => {
@@ -906,10 +918,12 @@ export function initProfilePage(data: ProfilePageData) {
       const container = (playButton as HTMLElement).closest(".video-container");
       if (!container) return;
 
-      const video = container.querySelector(".video-player") as HTMLVideoElement;
+      const mediaElement = container.querySelector(".video-player");
       const lockIcon = container.querySelector(".lock-icon");
 
-      if (video) {
+      // Only handle video elements, skip images
+      if (mediaElement && mediaElement.tagName === "VIDEO") {
+        const video = mediaElement as HTMLVideoElement;
         // Load and play the video
         video.setAttribute("controls", "true");
         video.load();

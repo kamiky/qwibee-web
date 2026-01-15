@@ -206,6 +206,7 @@ const getContentLabel = (contentType: ContentType) => {
                 video.previewFilename
               );
               const contentLabel = getContentLabel(video.type);
+              const isImage = video.mimetype?.startsWith('image/');
 
               return (
                 <div
@@ -213,21 +214,32 @@ const getContentLabel = (contentType: ContentType) => {
                   data-video-type={video.type}
                   data-video-id={video.id}
                 >
-                  {/* Video Preview */}
+                  {/* Video/Image Preview */}
                   <div class="aspect-video bg-gray-100 relative rounded-lg overflow-hidden mb-3 video-container">
-                    <video
-                      class="w-full h-full object-cover video-player"
-                      preload="metadata"
-                      poster={video.thumbnail}
-                      data-paid-src={`/uploads/${profile.id}/${video.paidFilename}#t=0.1`}
-                      data-preview-src={`/uploads/${profile.id}/${video.previewFilename}#t=0.1`}
-                      data-has-access={userHasAccess ? "true" : "false"}
-                    >
-                      <source
-                        src={`/uploads/${profile.id}/${videoFilename}#t=0.1`}
-                        type="video/mp4"
+                    {isImage ? (
+                      <img
+                        class="w-full h-full object-cover video-player"
+                        src={`/uploads/${profile.id}/${videoFilename}`}
+                        alt={video.title[lang]}
+                        data-paid-src={`/uploads/${profile.id}/${video.paidFilename}`}
+                        data-preview-src={`/uploads/${profile.id}/${video.previewFilename}`}
+                        data-has-access={userHasAccess ? "true" : "false"}
                       />
-                    </video>
+                    ) : (
+                      <video
+                        class="w-full h-full object-cover video-player"
+                        preload="metadata"
+                        poster={video.thumbnail}
+                        data-paid-src={`/uploads/${profile.id}/${video.paidFilename}#t=0.1`}
+                        data-preview-src={`/uploads/${profile.id}/${video.previewFilename}#t=0.1`}
+                        data-has-access={userHasAccess ? "true" : "false"}
+                      >
+                        <source
+                          src={`/uploads/${profile.id}/${videoFilename}#t=0.1`}
+                          type={video.mimetype || "video/mp4"}
+                        />
+                      </video>
+                    )}
 
                     {/* Content Type Badge - Hidden by default, shown only for subscribed users, removed when unlocked */}
                     {(video.type === "membership" || video.type === "paid") && !userHasAccess && (
@@ -238,18 +250,20 @@ const getContentLabel = (contentType: ContentType) => {
                       </div>
                     )}
 
-                    {/* Custom Play Icon - shown in center, clickable */}
-                    <div class="custom-play-icon absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-black/60 text-white p-4 rounded-full cursor-pointer hover:bg-black/75 transition-all">
-                      <svg
-                        class="w-8 h-8"
-                        fill="currentColor"
-                        viewBox="0 0 24 24"
-                      >
-                        <path
-                          d="M8 5v14l11-7z"
-                        />
-                      </svg>
-                    </div>
+                    {/* Custom Play Icon - shown in center, clickable - only for videos */}
+                    {!isImage && (
+                      <div class="custom-play-icon absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-black/60 text-white p-4 rounded-full cursor-pointer hover:bg-black/75 transition-all">
+                        <svg
+                          class="w-8 h-8"
+                          fill="currentColor"
+                          viewBox="0 0 24 24"
+                        >
+                          <path
+                            d="M8 5v14l11-7z"
+                          />
+                        </svg>
+                      </div>
+                    )}
 
                     {/* Lock Icon - shown in bottom left for locked content */}
                     {!userHasAccess && (
@@ -270,7 +284,7 @@ const getContentLabel = (contentType: ContentType) => {
                       </div>
                     )}
 
-                    {video.duration && (
+                    {video.duration && !isImage && (
                       <div class="absolute bottom-2 right-2 bg-black/70 text-white text-xs px-2 py-0.5 rounded">
                         {video.duration}
                       </div>
