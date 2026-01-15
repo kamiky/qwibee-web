@@ -9,12 +9,16 @@ interface VideoData {
 
 interface ProfilePageData {
   profileId: string;
+  displayName: {
+    en: string;
+    fr: string;
+  };
   promotionPercentage: number;
   videos: VideoData[];
 }
 
 export function initProfilePage(data: ProfilePageData) {
-  const { profileId: currentProfileId, promotionPercentage, videos: profileVideos } = data;
+  const { profileId: currentProfileId, displayName, promotionPercentage, videos: profileVideos } = data;
   
   // Helper function to calculate promotional price
   const calculatePromotionalPrice = (originalPrice: number): number => {
@@ -709,6 +713,8 @@ export function initProfilePage(data: ProfilePageData) {
                 profileId,
                 membershipPrice: parseInt(membershipPrice),
                 customerEmail,
+                language: lang,
+                displayName: displayName[lang],
               }),
             }
           );

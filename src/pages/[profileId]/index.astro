@@ -378,6 +378,7 @@ const getContentLabel = (contentType: ContentType) => {
     define:vars={{
       pageData: {
         profileId: profile.id,
+        displayName: profile.displayName,
         promotionPercentage: profile.promotionPercentage || 0,
         videos: profile.videos.map((v) => ({ 
           id: v.id, 
