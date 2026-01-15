@@ -1,0 +1,169 @@
+{
+  "id": "us2o0a6rzzx8ycdlqvtet",
+  "username": "us2o0a6rzzx8ycdlqvtet",
+  "displayName": {
+    "en": "Creator us2o0a6r",
+    "fr": "Créateur us2o0a6r"
+  },
+  "bio": {
+    "en": "Exclusive content creator sharing premium videos",
+    "fr": "Créateur de contenu exclusif partageant des vidéos premium"
+  },
+  "avatar": "/uploads/us2o0a6rzzx8ycdlqvtet/paid_9rzdiwov_iqry125ili7wj89pmc5w4kc3dtz260.JPEG",
+  "membershipPrice": 999,
+  "videos": [
+    {
+      "id": "9rzdiwov",
+      "title": {
+        "en": "Image 1",
+        "fr": "Image 1"
+      },
+      "description": {
+        "en": "Description for image 1",
+        "fr": "Description de l'image 1"
+      },
+      "duration": "0:00",
+      "price": 0,
+      "paidFilename": "paid_9rzdiwov_iqry125ili7wj89pmc5w4kc3dtz260.JPEG",
+      "previewFilename": "preview_9rzdiwov_q4cmh8smfwmhqrnshwwi9wpwhi34jo.JPEG",
+      "type": "free",
+      "mimetype": "image/jpeg"
+    },
+    {
+      "id": "cuip531f",
+      "title": {
+        "en": "Image 2",
+        "fr": "Image 2"
+      },
+      "description": {
+        "en": "Description for image 2",
+        "fr": "Description de l'image 2"
+      },
+      "duration": "0:00",
+      "price": 0,
+      "paidFilename": "paid_cuip531f_yj10ibw1a8fmrkir5h3tk7h6mclo8b.JPEG",
+      "previewFilename": "preview_cuip531f_y0qk5no1s7s1ed6pvd8nud9n18cxef.JPEG",
+      "type": "membership",
+      "mimetype": "image/jpeg"
+    },
+    {
+      "id": "dch299x7",
+      "title": {
+        "en": "Image 3",
+        "fr": "Image 3"
+      },
+      "description": {
+        "en": "Description for image 3",
+        "fr": "Description de l'image 3"
+      },
+      "duration": "0:00",
+      "price": 999,
+      "paidFilename": "paid_dch299x7_f9ltqrti5t3s1l6ts1731l3uu3zadf.JPEG",
+      "previewFilename": "preview_dch299x7_ed8q0jzeijfnb6prizom5dxc5ld8uz.JPEG",
+      "type": "paid",
+      "mimetype": "image/jpeg"
+    },
+    {
+      "id": "diqlopud",
+      "title": {
+        "en": "Image 4",
+        "fr": "Image 4"
+      },
+      "description": {
+        "en": "Description for image 4",
+        "fr": "Description de l'image 4"
+      },
+      "duration": "0:00",
+      "price": 0,
+      "paidFilename": "paid_diqlopud_7q8vga08zupn0ntpdhsse33wkkcrvg.JPEG",
+      "previewFilename": "preview_diqlopud_gnadhje0dl7nsejl1gvc7ok25erxl4.JPEG",
+      "type": "membership",
+      "mimetype": "image/jpeg"
+    },
+    {
+      "id": "enc7rs10",
+      "title": {
+        "en": "Image 5",
+        "fr": "Image 5"
+      },
+      "description": {
+        "en": "Description for image 5",
+        "fr": "Description de l'image 5"
+      },
+      "duration": "0:00",
+      "price": 999,
+      "paidFilename": "paid_enc7rs10_rofzdd4oouctg2zhxcbqupv1c61v8u.JPEG",
+      "previewFilename": "preview_enc7rs10_iwrdnko7ark1dttl10h9mjmph8mey8.JPEG",
+      "type": "paid",
+      "mimetype": "image/jpeg"
+    },
+    {
+      "id": "f2ge2r7e",
+      "title": {
+        "en": "Image 6",
+        "fr": "Image 6"
+      },
+      "description": {
+        "en": "Description for image 6",
+        "fr": "Description de l'image 6"
+      },
+      "duration": "0:00",
+      "price": 0,
+      "paidFilename": "paid_f2ge2r7e_2jyqs3247yox3orryeavzumxkfsvbw.JPEG",
+      "previewFilename": "preview_f2ge2r7e_71a05kqkek1syckl91i2qmqset7ff4.JPEG",
+      "type": "membership",
+      "mimetype": "image/jpeg"
+    },
+    {
+      "id": "ki8cud3k",
+      "title": {
+        "en": "Image 7",
+        "fr": "Image 7"
+      },
+      "description": {
+        "en": "Description for image 7",
+        "fr": "Description de l'image 7"
+      },
+      "duration": "0:00",
+      "price": 999,
+      "paidFilename": "paid_ki8cud3k_m18gdg2bmirhfa4txlq129wgg1daf4.JPEG",
+      "previewFilename": "preview_ki8cud3k_aczpjc7rmntcxsuf02s7apbfbalqb2.JPEG",
+      "type": "paid",
+      "mimetype": "image/jpeg"
+    },
+    {
+      "id": "p7apme99",
+      "title": {
+        "en": "Image 8",
+        "fr": "Image 8"
+      },
+      "description": {
+        "en": "Description for image 8",
+        "fr": "Description de l'image 8"
+      },
+      "duration": "0:00",
+      "price": 0,
+      "paidFilename": "paid_p7apme99_7ldttcbdpsqy7zz2g057m57zhlmwh6.JPEG",
+      "previewFilename": "preview_p7apme99_3tc962a42oeet3hfq3drvv4avh54ec.JPEG",
+      "type": "membership",
+      "mimetype": "image/jpeg"
+    },
+    {
+      "id": "ub654eln",
+      "title": {
+        "en": "Image 9",
+        "fr": "Image 9"
+      },
+      "description": {
+        "en": "Description for image 9",
+        "fr": "Description de l'image 9"
+      },
+      "duration": "0:00",
+      "price": 999,
+      "paidFilename": "paid_ub654eln_89ds7lz2hftfbslwyvicyr85jjhnn7.JPEG",
+      "previewFilename": "preview_ub654eln_40iwnr4295sjshp50sewyfgzusmvkh.JPEG",
+      "type": "paid",
+      "mimetype": "image/jpeg"
+    }
+  ]
+}

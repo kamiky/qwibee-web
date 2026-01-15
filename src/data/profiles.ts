@@ -37,8 +37,10 @@ export interface Profile {
 
 import uk8txjwcahv743xag2q9w from "./uk8txjwcahv743xag2q9w.json";
 import uku1q7t1ldosvb15kljos from "./uku1q7t1ldosvb15kljos.json";
+import us2o0a6rzzx8ycdlqvtet from "./us2o0a6rzzx8ycdlqvtet.json";
 
 export const profiles: Record<string, Profile> = {
   uk8txjwcahv743xag2q9w: uk8txjwcahv743xag2q9w as Profile,
   uku1q7t1ldosvb15kljos: uku1q7t1ldosvb15kljos as Profile,
+  us2o0a6rzzx8ycdlqvtet: us2o0a6rzzx8ycdlqvtet as Profile,
 };

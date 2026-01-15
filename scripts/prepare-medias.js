@@ -136,14 +136,49 @@ function isAlreadyProcessed(filename) {
 }
 
 /**
+ * Get video/image dimensions
+ */
+function getMediaDimensions(inputPath) {
+  try {
+    const output = execSync(
+      `ffprobe -v error -select_streams v:0 -show_entries stream=width,height -of csv=s=x:p=0 "${inputPath}"`,
+      { encoding: "utf-8" }
+    );
+    const [width, height] = output.trim().split("x").map(Number);
+    return { width, height };
+  } catch (error) {
+    console.error(`  ⚠ Could not get dimensions, using default blur`);
+    return null;
+  }
+}
+
+/**
+ * Calculate blur radius based on image dimensions (3% of width)
+ */
+function calculateBlurRadius(width) {
+  // Use 3% of width as blur radius for consistent blur effect
+  // Minimum of 15, maximum of 50 to keep blur reasonable
+  const blurRadius = Math.round(width * 0.03);
+  return Math.max(15, Math.min(50, blurRadius));
+}
+
+/**
  * Generate preview for video file (first 5 seconds, blurred)
  */
 function generateVideoPreview(inputPath, outputPath) {
   console.log(`  → Generating video preview: ${basename(outputPath)}`);
   try {
+    // Get video dimensions to calculate proportional blur
+    const dimensions = getMediaDimensions(inputPath);
+    const blurRadius = dimensions
+      ? calculateBlurRadius(dimensions.width)
+      : 20; // fallback to 20 if dimensions can't be determined
+
+    console.log(`  → Applying blur radius: ${blurRadius}px (video width: ${dimensions?.width || "unknown"}px)`);
+
     // Extract first 5 seconds and apply blur filter
     execSync(
-      `ffmpeg -i "${inputPath}" -t 5 -vf "boxblur=20:5" -c:v libx264 -preset fast -c:a copy -y "${outputPath}"`,
+      `ffmpeg -i "${inputPath}" -t 5 -vf "boxblur=${blurRadius}:5" -c:v libx264 -preset fast -c:a copy -y "${outputPath}"`,
       { stdio: "inherit" }
     );
     return true;
@@ -159,8 +194,16 @@ function generateVideoPreview(inputPath, outputPath) {
 function generateImagePreview(inputPath, outputPath) {
   console.log(`  → Generating image preview: ${basename(outputPath)}`);
   try {
+    // Get image dimensions to calculate proportional blur
+    const dimensions = getMediaDimensions(inputPath);
+    const blurRadius = dimensions
+      ? calculateBlurRadius(dimensions.width)
+      : 20; // fallback to 20 if dimensions can't be determined
+
+    console.log(`  → Applying blur radius: ${blurRadius}px (image width: ${dimensions?.width || "unknown"}px)`);
+
     // Apply blur filter to image
-    execSync(`ffmpeg -i "${inputPath}" -vf "boxblur=20:5" -y "${outputPath}"`, {
+    execSync(`ffmpeg -i "${inputPath}" -vf "boxblur=${blurRadius}:5" -y "${outputPath}"`, {
       stdio: "inherit",
     });
     return true;

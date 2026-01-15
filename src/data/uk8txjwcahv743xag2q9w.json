@@ -13,23 +13,6 @@
   "membershipPrice": 999,
   "videos": [
     {
-      "id": "zhz3rnmt",
-      "title": {
-        "en": "Video 1 x",
-        "fr": "Vidéo 1 x"
-      },
-      "description": {
-        "en": "Description for video 1 x ",
-        "fr": "Description de l'vidéo 1 x"
-      },
-      "duration": "0:00",
-      "price": 0,
-      "paidFilename": "paid_zhz3rnmt_66t16c8sr2m0f0esmg5gqipdhi6nf9.mp4",
-      "previewFilename": "preview_zhz3rnmt_giplfonf2j5hjpz0q1o74w3m0d9dsr.mp4",
-      "type": "free",
-      "mimetype": "video/mp4"
-    },
-    {
       "id": "hygahghv",
       "title": {
         "en": "Video 2",
@@ -96,6 +79,23 @@
       "previewFilename": "preview_mp9nr2q3_4exn4oz382de6mqi2kjdczd1v336cb.jpg",
       "type": "free",
       "mimetype": "image/jpeg"
+    },
+    {
+      "id": "zhz3rnmt",
+      "title": {
+        "en": "Video 1 x",
+        "fr": "Vidéo 1 x"
+      },
+      "description": {
+        "en": "Description for video 1 x ",
+        "fr": "Description de l'vidéo 1 x"
+      },
+      "duration": "0:00",
+      "price": 0,
+      "paidFilename": "paid_zhz3rnmt_66t16c8sr2m0f0esmg5gqipdhi6nf9.mp4",
+      "previewFilename": "preview_zhz3rnmt_giplfonf2j5hjpz0q1o74w3m0d9dsr.mp4",
+      "type": "free",
+      "mimetype": "video/mp4"
     }
   ]
 }
