@@ -1,5 +1,6 @@
 import { useTranslations } from "@/i18n/translations";
 import type { Language } from "@/i18n/translations";
+import { profiles } from "@/data/profiles";
 
 // Type definitions
 interface AuthData {
@@ -193,6 +194,15 @@ export function initAccountPage() {
       if (purchasedContentList) {
         purchasedContentList.innerHTML = purchasedContent
           .map((pc) => {
+            // Get profile and video data for display names
+            const profile = profiles[pc.profileId];
+            const displayName = profile
+              ? profile.displayName[lang]
+              : pc.profileId;
+
+            const video = profile?.videos.find((v) => v.id === pc.videoId);
+            const videoTitle = video ? video.title[lang] : pc.videoId;
+
             const dateOptions: Intl.DateTimeFormatOptions = {
               year: "numeric",
               month: "short",
@@ -211,9 +221,12 @@ export function initAccountPage() {
                 <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
                   <div class="flex-1">
                     <h3 class="font-semibold text-lg text-gray-900">
-                      ${pc.profileId} - ${pc.videoId}
+                      ${videoTitle}
                     </h3>
                     <p class="text-sm text-gray-600">
+                      ${displayName}
+                    </p>
+                    <p class="text-xs text-gray-500">
                       ${translations.account.purchasedContent.purchasedOn} ${purchaseDate} ${translations.account.purchasedContent.for} ${price}
                     </p>
                   </div>
@@ -243,6 +256,12 @@ export function initAccountPage() {
       if (membershipsList) {
         membershipsList.innerHTML = memberships
           .map((m) => {
+            // Get profile data for display name
+            const profile = profiles[m.profileId];
+            const displayName = profile
+              ? profile.displayName[lang]
+              : m.profileId;
+
             const statusColor =
               m.status === "active" || m.status === "trialing"
                 ? "text-green-600"
@@ -271,7 +290,7 @@ export function initAccountPage() {
                 <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
                   <div class="flex-1">
                     <h3 class="font-semibold text-lg flex items-center text-gray-900">
-                      ${m.profileId}
+                      ${displayName}
                       ${statusBadge}
                     </h3>
                     <p class="text-sm text-gray-600">
