@@ -54,26 +54,6 @@
       "previewThumbnail": "preview_1fw8ghgf_yvs886z2vgdwuqy2sd6b0swa7v97r7_thumb.jpg"
     },
     {
-      "id": "206ntsqd",
-      "title": {
-        "en": "Image 43",
-        "fr": "Image 43"
-      },
-      "description": {
-        "en": "Description for image 43",
-        "fr": "Description de l'image 43"
-      },
-      "duration": "0:00",
-      "price": 1262,
-      "paidFilename": "paid_206ntsqd_58k3fepq2zcesby8u9qbfl4bt7x8nd.png",
-      "previewFilename": "preview_206ntsqd_xrktei417e5hkrv19g07u8e1q2d88v.png",
-      "type": "paid",
-      "mimetype": "image/png",
-      "uploadedAt": "2026-01-15T22:45:36.928Z",
-      "paidThumbnail": "paid_206ntsqd_58k3fepq2zcesby8u9qbfl4bt7x8nd.png",
-      "previewThumbnail": "preview_206ntsqd_xrktei417e5hkrv19g07u8e1q2d88v.png"
-    },
-    {
       "id": "2n0zz8s4",
       "title": {
         "en": "Image 4",
@@ -92,26 +72,6 @@
       "uploadedAt": "2026-01-15T16:06:19.943Z",
       "paidThumbnail": "paid_2n0zz8s4_bwbkxacvt0hy5ls4pw734k4xw8c3cf.png",
       "previewThumbnail": "preview_2n0zz8s4_lvhhkad69ik1pydkf75kxf0qo8rkoo.png"
-    },
-    {
-      "id": "62yp93jd",
-      "title": {
-        "en": "Image 44",
-        "fr": "Image 44"
-      },
-      "description": {
-        "en": "Description for image 44",
-        "fr": "Description de l'image 44"
-      },
-      "duration": "0:00",
-      "price": 0,
-      "paidFilename": "paid_62yp93jd_zt60b9tbrq525q5sagrlmhnp7pdyo0.png",
-      "previewFilename": "preview_62yp93jd_1b8dxw9e17zs4t6coj88chu5388pgz.png",
-      "type": "membership",
-      "mimetype": "image/png",
-      "uploadedAt": "2026-01-15T22:45:36.929Z",
-      "paidThumbnail": "paid_62yp93jd_zt60b9tbrq525q5sagrlmhnp7pdyo0.png",
-      "previewThumbnail": "preview_62yp93jd_1b8dxw9e17zs4t6coj88chu5388pgz.png"
     },
     {
       "id": "66bqg1mw",
