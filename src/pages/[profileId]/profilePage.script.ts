@@ -25,9 +25,8 @@ export function initProfilePage(data: ProfilePageData) {
   // Returns { hasAccess: boolean, membership: object | null, purchasedContent: array }
   const checkMembershipAccess = async () => {
     const token = localStorage.getItem("wmf_access_token");
-    const storedProfileId = localStorage.getItem("wmf_profile_id");
 
-    if (!token || storedProfileId !== currentProfileId) {
+    if (!token) {
       return { hasAccess: false, membership: null, purchasedContent: [] };
     }
 
