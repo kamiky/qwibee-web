@@ -18,3 +18,11 @@ interface ImportMetaEnv {
 interface ImportMeta {
   readonly env: ImportMetaEnv;
 }
+
+// Extend Window interface for profile page data
+interface Window {
+  __profilePageData?: {
+    profileId: string;
+    videos: Array<{ id: string; price: number }>;
+  };
+}
