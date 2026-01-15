@@ -207,18 +207,22 @@ export function initAccountPage() {
               lang === "fr" ? `/fr/${pc.profileId}` : `/${pc.profileId}`;
 
             return `
-              <div class="border border-gray-200 rounded-lg p-4">
-                <div class="flex items-center justify-between">
-                  <div>
-                    <h3 class="font-bold text-lg">
+              <div class="bg-gray-50 rounded-lg p-5">
+                <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                  <div class="flex-1">
+                    <h3 class="font-semibold text-lg text-gray-900">
                       ${pc.profileId} - ${pc.videoId}
                     </h3>
                     <p class="text-sm text-gray-600">
                       ${translations.account.purchasedContent.purchasedOn} ${purchaseDate} ${translations.account.purchasedContent.for} ${price}
                     </p>
                   </div>
-                  <div>
-                    <a href="${profileUrl}" class="bg-brand-blue-500 hover:bg-brand-blue-600 text-white font-semibold py-2 px-4 rounded-lg transition-colors inline-block">
+                  <div class="flex-shrink-0">
+                    <a href="${profileUrl}" class="bg-brand-blue-500 hover:bg-brand-blue-600 text-white font-semibold py-3.5 px-6 rounded-full transition-all inline-flex items-center justify-center gap-2 whitespace-nowrap w-full sm:w-auto text-xs">
+                      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"/>
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                      </svg>
                       ${translations.account.purchasedContent.watchNow}
                     </a>
                   </div>
@@ -263,10 +267,10 @@ export function initAccountPage() {
               lang === "fr" ? `/fr/${m.profileId}` : `/${m.profileId}`;
 
             return `
-              <div class="border border-gray-200 rounded-lg p-4">
-                <div class="flex items-center justify-between">
-                  <div>
-                    <h3 class="font-bold text-lg flex items-center">
+              <div class="bg-gray-50 rounded-lg p-5">
+                <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                  <div class="flex-1">
+                    <h3 class="font-semibold text-lg flex items-center text-gray-900">
                       ${m.profileId}
                       ${statusBadge}
                     </h3>
@@ -275,11 +279,18 @@ export function initAccountPage() {
                     </p>
                     <p class="text-xs text-gray-500">${renewalText}</p>
                   </div>
-                  <div class="flex gap-2">
-                    <button class="manage-membership-btn bg-gray-500 hover:bg-gray-600 text-white font-semibold py-2 px-4 rounded-lg transition-colors">
+                  <div class="flex flex-col sm:flex-row gap-2 sm:gap-3">
+                    <button class="manage-membership-btn bg-gray-100 hover:bg-gray-200 text-gray-700 font-semibold py-3.5 px-6 rounded-full transition-all flex items-center justify-center gap-2 whitespace-nowrap text-xs">
+                      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/>
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                      </svg>
                       ${translations.account.membership.manage}
                     </button>
-                    <a href="${profileUrl}" class="bg-brand-blue-500 hover:bg-brand-blue-600 text-white font-semibold py-2 px-4 rounded-lg transition-colors inline-block">
+                    <a href="${profileUrl}" class="bg-brand-blue-500 hover:bg-brand-blue-600 text-white font-semibold py-3.5 px-6 rounded-full transition-all inline-flex items-center justify-center gap-2 whitespace-nowrap text-xs">
+                      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
+                      </svg>
                       ${translations.account.membership.viewProfile}
                     </a>
                   </div>
