@@ -155,13 +155,13 @@ function getMediaDimensions(inputPath) {
 }
 
 /**
- * Calculate blur radius based on image dimensions (3% of width)
+ * Calculate blur radius based on image dimensions (1% of width)
  */
 function calculateBlurRadius(width) {
-  // Use 3% of width as blur radius for consistent blur effect
-  // Minimum of 15, maximum of 50 to keep blur reasonable
-  const blurRadius = Math.round(width * 0.03);
-  return Math.max(15, Math.min(50, blurRadius));
+  // Use 1% of width as blur radius for consistent blur effect
+  // Minimum of 5, maximum of 25 to keep blur reasonable
+  const blurRadius = Math.round(width * 0.01);
+  return Math.max(5, Math.min(25, blurRadius));
 }
 
 /**
@@ -197,8 +197,13 @@ function generateVideoPreview(inputPath, outputPath) {
     );
 
     // Extract first 5 seconds and apply blur filter
+    // Scale up by 25%, blur, then center-crop back to prevent edge blur
+    const videoFilter = dimensions
+      ? `scale=iw*1.25:ih*1.25,boxblur=${blurRadius}:5,crop=${dimensions.width}:${dimensions.height}:(in_w-out_w)/2:(in_h-out_h)/2`
+      : `boxblur=${blurRadius}:5`;
+
     execSync(
-      `ffmpeg -i "${inputPath}" -t 5 -vf "boxblur=${blurRadius}:5" -c:v libx264 -preset fast -c:a copy -y "${outputPath}"`,
+      `ffmpeg -i "${inputPath}" -t 5 -vf "${videoFilter}" -c:v libx264 -preset fast -c:a copy -y "${outputPath}"`,
       { stdio: "inherit" }
     );
     return true;
@@ -223,8 +228,13 @@ function generateImagePreview(inputPath, outputPath) {
     );
 
     // Apply blur filter to image
+    // Scale up by 25%, blur, then center-crop back to prevent edge blur
+    const imageFilter = dimensions
+      ? `scale=iw*1.25:ih*1.25,boxblur=${blurRadius}:5,crop=${dimensions.width}:${dimensions.height}:(in_w-out_w)/2:(in_h-out_h)/2`
+      : `boxblur=${blurRadius}:5`;
+
     execSync(
-      `ffmpeg -i "${inputPath}" -vf "boxblur=${blurRadius}:5" -y "${outputPath}"`,
+      `ffmpeg -i "${inputPath}" -vf "${imageFilter}" -y "${outputPath}"`,
       {
         stdio: "inherit",
       }
@@ -268,7 +278,7 @@ async function processFile(folderPath, filename) {
 
   // Check if already processed
   if (isAlreadyProcessed(filename)) {
-    // For already processed files, check if thumbnails exist and generate if needed
+    // For already processed files, check if preview and thumbnails exist and generate if needed
     const fileInfo = extractProcessedFilenameInfo(filename);
 
     if (!fileInfo) {
@@ -276,27 +286,58 @@ async function processFile(folderPath, filename) {
       return;
     }
 
-    // Check if this is a video (we only generate separate thumbnails for videos)
-    if (!isVideo(filename)) {
+    // Only process paid_ files (skip preview_ files to avoid duplicate processing)
+    if (fileInfo.type === "preview") {
       return;
     }
 
-    console.log(`\n  Checking thumbnail for: ${filename}`);
+    console.log(`\n  Checking for missing files: ${filename}`);
 
-    const thumbnailExt = ".jpg";
-    const thumbnailFilename = `${fileInfo.type}_${fileInfo.uniqueId}_${fileInfo.hash}_thumb${thumbnailExt}`;
-    const thumbnailPath = join(folderPath, thumbnailFilename);
-    const videoPath = join(folderPath, filename);
+    const paidPath = join(folderPath, filename);
+    const previewFilename = `preview_${fileInfo.uniqueId}_${fileInfo.hash}${ext}`;
+    const previewPath = join(folderPath, previewFilename);
 
-    // Generate thumbnail if it doesn't exist
-    const thumbnailExists = await fileExists(thumbnailPath);
-    if (!thumbnailExists) {
-      generateVideoThumbnail(videoPath, thumbnailPath);
-      console.log(`  ✓ Thumbnail generated`);
-    } else {
-      console.log(`  ✓ Thumbnail already exists`);
+    // Check if preview exists, generate if missing
+    const previewExists = await fileExists(previewPath);
+    if (!previewExists) {
+      console.log(`  → Preview missing, regenerating...`);
+      if (isVideo(filename)) {
+        generateVideoPreview(paidPath, previewPath);
+      } else if (isImage(filename)) {
+        generateImagePreview(paidPath, previewPath);
+      }
     }
 
+    // For videos, check and generate thumbnails
+    if (isVideo(filename)) {
+      const thumbnailExt = ".jpg";
+      const paidThumbnailFilename = `paid_${fileInfo.uniqueId}_${fileInfo.hash}_thumb${thumbnailExt}`;
+      const previewThumbnailFilename = `preview_${fileInfo.uniqueId}_${fileInfo.hash}_thumb${thumbnailExt}`;
+      const paidThumbnailPath = join(folderPath, paidThumbnailFilename);
+      const previewThumbnailPath = join(folderPath, previewThumbnailFilename);
+
+      // Generate thumbnail for paid video if missing
+      const paidThumbnailExists = await fileExists(paidThumbnailPath);
+      if (!paidThumbnailExists) {
+        console.log(`  → Paid thumbnail missing, generating...`);
+        generateVideoThumbnail(paidPath, paidThumbnailPath);
+      }
+
+      // Generate thumbnail for preview video if missing (and preview exists)
+      if (previewExists || !previewExists) {
+        // Re-check preview existence after potential generation
+        const previewNowExists = await fileExists(previewPath);
+        if (previewNowExists) {
+          const previewThumbnailExists = await fileExists(previewThumbnailPath);
+          if (!previewThumbnailExists) {
+            console.log(`  → Preview thumbnail missing, generating...`);
+            generateVideoThumbnail(previewPath, previewThumbnailPath);
+          }
+        }
+      }
+    }
+
+    console.log(`  ✓ Check completed for: ${filename}`);
     return;
   }
 
