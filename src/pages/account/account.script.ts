@@ -111,11 +111,15 @@ export function initAccountPage() {
     const originalText = button.textContent;
     button.textContent = translations.account.membership.loading;
 
+    // Open window immediately (synchronously) to avoid popup blocker
+    const newWindow = window.open("", "_blank");
+
     try {
       // Get user email from auth
       const customerEmail = auth?.user?.email;
       if (!customerEmail) {
         alert(translations.account.membership.loginRequired);
+        if (newWindow) newWindow.close();
         return;
       }
 
@@ -137,15 +141,17 @@ export function initAccountPage() {
 
       const data = await response.json();
 
-      // Redirect to Stripe customer portal
-      if (data.url) {
-        window.location.href = data.url;
+      // Navigate the opened window to Stripe customer portal
+      if (data.url && newWindow) {
+        newWindow.location.href = data.url;
       } else {
+        if (newWindow) newWindow.close();
         throw new Error("No portal URL received");
       }
     } catch (error) {
       console.error("Error creating portal session:", error);
       alert(translations.account.membership.manageFailed);
+      if (newWindow) newWindow.close();
 
       // Re-enable button
       button.disabled = false;
