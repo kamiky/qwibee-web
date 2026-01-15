@@ -4,6 +4,10 @@ import { readdir, stat, writeFile, readFile } from "fs/promises";
 import { join, extname, basename } from "path";
 import { fileURLToPath } from "url";
 import { dirname } from "path";
+import { exec } from "child_process";
+import { promisify } from "util";
+
+const execAsync = promisify(exec);
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -71,6 +75,32 @@ function getMimeType(filename) {
 }
 
 /**
+ * Get video duration using ffprobe
+ * Returns formatted duration (MM:SS) or null if not a video or error
+ */
+async function getVideoDuration(filePath) {
+  try {
+    const { stdout } = await execAsync(
+      `ffprobe -v error -show_entries format=duration -of default=noprint_wrappers=1:nokey=1 "${filePath}"`
+    );
+    
+    const durationInSeconds = parseFloat(stdout.trim());
+    
+    if (isNaN(durationInSeconds)) {
+      return null;
+    }
+    
+    // Format as MM:SS
+    const minutes = Math.floor(durationInSeconds / 60);
+    const seconds = Math.floor(durationInSeconds % 60);
+    return `${minutes}:${seconds.toString().padStart(2, '0')}`;
+  } catch (error) {
+    console.log(`    ⚠️  Could not extract duration from ${filePath}: ${error.message}`);
+    return null;
+  }
+}
+
+/**
  * Determine content type based on filename or default logic
  * This is a placeholder - you may want to customize this logic
  */
@@ -84,7 +114,7 @@ function determineContentType(index, totalVideos) {
 /**
  * Generate default video metadata
  */
-function generateVideoMetadata(uniqueId, sequentialNumber, paidFilename, previewFilename, totalExisting) {
+async function generateVideoMetadata(uniqueId, sequentialNumber, paidFilename, previewFilename, totalExisting, profileId) {
   const contentType = determineContentType(totalExisting + sequentialNumber - 1, 0);
   const mimetype = getMimeType(paidFilename);
   const isImage = mimetype.startsWith('image/');
@@ -93,6 +123,16 @@ function generateVideoMetadata(uniqueId, sequentialNumber, paidFilename, preview
   
   // Generate random price between $4.99 and $14.99 for paid content
   const basePrice = contentType === "paid" ? Math.floor(Math.random() * 1000) + 499 : 0;
+  
+  // Get video duration if it's a video file
+  let duration = "0:00";
+  if (!isImage) {
+    const paidFilePath = join(UPLOADS_DIR, profileId, paidFilename);
+    const extractedDuration = await getVideoDuration(paidFilePath);
+    if (extractedDuration) {
+      duration = extractedDuration;
+    }
+  }
   
   return {
     id: uniqueId,
@@ -104,7 +144,7 @@ function generateVideoMetadata(uniqueId, sequentialNumber, paidFilename, preview
       en: `Description for ${contentTypeName.toLowerCase()} ${totalExisting + sequentialNumber}`,
       fr: `Description de l'${contentTypeNameFr.toLowerCase()} ${totalExisting + sequentialNumber}`,
     },
-    duration: "0:00", // Placeholder - could be extracted with ffprobe
+    duration,
     price: basePrice,
     paidFilename,
     previewFilename,
@@ -210,6 +250,16 @@ async function processFolderVideos(folderPath, profileId, existingProfile) {
           videoData.uploadedAt = new Date().toISOString();
         }
         
+        // Update duration if it's a video and duration is missing or "0:00"
+        const isImage = videoData.mimetype && videoData.mimetype.startsWith('image/');
+        if (!isImage && (!videoData.duration || videoData.duration === "0:00")) {
+          const paidFilePath = join(folderPath, group.paidFilename);
+          const extractedDuration = await getVideoDuration(paidFilePath);
+          if (extractedDuration) {
+            videoData.duration = extractedDuration;
+          }
+        }
+        
         videos.push(videoData);
         // Mark as processed
         existingVideosMap.delete(group.paidFilename);
@@ -229,18 +279,19 @@ async function processFolderVideos(folderPath, profileId, existingProfile) {
   
   // Add new videos with generated metadata
   const existingCount = videos.length;
-  newVideos.forEach((newVideo, index) => {
+  for (let index = 0; index < newVideos.length; index++) {
+    const newVideo = newVideos[index];
     const uniqueId = extractUniqueId(newVideo.paidFilename);
-    videos.push(
-      generateVideoMetadata(
-        uniqueId,
-        index + 1,
-        newVideo.paidFilename,
-        newVideo.previewFilename,
-        existingCount
-      )
+    const metadata = await generateVideoMetadata(
+      uniqueId,
+      index + 1,
+      newVideo.paidFilename,
+      newVideo.previewFilename,
+      existingCount,
+      profileId
     );
-  });
+    videos.push(metadata);
+  }
   
   console.log(`    ✓ Found ${videos.length} complete content pair(s) (${videos.length - newVideos.length} existing, ${newVideos.length} new)`);
   
@@ -368,6 +419,18 @@ ${profilesObject}
 }
 
 /**
+ * Check if ffprobe is available
+ */
+async function checkFfprobe() {
+  try {
+    await execAsync("ffprobe -version");
+    return true;
+  } catch (error) {
+    return false;
+  }
+}
+
+/**
  * Main function
  */
 async function main() {
@@ -376,6 +439,15 @@ async function main() {
   console.log(`💾 Data directory: ${DATA_DIR}\n`);
   
   try {
+    // Check if ffprobe is available for video duration extraction
+    const ffprobeAvailable = await checkFfprobe();
+    if (!ffprobeAvailable) {
+      console.log("⚠️  Warning: ffprobe not found. Video durations will be set to '0:00'.");
+      console.log("   Install ffmpeg to enable video duration extraction: brew install ffmpeg\n");
+    } else {
+      console.log("✓ ffprobe found - video durations will be extracted\n");
+    }
+    
     // Check if uploads directory exists
     const uploadsExists = await fileExists(UPLOADS_DIR);
     if (!uploadsExists) {
