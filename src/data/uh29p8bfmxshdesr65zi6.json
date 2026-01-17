@@ -166,12 +166,12 @@
       "duration": "1:59",
       "price": 2900,
       "paidFilename": "paid_97p0clwa_5mm1v0qob5t0j2svljszy2n5dms72s.MP4",
-      "previewFilename": "preview_97p0clwa_5mm1v0qob5t0j2svljszy2n5dms72s.MP4",
+      "previewFilename": "preview_97p0clwa_r6w2n53j3rw4o8is719u5o224h888h.MP4",
       "type": "paid",
       "mimetype": "video/mp4",
       "uploadedAt": "2026-01-15T16:06:19.943Z",
       "paidThumbnail": "paid_97p0clwa_5mm1v0qob5t0j2svljszy2n5dms72s_thumb.jpg",
-      "previewThumbnail": "preview_97p0clwa_5mm1v0qob5t0j2svljszy2n5dms72s_thumb.jpg"
+      "previewThumbnail": "preview_97p0clwa_r6w2n53j3rw4o8is719u5o224h888h_thumb.jpg"
     },
     {
       "id": "9u9ipi4g",
@@ -812,26 +812,6 @@
       "uploadedAt": "2026-01-15T16:06:19.943Z",
       "paidThumbnail": "paid_yh1bdbz0_6jl7k4aoq2n2kjk6osgejtg1zhuvaw_thumb.jpg",
       "previewThumbnail": "preview_yh1bdbz0_6jl7k4aoq2n2kjk6osgejtg1zhuvaw_thumb.jpg"
-    },
-    {
-      "id": "yzb5s1jj",
-      "title": {
-        "en": "Video 43",
-        "fr": "Vidéo 43"
-      },
-      "description": {
-        "en": "Description for video 43",
-        "fr": "Description de l'vidéo 43"
-      },
-      "duration": "1:59",
-      "price": 1372,
-      "paidFilename": "paid_yzb5s1jj_jxhwajxi485bnqu8du1xlw6nppyvsz.MP4",
-      "previewFilename": "preview_yzb5s1jj_jxhwajxi485bnqu8du1xlw6nppyvsz.MP4",
-      "type": "paid",
-      "mimetype": "video/mp4",
-      "uploadedAt": "2026-01-15T16:06:19.943Z",
-      "paidThumbnail": "paid_yzb5s1jj_jxhwajxi485bnqu8du1xlw6nppyvsz_thumb.jpg",
-      "previewThumbnail": "preview_yzb5s1jj_jxhwajxi485bnqu8du1xlw6nppyvsz_thumb.jpg"
     },
     {
       "id": "zn5m8us5",

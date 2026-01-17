@@ -145,16 +145,32 @@ function isThumbnailFile(filename) {
 }
 
 /**
- * Get video/image dimensions
+ * Get video/image dimensions (without auto-rotation applied)
  */
 function getMediaDimensions(inputPath) {
   try {
+    // Get width and height from the stream
     const output = execSync(
       `ffprobe -v error -select_streams v:0 -show_entries stream=width,height -of csv=s=x:p=0 "${inputPath}"`,
       { encoding: "utf-8" }
     );
     const [width, height] = output.trim().split("x").map(Number);
-    return { width, height };
+    
+    // Check for rotation metadata
+    try {
+      const rotationOutput = execSync(
+        `ffprobe -v error -select_streams v:0 -show_entries stream_side_data=rotation -of default=nw=1:nk=1 "${inputPath}"`,
+        { encoding: "utf-8" }
+      );
+      const rotation = Math.abs(parseInt(rotationOutput.trim()) || 0);
+      
+      // If video is rotated 90 or 270 degrees, dimensions are already correct as stored
+      // FFmpeg will auto-rotate during processing, but we want the stored dimensions
+      return { width, height };
+    } catch {
+      // No rotation metadata, use dimensions as-is
+      return { width, height };
+    }
   } catch (error) {
     console.error(`  ⚠ Could not get dimensions, using default blur`);
     return null;
@@ -178,8 +194,9 @@ function generateVideoThumbnail(inputPath, outputPath) {
   console.log(`  → Generating video thumbnail: ${basename(outputPath)}`);
   try {
     // Extract a frame at 1 second and save as JPEG
+    // Use -noautorotate to keep original orientation
     execSync(
-      `ffmpeg -i "${inputPath}" -ss 00:00:01 -vframes 1 -q:v 2 -y "${outputPath}"`,
+      `ffmpeg -noautorotate -i "${inputPath}" -ss 00:00:01 -vframes 1 -q:v 2 -y "${outputPath}"`,
       { stdio: "inherit" }
     );
     return true;
@@ -205,13 +222,14 @@ function generateVideoPreview(inputPath, outputPath) {
 
     // Extract first 5 seconds and apply blur filter
     // Add padding, blur, then crop padding to prevent edge blur
+    // Use -noautorotate to prevent FFmpeg from auto-rotating the video
     const padding = Math.max(blurRadius * 3, 30);
     const videoFilter = dimensions
       ? `pad=iw+${padding * 2}:ih+${padding * 2}:${padding}:${padding}:black,boxblur=${blurRadius}:5,crop=${dimensions.width}:${dimensions.height}:${padding}:${padding}`
       : `boxblur=${blurRadius}:5`;
 
     execSync(
-      `ffmpeg -i "${inputPath}" -t 5 -vf "${videoFilter}" -c:v libx264 -preset fast -c:a copy -y "${outputPath}"`,
+      `ffmpeg -noautorotate -i "${inputPath}" -t 5 -vf "${videoFilter}" -c:v libx264 -preset fast -c:a copy -y "${outputPath}"`,
       { stdio: "inherit" }
     );
     return true;
@@ -237,13 +255,14 @@ function generateImagePreview(inputPath, outputPath) {
 
     // Apply blur filter to image
     // Add padding, blur, then crop padding to prevent edge blur
+    // Use -noautorotate to keep original orientation
     const padding = Math.max(blurRadius * 3, 30);
     const imageFilter = dimensions
       ? `pad=iw+${padding * 2}:ih+${padding * 2}:${padding}:${padding}:black,boxblur=${blurRadius}:5,crop=${dimensions.width}:${dimensions.height}:${padding}:${padding}`
       : `boxblur=${blurRadius}:5`;
 
     execSync(
-      `ffmpeg -i "${inputPath}" -vf "${imageFilter}" -y "${outputPath}"`,
+      `ffmpeg -noautorotate -i "${inputPath}" -vf "${imageFilter}" -y "${outputPath}"`,
       {
         stdio: "inherit",
       }
