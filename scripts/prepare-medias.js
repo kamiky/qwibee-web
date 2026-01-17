@@ -197,9 +197,10 @@ function generateVideoPreview(inputPath, outputPath) {
     );
 
     // Extract first 5 seconds and apply blur filter
-    // Scale up by 25%, blur, then center-crop back to prevent edge blur
+    // Add padding, blur, then crop padding to prevent edge blur
+    const padding = Math.max(blurRadius * 3, 30);
     const videoFilter = dimensions
-      ? `scale=iw*1.25:ih*1.25,boxblur=${blurRadius}:5,crop=${dimensions.width}:${dimensions.height}:(in_w-out_w)/2:(in_h-out_h)/2`
+      ? `pad=iw+${padding * 2}:ih+${padding * 2}:${padding}:${padding}:black,boxblur=${blurRadius}:5,crop=${dimensions.width}:${dimensions.height}:${padding}:${padding}`
       : `boxblur=${blurRadius}:5`;
 
     execSync(
@@ -228,9 +229,10 @@ function generateImagePreview(inputPath, outputPath) {
     );
 
     // Apply blur filter to image
-    // Scale up by 25%, blur, then center-crop back to prevent edge blur
+    // Add padding, blur, then crop padding to prevent edge blur
+    const padding = Math.max(blurRadius * 3, 30);
     const imageFilter = dimensions
-      ? `scale=iw*1.25:ih*1.25,boxblur=${blurRadius}:5,crop=${dimensions.width}:${dimensions.height}:(in_w-out_w)/2:(in_h-out_h)/2`
+      ? `pad=iw+${padding * 2}:ih+${padding * 2}:${padding}:${padding}:black,boxblur=${blurRadius}:5,crop=${dimensions.width}:${dimensions.height}:${padding}:${padding}`
       : `boxblur=${blurRadius}:5`;
 
     execSync(
