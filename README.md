@@ -7,7 +7,7 @@ A modern web application for creators to sell video content through memberships 
 - 🎥 **Video Content Platform**: Creators can sell videos individually or through monthly subscriptions
 - 💳 **Stripe Integration**: Secure payment processing for subscriptions and one-time purchases
 - 🔐 **Access Control**: Magic link authentication for purchased content
-- 📧 **Email Notifications**: Powered by Resend for transactional emails
+- 📧 **Email Notifications**: Contact form and transactional emails via backend API
 - 🌍 **i18n Support**: Multi-language support (English & French)
 - 🎨 **Modern UI**: Built with Tailwind CSS and Astro
 
@@ -15,8 +15,7 @@ A modern web application for creators to sell video content through memberships 
 
 - **Framework**: Astro 4.x
 - **Frontend**: React + Tailwind CSS
-- **Payments**: Stripe
-- **Email**: Resend
+- **Payments**: Stripe (via backend API)
 - **Deployment**: Node.js with PM2
 
 ## Project Structure
@@ -47,24 +46,16 @@ A modern web application for creators to sell video content through memberships 
 
 - Node.js 18+
 - Yarn or npm
-- Stripe account
-- Resend account
+- Backend API running (see `../api` directory)
 
 ### Environment Variables
 
 Create a `.env` file in the root:
 
 ```env
-# Stripe
-STRIPE_SECRET_KEY=sk_test_...
-STRIPE_PUBLISHABLE_KEY=pk_test_...
-STRIPE_WEBHOOK_SECRET=whsec_...
-
-# Resend
-RESEND_API_KEY=re_...
-
-# App
+# App URLs
 PUBLIC_APP_URL=http://localhost:4321
+PUBLIC_API_URL=http://localhost:5002
 ```
 
 ### Installation

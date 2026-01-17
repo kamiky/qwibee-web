@@ -5,9 +5,6 @@ interface ImportMetaEnv {
   // Application URLs
   readonly PUBLIC_APP_URL: string;
   readonly PUBLIC_API_URL: string;
-
-  // Email Configuration
-  readonly RESEND_API_KEY: string;
 }
 
 interface ImportMeta {
