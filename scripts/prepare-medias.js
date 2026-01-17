@@ -138,6 +138,13 @@ function isAlreadyProcessed(filename) {
 }
 
 /**
+ * Check if a file is a thumbnail file
+ */
+function isThumbnailFile(filename) {
+  return filename.includes("_thumb.");
+}
+
+/**
  * Get video/image dimensions
  */
 function getMediaDimensions(inputPath) {
@@ -296,25 +303,45 @@ async function processFile(folderPath, filename) {
     console.log(`\n  Checking for missing files: ${filename}`);
 
     const paidPath = join(folderPath, filename);
-    const previewFilename = `preview_${fileInfo.uniqueId}_${fileInfo.hash}${ext}`;
-    const previewPath = join(folderPath, previewFilename);
 
-    // Check if preview exists, generate if missing
-    const previewExists = await fileExists(previewPath);
-    if (!previewExists) {
-      console.log(`  → Preview missing, regenerating...`);
+    // Look for ANY preview file with matching ID, regardless of hash
+    const files = await readdir(folderPath);
+    let existingPreviewFile = null;
+    for (const file of files) {
+      if (file.startsWith(`preview_${fileInfo.uniqueId}_`)) {
+        const previewInfo = extractProcessedFilenameInfo(file);
+        if (previewInfo && !isThumbnailFile(file)) {
+          existingPreviewFile = file;
+          break;
+        }
+      }
+    }
+
+    // If no preview exists with this ID, generate a new one with a different hash
+    if (!existingPreviewFile) {
+      const previewHash = generateRandomString(30);
+      const previewFilename = `preview_${fileInfo.uniqueId}_${previewHash}${ext}`;
+      const previewPath = join(folderPath, previewFilename);
+
+      console.log(`  → Preview missing, generating with new hash...`);
       if (isVideo(filename)) {
         generateVideoPreview(paidPath, previewPath);
       } else if (isImage(filename)) {
         generateImagePreview(paidPath, previewPath);
       }
+
+      existingPreviewFile = previewFilename;
     }
+
+    // Extract preview file info for thumbnail generation
+    const previewInfo = extractProcessedFilenameInfo(existingPreviewFile);
+    const previewPath = join(folderPath, existingPreviewFile);
 
     // For videos, check and generate thumbnails
     if (isVideo(filename)) {
       const thumbnailExt = ".jpg";
       const paidThumbnailFilename = `paid_${fileInfo.uniqueId}_${fileInfo.hash}_thumb${thumbnailExt}`;
-      const previewThumbnailFilename = `preview_${fileInfo.uniqueId}_${fileInfo.hash}_thumb${thumbnailExt}`;
+      const previewThumbnailFilename = `preview_${previewInfo.uniqueId}_${previewInfo.hash}_thumb${thumbnailExt}`;
       const paidThumbnailPath = join(folderPath, paidThumbnailFilename);
       const previewThumbnailPath = join(folderPath, previewThumbnailFilename);
 
@@ -325,16 +352,13 @@ async function processFile(folderPath, filename) {
         generateVideoThumbnail(paidPath, paidThumbnailPath);
       }
 
-      // Generate thumbnail for preview video if missing (and preview exists)
-      if (previewExists || !previewExists) {
-        // Re-check preview existence after potential generation
-        const previewNowExists = await fileExists(previewPath);
-        if (previewNowExists) {
-          const previewThumbnailExists = await fileExists(previewThumbnailPath);
-          if (!previewThumbnailExists) {
-            console.log(`  → Preview thumbnail missing, generating...`);
-            generateVideoThumbnail(previewPath, previewThumbnailPath);
-          }
+      // Generate thumbnail for preview video if missing
+      const previewExists = await fileExists(previewPath);
+      if (previewExists) {
+        const previewThumbnailExists = await fileExists(previewThumbnailPath);
+        if (!previewThumbnailExists) {
+          console.log(`  → Preview thumbnail missing, generating...`);
+          generateVideoThumbnail(previewPath, previewThumbnailPath);
         }
       }
     }

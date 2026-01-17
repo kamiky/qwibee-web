@@ -229,22 +229,35 @@ async function processFolderVideos(folderPath, profileId, existingProfile) {
           }
         } else {
           // This is a video/image file
+          const isVideoFile = getMimeType(file).startsWith('video/');
+          
           if (isPaidFile(file)) {
             group.paidFilename = file;
           } else if (isPreviewFile(file)) {
-            group.previewFilename = file;
+            // Prefer video files over image files for preview
+            // If we already have a preview and this is a video, replace it
+            // If we don't have a preview, or current preview is image and this is video, use this
+            if (!group.previewFilename) {
+              group.previewFilename = file;
+            } else {
+              const currentIsVideo = getMimeType(group.previewFilename).startsWith('video/');
+              if (isVideoFile && !currentIsVideo) {
+                // Replace image preview with video preview
+                group.previewFilename = file;
+              }
+            }
           }
         }
       }
     }
   }
   
-  // Create a map of existing videos by their filenames for quick lookup
+  // Create a map of existing videos by their ID for quick lookup
   const existingVideosMap = new Map();
   if (existingProfile && existingProfile.videos) {
     existingProfile.videos.forEach(video => {
-      // Use paidFilename as the key since it's unique
-      existingVideosMap.set(video.paidFilename, video);
+      // Use the ID as the key since that's what we match on
+      existingVideosMap.set(video.id, video);
     });
   }
   
@@ -252,69 +265,69 @@ async function processFolderVideos(folderPath, profileId, existingProfile) {
   const videos = [];
   const newVideos = [];
   
-  // First, add all existing videos that still have matching files
+  // Process all video groups found in the folder
   for (const [uniqueId, group] of videoGroups.entries()) {
-    if (group.paidFilename && group.previewFilename) {
-      const existingVideo = existingVideosMap.get(group.paidFilename);
+    if (!group.paidFilename) {
+      console.log(`    ⚠️  No paid file found for ID ${uniqueId}`);
+      continue;
+    }
+    
+    const existingVideo = existingVideosMap.get(uniqueId);
+    
+    if (existingVideo) {
+      // Keep existing video data, just update file paths
+      const videoData = {
+        ...existingVideo,
+        paidFilename: group.paidFilename,
+        previewFilename: group.previewFilename || undefined,
+      };
       
-      if (existingVideo) {
-        // Keep existing video data, just ensure filenames and thumbnails match
-        const videoData = {
-          ...existingVideo,
-          paidFilename: group.paidFilename,
-          previewFilename: group.previewFilename,
-        };
-        
-        // Remove priceAfterPromotion if it exists (deprecated field)
-        delete videoData.priceAfterPromotion;
-        
-        // Ensure price is set correctly
-        if (existingVideo.type === "paid") {
-          videoData.price = existingVideo.price || 999;
-        } else {
-          videoData.price = 0;
-        }
-        
-        // Preserve uploadedAt if it exists, otherwise set it now
-        if (!videoData.uploadedAt) {
-          videoData.uploadedAt = new Date().toISOString();
-        }
-        
-        // Update duration if it's a video and duration is missing or "0:00"
-        const isImage = videoData.mimetype && videoData.mimetype.startsWith('image/');
-        if (!isImage && (!videoData.duration || videoData.duration === "0:00")) {
-          const paidFilePath = join(folderPath, group.paidFilename);
-          const extractedDuration = await getVideoDuration(paidFilePath);
-          if (extractedDuration) {
-            videoData.duration = extractedDuration;
-          }
-        }
-        
-        // Update thumbnails (for videos, use thumbnail files; for images, use the image files themselves)
-        if (isImage) {
-          videoData.paidThumbnail = group.paidFilename;
-          videoData.previewThumbnail = group.previewFilename;
-        } else {
-          if (group.paidThumbnail) videoData.paidThumbnail = group.paidThumbnail;
-          if (group.previewThumbnail) videoData.previewThumbnail = group.previewThumbnail;
-        }
-        
-        videos.push(videoData);
-        // Mark as processed
-        existingVideosMap.delete(group.paidFilename);
+      // Remove priceAfterPromotion if it exists (deprecated field)
+      delete videoData.priceAfterPromotion;
+      
+      // Ensure price is set correctly
+      if (existingVideo.type === "paid") {
+        videoData.price = existingVideo.price || 999;
       } else {
-        // This is a new video/image pair
-        newVideos.push({
-          paidFilename: group.paidFilename,
-          previewFilename: group.previewFilename,
-          paidThumbnail: group.paidThumbnail,
-          previewThumbnail: group.previewThumbnail,
-        });
+        videoData.price = 0;
       }
+      
+      // Preserve uploadedAt if it exists, otherwise set it now
+      if (!videoData.uploadedAt) {
+        videoData.uploadedAt = new Date().toISOString();
+      }
+      
+      // Update duration if it's a video and duration is missing or "0:00"
+      const isImage = videoData.mimetype && videoData.mimetype.startsWith('image/');
+      if (!isImage && (!videoData.duration || videoData.duration === "0:00")) {
+        const paidFilePath = join(folderPath, group.paidFilename);
+        const extractedDuration = await getVideoDuration(paidFilePath);
+        if (extractedDuration) {
+          videoData.duration = extractedDuration;
+        }
+      }
+      
+      // Update thumbnails (for videos, use thumbnail files; for images, use the image files themselves)
+      if (isImage) {
+        videoData.paidThumbnail = group.paidFilename;
+        videoData.previewThumbnail = group.previewFilename || undefined;
+      } else {
+        videoData.paidThumbnail = group.paidThumbnail || undefined;
+        videoData.previewThumbnail = group.previewThumbnail || undefined;
+      }
+      
+      videos.push(videoData);
+      // Mark as processed
+      existingVideosMap.delete(uniqueId);
     } else {
-      console.log(
-        `    ⚠️  Incomplete pair for ${uniqueId}: paid=${group.paidFilename}, preview=${group.previewFilename}`
-      );
+      // This is a new video/image
+      newVideos.push({
+        uniqueId,
+        paidFilename: group.paidFilename,
+        previewFilename: group.previewFilename,
+        paidThumbnail: group.paidThumbnail,
+        previewThumbnail: group.previewThumbnail,
+      });
     }
   }
   
@@ -322,9 +335,8 @@ async function processFolderVideos(folderPath, profileId, existingProfile) {
   const existingCount = videos.length;
   for (let index = 0; index < newVideos.length; index++) {
     const newVideo = newVideos[index];
-    const uniqueId = extractUniqueId(newVideo.paidFilename);
     const metadata = await generateVideoMetadata(
-      uniqueId,
+      newVideo.uniqueId,
       index + 1,
       newVideo.paidFilename,
       newVideo.previewFilename,
@@ -336,7 +348,10 @@ async function processFolderVideos(folderPath, profileId, existingProfile) {
     videos.push(metadata);
   }
   
-  console.log(`    ✓ Found ${videos.length} complete content pair(s) (${videos.length - newVideos.length} existing, ${newVideos.length} new)`);
+  console.log(`    ✓ Found ${videos.length} content item(s) (${videos.length - newVideos.length} existing, ${newVideos.length} new)`);
+  if (existingVideosMap.size > 0) {
+    console.log(`    ⚠️  ${existingVideosMap.size} item(s) from JSON not found in folder (removed)`);
+  }
   
   return videos;
 }
