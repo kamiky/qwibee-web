@@ -83,12 +83,8 @@ const getContentLabel = (contentType: ContentType) => {
   return "";
 };
 
-// Sort videos by uploadedAt (most recent first)
-const sortedVideos = [...profile.videos].sort((a, b) => {
-  const dateA = a.uploadedAt ? new Date(a.uploadedAt).getTime() : 0;
-  const dateB = b.uploadedAt ? new Date(b.uploadedAt).getTime() : 0;
-  return dateB - dateA; // Descending order (most recent first)
-});
+// Keep original order from data file
+const sortedVideos = [...profile.videos];
 ---
 
 <Layout
