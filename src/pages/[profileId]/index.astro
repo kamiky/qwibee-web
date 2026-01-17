@@ -17,6 +17,9 @@ const t = useTranslations(lang);
 const isDebugMode = import.meta.env.DEV && Astro.url.searchParams.has('debug');
 const simulateMode = isDebugMode ? Astro.url.searchParams.get('simulate') : null;
 
+// Check if debug=true to show media titles
+const showMediaTitles = Astro.url.searchParams.get('debug') === 'true';
+
 // Temporary constant for user plan - will be replaced with actual user data later
 const USER_PLAN = "free" as "free" | "membership"; // Options: 'free', 'membership', 'premium'
 let PURCHASED_VIDEO_IDS: string[] = []; // IDs of individually purchased videos - will be populated from backend
@@ -335,9 +338,11 @@ const sortedVideos = [...profile.videos].sort((a, b) => {
 
                   {/* Video Info */}
                   <div>
-                    <h3 class="text-base font-semibold text-gray-900 mb-1 line-clamp-1">
-                      {video.title[lang]}
-                    </h3>
+                    {showMediaTitles && (
+                      <h3 class="text-base font-semibold text-gray-900 mb-1 line-clamp-1">
+                        {video.title[lang]}
+                      </h3>
+                    )}
                     
                     {/* Pricing/Status line - show for unlocked content or paid content */}
                     <div class="flex items-center justify-between mb-1.5 video-status-line">
