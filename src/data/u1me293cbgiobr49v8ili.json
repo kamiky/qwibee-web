@@ -10,7 +10,7 @@
     "fr": "Créateur de contenu exclusif partageant des vidéos premium"
   },
   "avatar": "/uploads/u1me293cbgiobr49v8ili/paid_0l32k758_r0b41y40nj0cq22igigklbjpkwsorx.jpg",
-  "membershipPrice": 999,
+  "membershipPrice": 450,
   "promotionPercentage": 0,
   "videos": [
     {
@@ -407,7 +407,7 @@
       "price": 980,
       "paidFilename": "paid_js8hh2ru_xojr6nfziyauzkwlffmcgyqsjdiof2.mp4",
       "previewFilename": "preview_js8hh2ru_cf794vwirj2ro693nsw39m3uatylcs.mp4",
-      "type": "paid",
+      "type": "membership",
       "mimetype": "video/mp4",
       "uploadedAt": "2026-01-15T16:06:19.936Z",
       "paidThumbnail": "paid_js8hh2ru_xojr6nfziyauzkwlffmcgyqsjdiof2_thumb.jpg",
@@ -464,7 +464,7 @@
         "fr": "Description de l'vidéo 23"
       },
       "duration": "0:13",
-      "price": 962,
+      "price": 0,
       "paidFilename": "paid_l6q258pk_deyze00xr4u6kzfgatp8lf8kfqfjbq.mp4",
       "previewFilename": "preview_l6q258pk_a9093g9uw1gw6lhwrteg8gusytlx9j.mp4",
       "type": "free",
@@ -504,7 +504,7 @@
         "fr": "Description de l'image 25"
       },
       "duration": "0:00",
-      "price": 825,
+      "price": 0,
       "paidFilename": "paid_onw9otov_h39w8k5mwmaxy1hj61x944alhaunlw.jpg",
       "previewFilename": "preview_onw9otov_h39w8k5mwmaxy1hj61x944alhaunlw.jpg",
       "type": "free",
@@ -544,7 +544,7 @@
         "fr": "Description de l'image 27"
       },
       "duration": "0:00",
-      "price": 1040,
+      "price": 0,
       "paidFilename": "paid_ryjnsaxe_7khvlcpt3qdtavzf82yrmaldalnzu7.jpg",
       "previewFilename": "preview_ryjnsaxe_7khvlcpt3qdtavzf82yrmaldalnzu7.jpg",
       "type": "free",
