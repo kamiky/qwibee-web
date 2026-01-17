@@ -481,12 +481,39 @@ async function main() {
   console.log("🎬 Starting media preparation script...\n");
   console.log(`📂 Uploads directory: ${UPLOADS_DIR}\n`);
 
+  // Check for specific profile ID parameter
+  const specificProfileId = process.argv[2];
+  if (specificProfileId) {
+    console.log(`🎯 Processing specific profile: ${specificProfileId}\n`);
+  }
+
   try {
     // Check if uploads directory exists
     const uploadsExists = await fileExists(UPLOADS_DIR);
     if (!uploadsExists) {
       console.error(`✗ Uploads directory does not exist: ${UPLOADS_DIR}`);
       process.exit(1);
+    }
+
+    // If a specific profile ID is provided, verify it exists
+    if (specificProfileId) {
+      const specificPath = join(UPLOADS_DIR, specificProfileId);
+      const specificExists = await fileExists(specificPath);
+      if (!specificExists) {
+        console.error(`✗ Profile folder does not exist: ${specificProfileId}`);
+        process.exit(1);
+      }
+
+      const stats = await stat(specificPath);
+      if (!stats.isDirectory()) {
+        console.error(`✗ Path is not a directory: ${specificProfileId}`);
+        process.exit(1);
+      }
+
+      // Process only the specific folder
+      await processFolder(specificPath);
+      console.log("\n\n✅ Media preparation completed successfully!");
+      return;
     }
 
     // STEP 1: Rename folders to user ID format (u[20-length-hash])

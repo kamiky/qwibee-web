@@ -497,6 +497,12 @@ async function main() {
   console.log(`📂 Uploads directory: ${UPLOADS_DIR}`);
   console.log(`💾 Data directory: ${DATA_DIR}\n`);
   
+  // Check for specific profile ID parameter
+  const specificProfileId = process.argv[2];
+  if (specificProfileId) {
+    console.log(`🎯 Processing specific profile: ${specificProfileId}\n`);
+  }
+  
   try {
     // Check if ffprobe is available for video duration extraction
     const ffprobeAvailable = await checkFfprobe();
@@ -519,6 +525,34 @@ async function main() {
     if (!dataExists) {
       console.error(`✗ Data directory does not exist: ${DATA_DIR}`);
       process.exit(1);
+    }
+    
+    // If a specific profile ID is provided, process only that one
+    if (specificProfileId) {
+      const specificPath = join(UPLOADS_DIR, specificProfileId);
+      const specificExists = await fileExists(specificPath);
+      if (!specificExists) {
+        console.error(`✗ Profile folder does not exist: ${specificProfileId}`);
+        process.exit(1);
+      }
+
+      const stats = await stat(specificPath);
+      if (!stats.isDirectory()) {
+        console.error(`✗ Path is not a directory: ${specificProfileId}`);
+        process.exit(1);
+      }
+
+      // Generate profile JSON for the specific profile
+      const profile = await generateProfileJson(specificPath, specificProfileId);
+      
+      // Write JSON file
+      const jsonPath = join(DATA_DIR, `${specificProfileId}.json`);
+      await writeFile(jsonPath, JSON.stringify(profile, null, 2), "utf-8");
+      console.log(`  ✅ Written: ${specificProfileId}.json\n`);
+      
+      console.log("\n✅ Data generation completed successfully for profile:", specificProfileId);
+      console.log("\n⚠️  Note: profiles.ts was not regenerated. Run without profile ID to regenerate profiles.ts");
+      return;
     }
     
     // Get all folders in uploads directory
