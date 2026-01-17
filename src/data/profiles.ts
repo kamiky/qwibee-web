@@ -40,8 +40,10 @@ export interface Profile {
 
 import u1me293cbgiobr49v8ili from "./u1me293cbgiobr49v8ili.json";
 import uh29p8bfmxshdesr65zi6 from "./uh29p8bfmxshdesr65zi6.json";
+import uxykli0kh9iyafl3dicyd from "./uxykli0kh9iyafl3dicyd.json";
 
 export const profiles: Record<string, Profile> = {
   u1me293cbgiobr49v8ili: u1me293cbgiobr49v8ili as Profile,
   uh29p8bfmxshdesr65zi6: uh29p8bfmxshdesr65zi6 as Profile,
+  uxykli0kh9iyafl3dicyd: uxykli0kh9iyafl3dicyd as Profile,
 };
