@@ -26,8 +26,14 @@ interface ProfilePageData {
 }
 
 export function initProfilePage(data: ProfilePageData) {
-  const { profileId: currentProfileId, displayName, promotionPercentage, videos: profileVideos, debug } = data;
-  
+  const {
+    profileId: currentProfileId,
+    displayName,
+    promotionPercentage,
+    videos: profileVideos,
+    debug,
+  } = data;
+
   // Helper function to calculate promotional price
   const calculatePromotionalPrice = (originalPrice: number): number => {
     if (!promotionPercentage || promotionPercentage === 0) {
@@ -47,31 +53,35 @@ export function initProfilePage(data: ProfilePageData) {
   const checkMembershipAccess = async () => {
     // Debug mode: simulate different membership levels
     if (debug.isDebugMode) {
-      console.log(`🔧 Debug mode active: simulate=${debug.simulateMode || 'free-only'}`);
-      
-      if (debug.simulateMode === 'all') {
+      console.log(
+        `🔧 Debug mode active: simulate=${debug.simulateMode || "free-only"}`
+      );
+
+      if (debug.simulateMode === "all") {
         // Simulate having membership + all content purchased
-        console.log('  → Simulating: membership + all paid content unlocked');
-        return { 
-          hasAccess: true, 
-          membership: { status: 'active', profileId: currentProfileId }, 
-          purchasedContent: profileVideos.map(v => v.id) 
+        console.log("  → Simulating: membership + all paid content unlocked");
+        return {
+          hasAccess: true,
+          membership: { status: "active", profileId: currentProfileId },
+          purchasedContent: profileVideos.map((v) => v.id),
         };
-      } else if (debug.simulateMode === 'membership') {
+      } else if (debug.simulateMode === "membership") {
         // Simulate having membership only (no paid content)
-        console.log('  → Simulating: membership only (free + membership content)');
-        return { 
-          hasAccess: true, 
-          membership: { status: 'active', profileId: currentProfileId }, 
-          purchasedContent: [] 
+        console.log(
+          "  → Simulating: membership only (free + membership content)"
+        );
+        return {
+          hasAccess: true,
+          membership: { status: "active", profileId: currentProfileId },
+          purchasedContent: [],
         };
       } else {
         // Default debug mode: no membership, no purchased content (free only)
-        console.log('  → Simulating: no membership (free content only)');
-        return { 
-          hasAccess: false, 
-          membership: null, 
-          purchasedContent: [] 
+        console.log("  → Simulating: no membership (free content only)");
+        return {
+          hasAccess: false,
+          membership: null,
+          purchasedContent: [],
         };
       }
     }
@@ -126,20 +136,27 @@ export function initProfilePage(data: ProfilePageData) {
   };
 
   // Function to unlock membership videos
-  function unlockMembershipVideos() {
+  function unlockMembershipVideos(forceReload = false) {
     // In debug mode, access is already simulated server-side, so no need to reload
     if (debug.isDebugMode) {
-      console.log("Debug mode: Membership access already simulated server-side, skipping reload");
+      console.log(
+        "Debug mode: Membership access already simulated server-side, skipping reload"
+      );
       return;
     }
-    
-    // Note: Since we're using server-side rendering, unlocking requires a page refresh
-    // to get the updated paid content URLs. For now, we just show visual indicators.
-    // In the future, we could fetch updated URLs via API.
-    console.log("Membership unlocked - page refresh recommended to load paid content");
-    
-    // For now, just reload the page to get the correct paid URLs
-    window.location.reload();
+
+    // Only reload if explicitly requested (e.g., after fresh membership activation)
+    // Don't reload on every page load if user already has membership
+    if (forceReload) {
+      console.log(
+        "Membership unlocked - reloading to load paid content"
+      );
+      window.location.reload();
+    } else {
+      console.log(
+        "Membership detected - content already loaded"
+      );
+    }
   }
 
   // Function to update membership UI
@@ -207,14 +224,18 @@ export function initProfilePage(data: ProfilePageData) {
   function unlockPaidContentVideos(purchasedVideoIds: string[]) {
     // In debug mode, access is already simulated server-side, so no need to reload
     if (debug.isDebugMode) {
-      console.log("Debug mode: Purchased content access already simulated server-side, skipping reload");
+      console.log(
+        "Debug mode: Purchased content access already simulated server-side, skipping reload"
+      );
       return;
     }
-    
+
     // Note: Since we're using server-side rendering, unlocking requires a page refresh
     // to get the updated paid content URLs. For now, we just show visual indicators.
-    console.log(`${purchasedVideoIds.length} videos purchased - page refresh recommended to load paid content`);
-    
+    console.log(
+      `${purchasedVideoIds.length} videos purchased - page refresh recommended to load paid content`
+    );
+
     // For now, just reload the page to get the correct paid URLs
     if (purchasedVideoIds.length > 0) {
       window.location.reload();
@@ -247,7 +268,7 @@ export function initProfilePage(data: ProfilePageData) {
   // Function to show content type badges (Members/-17%) for subscribed users
   function showContentTypeBadges() {
     // Find all content type badges (both membership and paid)
-    const badges = document.querySelectorAll('.content-type-badge');
+    const badges = document.querySelectorAll(".content-type-badge");
 
     badges.forEach((badge) => {
       (badge as HTMLElement).style.display = "block";
@@ -265,8 +286,8 @@ export function initProfilePage(data: ProfilePageData) {
       }
 
       if (hasAccess && membership) {
-        // Unlock membership videos
-        unlockMembershipVideos();
+        // Unlock membership videos (no reload on normal page load)
+        unlockMembershipVideos(false);
 
         // Show paid content pricing for subscribed users
         showPaidContentPricing();
@@ -335,6 +356,60 @@ export function initProfilePage(data: ProfilePageData) {
             const purchasedForProfile = purchasedContent
               .filter((pc: any) => pc.profileId === currentProfileId)
               .map((pc: any) => pc.videoId);
+
+            // Find the purchase record for this video to get the payment intent ID
+            const purchase = purchasedContent.find(
+              (pc: any) =>
+                pc.profileId === currentProfileId &&
+                pc.videoId === purchasedVideoId
+            );
+
+            // Generate invoice if we have a payment intent ID
+            if (purchase?.stripePaymentIntentId) {
+              try {
+                console.log(
+                  `🧾 Generating invoice for payment: ${purchase.stripePaymentIntentId}`
+                );
+                const invoiceResponse = await fetch(
+                  "/api/stripe/generate-invoice",
+                  {
+                    method: "POST",
+                    headers: {
+                      "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify({
+                      paymentIntentId: purchase.stripePaymentIntentId,
+                    }),
+                  }
+                );
+
+                if (invoiceResponse.ok) {
+                  const invoiceData = await invoiceResponse.json();
+                  if (invoiceData.data.alreadyExists) {
+                    console.log(
+                      `✓ Invoice already exists: ${invoiceData.data.invoiceId}`
+                    );
+                  } else {
+                    console.log(
+                      `✓ Invoice generated: ${invoiceData.data.invoiceId}`
+                    );
+                    if (invoiceData.data.invoiceUrl) {
+                      console.log(
+                        `  View invoice: ${invoiceData.data.invoiceUrl}`
+                      );
+                    }
+                  }
+                } else {
+                  console.error(
+                    "Failed to generate invoice:",
+                    await invoiceResponse.text()
+                  );
+                }
+              } catch (invoiceError) {
+                console.error("Error generating invoice:", invoiceError);
+                // Don't block the main flow if invoice generation fails
+              }
+            }
 
             // Unlock the purchased video immediately
             unlockPaidContentVideos(purchasedForProfile);
@@ -411,7 +486,13 @@ export function initProfilePage(data: ProfilePageData) {
         });
 
         if (!response.ok) {
-          throw new Error("Failed to verify session");
+          const errorData = await response
+            .json()
+            .catch(() => ({ error: "Unknown error" }));
+          const errorMessage =
+            errorData.error || errorData.message || "Failed to verify session";
+          console.error("Backend error:", errorData);
+          throw new Error(errorMessage);
         }
 
         const data = await response.json();
@@ -421,8 +502,16 @@ export function initProfilePage(data: ProfilePageData) {
         localStorage.setItem("wmf_access_token", token);
         localStorage.setItem("wmf_profile_id", currentProfileId);
 
-        // Unlock membership videos immediately
-        unlockMembershipVideos();
+        // Remove query params from URL BEFORE reloading
+        // This prevents infinite loop when unlockMembershipVideos() reloads the page
+        window.history.replaceState(
+          {},
+          document.title,
+          window.location.pathname
+        );
+
+        // Unlock membership videos immediately (this will reload the page)
+        unlockMembershipVideos(true); // forceReload = true for fresh activation
 
         // Show paid content pricing for subscribed users
         showPaidContentPricing();
@@ -452,17 +541,21 @@ export function initProfilePage(data: ProfilePageData) {
           renewalDate: "Feb. 15, 2026", // TODO: Get from API response
           endDate: null,
         });
+      } catch (error) {
+        console.error("Error verifying session:", error);
 
-        // Remove query params from URL
+        // Remove query params even on error to prevent repeated alerts
         window.history.replaceState(
           {},
           document.title,
           window.location.pathname
         );
-      } catch (error) {
-        console.error("Error verifying session:", error);
+
+        // Show detailed error message
+        const errorMessage =
+          error instanceof Error ? error.message : "Unknown error";
         alert(
-          "Payment successful, but failed to activate membership. Please contact support."
+          `Payment successful, but failed to activate membership.\n\nError: ${errorMessage}\n\nPlease contact support with session ID: ${sessionId}`
         );
       }
     })();
@@ -776,10 +869,10 @@ export function initProfilePage(data: ProfilePageData) {
         }
 
         const currentUrl = window.location.origin + window.location.pathname;
-        
+
         // Calculate the promotional price to send to Stripe
         const finalPrice = calculatePromotionalPrice(videoData.price);
-        
+
         const response = await fetch(
           "/api/stripe/create-content-checkout-session",
           {
@@ -861,7 +954,7 @@ export function initProfilePage(data: ProfilePageData) {
   customPlayButtons.forEach((playButton) => {
     playButton.addEventListener("click", (e) => {
       e.stopPropagation();
-      
+
       const container = (playButton as HTMLElement).closest(".video-container");
       if (!container) return;
 
@@ -873,15 +966,15 @@ export function initProfilePage(data: ProfilePageData) {
       // Only handle video elements, skip images
       if (videoElement && videoElement.tagName === "VIDEO") {
         const video = videoElement as HTMLVideoElement;
-        
+
         // Get the video source (already filtered by access on server side)
         const videoSrc = video.getAttribute("data-video-src");
         const mimetype = video.getAttribute("data-mimetype") || "video/mp4";
-        
+
         if (videoSrc) {
           // Create and add source element
           video.innerHTML = `<source src="${videoSrc}" type="${mimetype}">`;
-          
+
           // Load and play the video
           video.setAttribute("controls", "true");
           video.classList.remove("hidden");
@@ -957,32 +1050,33 @@ export function initProfilePage(data: ProfilePageData) {
   };
 
   // Initialize fullscreen viewer
-  const { modal: fullscreenModal, image: fullscreenImage } = createFullscreenViewer();
+  const { modal: fullscreenModal, image: fullscreenImage } =
+    createFullscreenViewer();
 
   // Add click handlers to all images
   const imageCards = document.querySelectorAll(".video-card");
   imageCards.forEach((card) => {
     const mediaElement = card.querySelector(".video-player");
-    
+
     // Only handle images
     if (mediaElement && mediaElement.tagName === "IMG") {
       const img = mediaElement as HTMLImageElement;
       const container = img.closest(".video-container");
-      
+
       // Make the entire container clickable for images
       if (container) {
         (container as HTMLElement).style.cursor = "pointer";
-        
+
         container.addEventListener("click", (e) => {
           e.stopPropagation();
-          
+
           const hasAccess = img.getAttribute("data-has-access") === "true";
           const paidSrc = img.getAttribute("data-paid-src");
           const previewSrc = img.getAttribute("data-preview-src");
-          
+
           // Show the appropriate image (unlocked or blurred preview)
           const imageSrc = hasAccess ? paidSrc : previewSrc;
-          
+
           if (imageSrc) {
             fullscreenImage.src = imageSrc;
             fullscreenModal.classList.remove("hidden");
