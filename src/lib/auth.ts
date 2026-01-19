@@ -20,12 +20,20 @@ export interface AuthTokens {
 
 /**
  * Store authentication tokens and user info
+ * Stores in both localStorage (for client) and cookies (for server SSR)
  */
 export function storeAuth(tokens: AuthTokens): void {
   if (typeof window !== "undefined") {
+    // Store in localStorage (backwards compatible)
     localStorage.setItem(ACCESS_TOKEN_KEY, tokens.accessToken);
     localStorage.setItem(REFRESH_TOKEN_KEY, tokens.refreshToken);
     localStorage.setItem(USER_KEY, JSON.stringify(tokens.user));
+    
+    // Also store access token in cookie for server-side access
+    // Set to expire in 7 days (access tokens are short-lived but we refresh them)
+    const expires = new Date();
+    expires.setDate(expires.getDate() + 7);
+    document.cookie = `${ACCESS_TOKEN_KEY}=${tokens.accessToken}; path=/; expires=${expires.toUTCString()}; SameSite=Lax`;
   }
 }
 
@@ -87,12 +95,16 @@ export function getAuth(): AuthTokens | null {
 
 /**
  * Clear all authentication data
+ * Clears both localStorage and cookies
  */
 export function clearAuth(): void {
   if (typeof window !== "undefined") {
     localStorage.removeItem(ACCESS_TOKEN_KEY);
     localStorage.removeItem(REFRESH_TOKEN_KEY);
     localStorage.removeItem(USER_KEY);
+    
+    // Clear cookie
+    document.cookie = `${ACCESS_TOKEN_KEY}=; path=/; expires=Thu, 01 Jan 1970 00:00:00 UTC; SameSite=Lax`;
   }
 }
 
@@ -181,6 +193,11 @@ export async function refreshAccessToken(): Promise<boolean> {
       if (typeof window !== "undefined") {
         localStorage.setItem(ACCESS_TOKEN_KEY, data.data.accessToken);
         localStorage.setItem(USER_KEY, JSON.stringify(data.data.user));
+        
+        // Update cookie
+        const expires = new Date();
+        expires.setDate(expires.setDate() + 7);
+        document.cookie = `${ACCESS_TOKEN_KEY}=${data.data.accessToken}; path=/; expires=${expires.toUTCString()}; SameSite=Lax`;
       }
       return true;
     }

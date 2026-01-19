@@ -20,9 +20,52 @@ const simulateMode = isDebugMode ? Astro.url.searchParams.get('simulate') : null
 // Check if debug=true to show media titles
 const showMediaTitles = Astro.url.searchParams.get('debug') === 'true';
 
-// Temporary constant for user plan - will be replaced with actual user data later
-const USER_PLAN = "free" as "free" | "membership"; // Options: 'free', 'membership', 'premium'
-let PURCHASED_VIDEO_IDS: string[] = []; // IDs of individually purchased videos - will be populated from backend
+// Check user authentication and access on server-side
+let USER_PLAN: "free" | "membership" = "free";
+let PURCHASED_VIDEO_IDS: string[] = [];
+
+// Get access token from cookies
+const accessToken = Astro.cookies.get('wmf_access_token')?.value || 
+                    (Astro.request.headers.get('cookie')?.match(/wmf_access_token=([^;]+)/)?.[1]);
+
+if (accessToken) {
+  try {
+    // Verify token with backend to get memberships and purchased content
+    const backendUrl = import.meta.env.PUBLIC_API_URL || 'http://localhost:5002';
+    const response = await fetch(`${backendUrl}/auth/verify-token`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ token: accessToken }),
+    });
+
+    if (response.ok) {
+      const data = await response.json();
+      
+      // Check if user has active membership for this profile
+      if (data.data.valid && data.data.memberships) {
+        const membership = data.data.memberships.find(
+          (m: any) => m.profileId === profileId && (m.status === 'active' || m.status === 'trialing')
+        );
+        
+        if (membership) {
+          USER_PLAN = "membership";
+        }
+      }
+      
+      // Get purchased content for this profile
+      if (data.data.purchasedContent) {
+        PURCHASED_VIDEO_IDS = data.data.purchasedContent
+          .filter((pc: any) => pc.profileId === profileId)
+          .map((pc: any) => pc.videoId);
+      }
+    }
+  } catch (error) {
+    console.error('Error verifying token on server:', error);
+    // Continue with USER_PLAN = "free" if verification fails
+  }
+}
 
 // Get profile data
 const profile = profiles[profileId || ""];

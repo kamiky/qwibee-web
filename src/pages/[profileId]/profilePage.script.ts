@@ -1,5 +1,6 @@
 import { useTranslations } from "@/i18n/translations";
 import type { Language } from "@/i18n/translations";
+import { storeAuth } from "@/lib/auth";
 
 // Type definitions
 interface VideoData {
@@ -148,14 +149,10 @@ export function initProfilePage(data: ProfilePageData) {
     // Only reload if explicitly requested (e.g., after fresh membership activation)
     // Don't reload on every page load if user already has membership
     if (forceReload) {
-      console.log(
-        "Membership unlocked - reloading to load paid content"
-      );
+      console.log("Membership unlocked - reloading to load paid content");
       window.location.reload();
     } else {
-      console.log(
-        "Membership detected - content already loaded"
-      );
+      console.log("Membership detected - content already loaded");
     }
   }
 
@@ -221,7 +218,10 @@ export function initProfilePage(data: ProfilePageData) {
   };
 
   // Function to unlock paid content videos
-  function unlockPaidContentVideos(purchasedVideoIds: string[]) {
+  function unlockPaidContentVideos(
+    purchasedVideoIds: string[],
+    forceReload = false
+  ) {
     // In debug mode, access is already simulated server-side, so no need to reload
     if (debug.isDebugMode) {
       console.log(
@@ -230,15 +230,17 @@ export function initProfilePage(data: ProfilePageData) {
       return;
     }
 
-    // Note: Since we're using server-side rendering, unlocking requires a page refresh
-    // to get the updated paid content URLs. For now, we just show visual indicators.
-    console.log(
-      `${purchasedVideoIds.length} videos purchased - page refresh recommended to load paid content`
-    );
-
-    // For now, just reload the page to get the correct paid URLs
-    if (purchasedVideoIds.length > 0) {
+    // Only reload if explicitly requested (e.g., after fresh content purchase)
+    // Don't reload on every page load if user already has purchased content
+    if (forceReload && purchasedVideoIds.length > 0) {
+      console.log(
+        `${purchasedVideoIds.length} videos purchased - reloading to load paid content`
+      );
       window.location.reload();
+    } else if (purchasedVideoIds.length > 0) {
+      console.log(
+        `${purchasedVideoIds.length} purchased videos detected - content already loaded`
+      );
     }
   }
 
@@ -280,9 +282,9 @@ export function initProfilePage(data: ProfilePageData) {
   // Check access on page load and update UI
   checkMembershipAccess().then(
     ({ hasAccess, membership, purchasedContent }) => {
-      // Unlock purchased content videos
+      // Unlock purchased content videos (no reload on normal page load)
       if (purchasedContent && purchasedContent.length > 0) {
-        unlockPaidContentVideos(purchasedContent);
+        unlockPaidContentVideos(purchasedContent, false);
       }
 
       if (hasAccess && membership) {
@@ -411,9 +413,6 @@ export function initProfilePage(data: ProfilePageData) {
               }
             }
 
-            // Unlock the purchased video immediately
-            unlockPaidContentVideos(purchasedForProfile);
-
             // Show success message
             const statusContainer = document.getElementById(
               "membership-status-message"
@@ -438,14 +437,25 @@ export function initProfilePage(data: ProfilePageData) {
           }
         }
 
-        // Remove query params from URL
+        // Remove query params from URL BEFORE reloading
+        // This prevents infinite loop when unlockPaidContentVideos() reloads the page
         window.history.replaceState(
           {},
           document.title,
           window.location.pathname
         );
+
+        // Unlock the purchased video (this will reload the page if forceReload=true)
+        unlockPaidContentVideos(purchasedForProfile, true);
       } catch (error) {
         console.error("Error processing content purchase:", error);
+        
+        // Remove query params even on error to prevent repeated processing
+        window.history.replaceState(
+          {},
+          document.title,
+          window.location.pathname
+        );
       }
     })();
   } else if (contentPurchaseStatus === "canceled") {
@@ -496,10 +506,15 @@ export function initProfilePage(data: ProfilePageData) {
         }
 
         const data = await response.json();
-        const token = data.data.accessToken;
 
-        // Store token in localStorage
-        localStorage.setItem("wmf_access_token", token);
+        // Store auth data (includes setting cookie for server-side access)
+        storeAuth({
+          accessToken: data.data.accessToken,
+          refreshToken: data.data.refreshToken,
+          user: data.data.user,
+        });
+        
+        // Store profile ID
         localStorage.setItem("wmf_profile_id", currentProfileId);
 
         // Remove query params from URL BEFORE reloading
