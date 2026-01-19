@@ -1,6 +1,6 @@
 /**
  * Authentication utilities for watchmefans
- * Handles access tokens, refresh tokens, and user sessions
+ * Handles access tokens, refresh tokens, and user sessions using cookies
  */
 
 const ACCESS_TOKEN_KEY = "wmf_access_token";
@@ -19,56 +19,89 @@ export interface AuthTokens {
 }
 
 /**
- * Store authentication tokens and user info
- * Stores in both localStorage (for client) and cookies (for server SSR)
+ * Helper to get cookie value by name
+ */
+function getCookie(name: string): string | null {
+  if (typeof document === "undefined") return null;
+  
+  const value = `; ${document.cookie}`;
+  const parts = value.split(`; ${name}=`);
+  if (parts.length === 2) {
+    const cookieValue = parts.pop()?.split(';').shift();
+    return cookieValue ? decodeURIComponent(cookieValue) : null;
+  }
+  return null;
+}
+
+/**
+ * Helper to set cookie
+ */
+function setCookie(name: string, value: string, days: number = 7): void {
+  if (typeof document === "undefined") return;
+  
+  const expires = new Date();
+  expires.setDate(expires.getDate() + days);
+  
+  // Use Secure in production, allow non-secure in development
+  const isProduction = window.location.protocol === 'https:';
+  const secureFlag = isProduction ? '; Secure' : '';
+  
+  // URL encode the value to handle special characters
+  const encodedValue = encodeURIComponent(value);
+  document.cookie = `${name}=${encodedValue}; path=/; expires=${expires.toUTCString()}; SameSite=Lax${secureFlag}`;
+}
+
+/**
+ * Helper to delete cookie
+ */
+function deleteCookie(name: string): void {
+  if (typeof document === "undefined") return;
+  document.cookie = `${name}=; path=/; expires=Thu, 01 Jan 1970 00:00:00 UTC; SameSite=Lax`;
+}
+
+/**
+ * Store authentication tokens and user info in cookies
  */
 export function storeAuth(tokens: AuthTokens): void {
   if (typeof window !== "undefined") {
-    // Store in localStorage (backwards compatible)
-    localStorage.setItem(ACCESS_TOKEN_KEY, tokens.accessToken);
-    localStorage.setItem(REFRESH_TOKEN_KEY, tokens.refreshToken);
-    localStorage.setItem(USER_KEY, JSON.stringify(tokens.user));
+    // Store all auth data in cookies
+    setCookie(ACCESS_TOKEN_KEY, tokens.accessToken, 7);
+    setCookie(REFRESH_TOKEN_KEY, tokens.refreshToken, 90); // Refresh tokens last longer
+    setCookie(USER_KEY, JSON.stringify(tokens.user), 90);
     
-    // Also store access token in cookie for server-side access
-    // Set to expire in 7 days (access tokens are short-lived but we refresh them)
-    const expires = new Date();
-    expires.setDate(expires.getDate() + 7);
-    document.cookie = `${ACCESS_TOKEN_KEY}=${tokens.accessToken}; path=/; expires=${expires.toUTCString()}; SameSite=Lax`;
+    // Clean up old localStorage data if it exists
+    localStorage.removeItem(ACCESS_TOKEN_KEY);
+    localStorage.removeItem(REFRESH_TOKEN_KEY);
+    localStorage.removeItem(USER_KEY);
   }
 }
 
 /**
- * Get access token
+ * Get access token from cookie
  */
 export function getAccessToken(): string | null {
-  if (typeof window !== "undefined") {
-    return localStorage.getItem(ACCESS_TOKEN_KEY);
-  }
-  return null;
+  return getCookie(ACCESS_TOKEN_KEY);
 }
 
 /**
- * Get refresh token
+ * Get refresh token from cookie
  */
 export function getRefreshToken(): string | null {
-  if (typeof window !== "undefined") {
-    return localStorage.getItem(REFRESH_TOKEN_KEY);
-  }
-  return null;
+  return getCookie(REFRESH_TOKEN_KEY);
 }
 
 /**
- * Get stored user info
+ * Get stored user info from cookie
  */
 export function getUser(): User | null {
-  if (typeof window !== "undefined") {
-    const userStr = localStorage.getItem(USER_KEY);
-    if (userStr) {
-      try {
-        return JSON.parse(userStr);
-      } catch (error) {
-        return null;
-      }
+  const userStr = getCookie(USER_KEY);
+  if (userStr) {
+    try {
+      // getCookie already decodes, so just parse
+      return JSON.parse(userStr);
+    } catch (error) {
+      console.error("Error parsing user data from cookie:", error);
+      return null;
     }
   }
   return null;
@@ -94,17 +127,19 @@ export function getAuth(): AuthTokens | null {
 }
 
 /**
- * Clear all authentication data
- * Clears both localStorage and cookies
+ * Clear all authentication data from cookies
  */
 export function clearAuth(): void {
   if (typeof window !== "undefined") {
+    deleteCookie(ACCESS_TOKEN_KEY);
+    deleteCookie(REFRESH_TOKEN_KEY);
+    deleteCookie(USER_KEY);
+    
+    // Clean up old localStorage data if it exists
     localStorage.removeItem(ACCESS_TOKEN_KEY);
     localStorage.removeItem(REFRESH_TOKEN_KEY);
     localStorage.removeItem(USER_KEY);
-    
-    // Clear cookie
-    document.cookie = `${ACCESS_TOKEN_KEY}=; path=/; expires=Thu, 01 Jan 1970 00:00:00 UTC; SameSite=Lax`;
+    localStorage.removeItem("wmf_profile_id");
   }
 }
 
@@ -189,15 +224,10 @@ export async function refreshAccessToken(): Promise<boolean> {
     const data = await response.json();
     
     if (data.success) {
-      // Update access token (keep same refresh token)
+      // Update access token and user in cookies (keep same refresh token)
       if (typeof window !== "undefined") {
-        localStorage.setItem(ACCESS_TOKEN_KEY, data.data.accessToken);
-        localStorage.setItem(USER_KEY, JSON.stringify(data.data.user));
-        
-        // Update cookie
-        const expires = new Date();
-        expires.setDate(expires.setDate() + 7);
-        document.cookie = `${ACCESS_TOKEN_KEY}=${data.data.accessToken}; path=/; expires=${expires.toUTCString()}; SameSite=Lax`;
+        setCookie(ACCESS_TOKEN_KEY, data.data.accessToken, 7);
+        setCookie(USER_KEY, JSON.stringify(data.data.user), 90);
       }
       return true;
     }

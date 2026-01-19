@@ -1,6 +1,6 @@
 import { useTranslations } from "@/i18n/translations";
 import type { Language } from "@/i18n/translations";
-import { storeAuth } from "@/lib/auth";
+import { storeAuth, getAccessToken } from "@/lib/auth";
 
 // Type definitions
 interface VideoData {
@@ -87,7 +87,7 @@ export function initProfilePage(data: ProfilePageData) {
       }
     }
 
-    const token = localStorage.getItem("wmf_access_token");
+    const token = getAccessToken();
 
     if (!token) {
       return { hasAccess: false, membership: null, purchasedContent: [] };
@@ -342,7 +342,7 @@ export function initProfilePage(data: ProfilePageData) {
     (async () => {
       try {
         // Refresh token to get updated purchased content list
-        const token = localStorage.getItem("wmf_access_token");
+        const token = getAccessToken();
         if (token) {
           const response = await fetch("/api/auth/verify-token", {
             method: "POST",
@@ -449,7 +449,7 @@ export function initProfilePage(data: ProfilePageData) {
         unlockPaidContentVideos(purchasedForProfile, true);
       } catch (error) {
         console.error("Error processing content purchase:", error);
-        
+
         // Remove query params even on error to prevent repeated processing
         window.history.replaceState(
           {},
@@ -507,15 +507,12 @@ export function initProfilePage(data: ProfilePageData) {
 
         const data = await response.json();
 
-        // Store auth data (includes setting cookie for server-side access)
+        // Store auth data in cookies
         storeAuth({
           accessToken: data.data.accessToken,
           refreshToken: data.data.refreshToken,
           user: data.data.user,
         });
-        
-        // Store profile ID
-        localStorage.setItem("wmf_profile_id", currentProfileId);
 
         // Remove query params from URL BEFORE reloading
         // This prevents infinite loop when unlockMembershipVideos() reloads the page
@@ -621,7 +618,7 @@ export function initProfilePage(data: ProfilePageData) {
       }
 
       // Check if user is logged in
-      const token = localStorage.getItem("wmf_access_token");
+      const token = getAccessToken();
       if (!token) {
         // User not logged in - redirect to login with redirect URL in query params
         const redirectUrl = encodeURIComponent(window.location.pathname);
@@ -813,7 +810,7 @@ export function initProfilePage(data: ProfilePageData) {
       }
 
       // Check if user is logged in
-      const token = localStorage.getItem("wmf_access_token");
+      const token = getAccessToken();
       if (!token) {
         // User not logged in - redirect to login
         const redirectUrl = encodeURIComponent(window.location.pathname);

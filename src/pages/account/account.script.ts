@@ -1,6 +1,7 @@
 import { useTranslations } from "@/i18n/translations";
 import type { Language } from "@/i18n/translations";
 import { profiles } from "@/data/profiles";
+import { getAuth, clearAuth, getAccessToken, getRefreshToken } from "@/lib/auth";
 
 // Type definitions
 interface AuthData {
@@ -33,30 +34,7 @@ export function initAccountPage() {
     : "en";
   const translations = useTranslations(lang);
 
-  // Auth utility functions
-  function getAuth(): AuthData | null {
-    const accessToken = localStorage.getItem("wmf_access_token");
-    const refreshToken = localStorage.getItem("wmf_refresh_token");
-    const userJson = localStorage.getItem("wmf_user");
-
-    if (!accessToken || !userJson) {
-      return null;
-    }
-
-    try {
-      const user = JSON.parse(userJson);
-      return { accessToken, refreshToken, user };
-    } catch {
-      return null;
-    }
-  }
-
-  function clearAuth() {
-    localStorage.removeItem("wmf_access_token");
-    localStorage.removeItem("wmf_refresh_token");
-    localStorage.removeItem("wmf_user");
-    localStorage.removeItem("wmf_profile_id");
-  }
+  // Note: Auth utility functions now imported from @/lib/auth
 
   // Get DOM elements
   const loadingContainer = document.getElementById("loading-container");
@@ -396,7 +374,7 @@ export function initAccountPage() {
     modalConfirm.addEventListener("click", async () => {
       try {
         // Call logout API
-        const refreshToken = localStorage.getItem("wmf_refresh_token");
+        const refreshToken = getRefreshToken();
         if (refreshToken) {
           await fetch("/api/auth/logout", {
             method: "POST",

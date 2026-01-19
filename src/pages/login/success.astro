@@ -123,7 +123,7 @@ const t = useTranslations(lang);
 
   <!-- Main client-side logic as a module -->
   <script>
-    import { storeAuth } from "@/lib/auth";
+    import { storeAuth, getAccessToken, getUser } from "@/lib/auth";
 
     const loadingContainer = document.getElementById("loading-container");
     const successContainer = document.getElementById("success-container");
@@ -142,7 +142,7 @@ const t = useTranslations(lang);
 
         if (!token) {
           // No token - user navigated directly here, check if already logged in
-          const existingAuth = localStorage.getItem("wmf_access_token");
+          const existingAuth = getAccessToken();
           if (!existingAuth) {
             window.location.href = "/login";
             return;
@@ -203,9 +203,9 @@ const t = useTranslations(lang);
       if (loadingContainer) loadingContainer.classList.add("hidden");
       if (successContainer) successContainer.classList.remove("hidden");
 
-      // Get email from params or storage
-      const finalEmail =
-        email || JSON.parse(localStorage.getItem("wmf_user") || "{}").email;
+      // Get email from params or cookie storage
+      const user = getUser();
+      const finalEmail = email || user?.email;
       if (userEmailEl && finalEmail) {
         userEmailEl.textContent = finalEmail;
       }

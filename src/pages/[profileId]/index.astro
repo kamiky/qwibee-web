@@ -24,9 +24,8 @@ const showMediaTitles = Astro.url.searchParams.get('debug') === 'true';
 let USER_PLAN: "free" | "membership" = "free";
 let PURCHASED_VIDEO_IDS: string[] = [];
 
-// Get access token from cookies
-const accessToken = Astro.cookies.get('wmf_access_token')?.value || 
-                    (Astro.request.headers.get('cookie')?.match(/wmf_access_token=([^;]+)/)?.[1]);
+// Get access token from cookies (Astro.cookies is the proper way)
+const accessToken = Astro.cookies.get('wmf_access_token')?.value;
 
 if (accessToken) {
   try {
