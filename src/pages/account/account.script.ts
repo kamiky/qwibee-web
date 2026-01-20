@@ -106,7 +106,54 @@ export function initAccountPage() {
         },
         body: JSON.stringify({
           customerEmail,
+          returnUrl: window.location.href,
           ...(subscriptionId && { subscriptionId }),
+        }),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || "Failed to create portal session");
+      }
+
+      const data = await response.json();
+
+      // Navigate the opened window to Stripe customer portal
+      if (data.url && newWindow) {
+        newWindow.location.href = data.url;
+      } else {
+        if (newWindow) newWindow.close();
+        throw new Error("No portal URL received");
+      }
+    } catch (error) {
+      console.error("Error creating portal session:", error);
+      alert(translations.account.membership.manageFailed);
+      if (newWindow) newWindow.close();
+    }
+  }
+
+  async function handleManageAllSubscriptions() {
+    // Open window immediately (synchronously) to avoid popup blocker
+    const newWindow = window.open("", "_blank");
+
+    try {
+      // Get user email from auth
+      const customerEmail = auth?.user?.email;
+      if (!customerEmail) {
+        alert(translations.account.membership.loginRequired);
+        if (newWindow) newWindow.close();
+        return;
+      }
+
+      // Call API to create portal session (without subscriptionId for general portal)
+      const response = await fetch("/api/stripe/create-portal-session", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          customerEmail,
+          returnUrl: window.location.href,
         }),
       });
 
@@ -227,10 +274,14 @@ export function initAccountPage() {
   }
 
   function loadMemberships(memberships: Membership[]) {
+    const manageAllBtn = document.getElementById("manage-all-btn");
+    
     if (memberships.length === 0) {
       if (membershipsList) membershipsList.classList.add("hidden");
       if (noMemberships) noMemberships.classList.remove("hidden");
+      if (manageAllBtn) manageAllBtn.style.display = "none";
     } else {
+      if (manageAllBtn) manageAllBtn.style.display = "flex";
       if (membershipsList) {
         membershipsList.innerHTML = memberships
           .map((m) => {
@@ -240,56 +291,79 @@ export function initAccountPage() {
               ? profile.displayName[lang]
               : m.profileId;
 
-            const statusColor =
-              m.status === "active" || m.status === "trialing"
-                ? "text-green-600"
-                : m.status === "canceled"
-                  ? "text-red-600"
-                  : "text-yellow-600";
-
             const dateOptions: Intl.DateTimeFormatOptions = {
               year: "numeric",
               month: "short",
               day: "numeric",
             };
-            const renewalText = m.cancelAtPeriodEnd
-              ? `${translations.account.membership.ends}: ${new Date(m.currentPeriodEnd).toLocaleDateString(lang === "fr" ? "fr-FR" : "en-US", dateOptions)}`
-              : `${translations.account.membership.renews}: ${new Date(m.currentPeriodEnd).toLocaleDateString(lang === "fr" ? "fr-FR" : "en-US", dateOptions)}`;
 
-            const statusBadge = m.cancelAtPeriodEnd
-              ? `<span class="text-xs bg-orange-100 text-orange-800 px-2 py-1 rounded-full ml-2">${translations.account.membership.canceling}</span>`
-              : "";
+            // Determine status display
+            let statusText = "";
+            let statusColor = "";
+            let renewalText = "";
+
+            if (m.cancelAtPeriodEnd) {
+              // Subscription is set to cancel at period end
+              statusText = translations.account.membership.canceling;
+              statusColor = "text-orange-600";
+              renewalText = `${translations.account.membership.willCancelOn} ${new Date(m.currentPeriodEnd).toLocaleDateString(lang === "fr" ? "fr-FR" : "en-US", dateOptions)}`;
+            } else if (m.status === "active" || m.status === "trialing") {
+              // Active subscription
+              statusText = translations.account.membership.active;
+              statusColor = "text-green-600";
+              renewalText = `${translations.account.membership.renews} ${new Date(m.currentPeriodEnd).toLocaleDateString(lang === "fr" ? "fr-FR" : "en-US", dateOptions)}`;
+            } else if (m.status === "canceled") {
+              // Fully cancelled
+              statusText = m.status;
+              statusColor = "text-red-600";
+              renewalText = `${translations.account.membership.ends} ${new Date(m.currentPeriodEnd).toLocaleDateString(lang === "fr" ? "fr-FR" : "en-US", dateOptions)}`;
+            } else {
+              // Other statuses
+              statusText = m.status;
+              statusColor = "text-yellow-600";
+              renewalText = `${translations.account.membership.renews} ${new Date(m.currentPeriodEnd).toLocaleDateString(lang === "fr" ? "fr-FR" : "en-US", dateOptions)}`;
+            }
 
             const profileUrl =
               lang === "fr" ? `/fr/${m.profileId}` : `/${m.profileId}`;
+
+            // Determine button label and icon based on cancel status
+            const buttonLabel = m.cancelAtPeriodEnd
+              ? translations.account.membership.manageSubscription
+              : translations.account.membership.cancelSubscription;
+
+            const buttonIcon = m.cancelAtPeriodEnd
+              ? `<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/>
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                </svg>`
+              : `<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                </svg>`;
 
             return `
               <div class="bg-gray-50 rounded-lg p-5">
                 <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
                   <div class="flex-1">
-                    <h3 class="font-semibold text-lg flex items-center text-gray-900">
+                    <h3 class="font-semibold text-lg text-gray-900">
                       ${displayName}
-                      ${statusBadge}
                     </h3>
                     <p class="text-sm text-gray-600">
-                      ${translations.account.membership.status}: <span class="${statusColor} font-semibold">${m.status}</span>
+                      ${translations.account.membership.status}: <span class="${statusColor} font-semibold">${statusText}</span>
                     </p>
                     <p class="text-xs text-gray-500">${renewalText}</p>
                   </div>
                   <div class="flex flex-col sm:flex-row gap-2 sm:gap-3">
-                    <button class="manage-membership-btn bg-gray-100 hover:bg-gray-200 text-gray-700 font-semibold py-3.5 px-6 rounded-full transition-all flex items-center justify-center gap-2 whitespace-nowrap text-xs" data-subscription-id="${m.stripeSubscriptionId}">
-                      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/>
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
-                      </svg>
-                      ${translations.account.membership.manage}
-                    </button>
                     <a href="${profileUrl}" class="bg-brand-blue-500 hover:bg-brand-blue-600 text-white font-semibold py-3.5 px-6 rounded-full transition-all inline-flex items-center justify-center gap-2 whitespace-nowrap text-xs">
                       <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
                       </svg>
                       ${translations.account.membership.viewProfile}
                     </a>
+                    <button class="manage-membership-btn bg-gray-100 hover:bg-gray-200 text-gray-700 font-semibold py-3.5 px-6 rounded-full transition-all flex items-center justify-center gap-2 whitespace-nowrap text-xs" data-subscription-id="${m.stripeSubscriptionId}">
+                      ${buttonIcon}
+                      ${buttonLabel}
+                    </button>
                   </div>
                 </div>
               </div>
@@ -498,4 +572,10 @@ export function initAccountPage() {
       }
     }
   });
+
+  // Manage All Subscriptions button
+  const manageAllBtn = document.getElementById("manage-all-btn");
+  if (manageAllBtn) {
+    manageAllBtn.addEventListener("click", handleManageAllSubscriptions);
+  }
 }
