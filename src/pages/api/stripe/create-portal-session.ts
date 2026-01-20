@@ -5,7 +5,7 @@ export const prerender = false;
 export const POST: APIRoute = async ({ request, url }) => {
   try {
     const body = await request.json();
-    const { customerEmail } = body;
+    const { customerEmail, subscriptionId } = body;
 
     // Validate required fields
     if (!customerEmail || !customerEmail.includes("@")) {
@@ -36,6 +36,7 @@ export const POST: APIRoute = async ({ request, url }) => {
         body: JSON.stringify({
           customerEmail,
           returnUrl,
+          ...(subscriptionId && { subscriptionId }),
         }),
       }
     );
