@@ -3,7 +3,7 @@ import type { Language } from "@/i18n/translations";
 import { storeAuth, getAccessToken } from "@/lib/auth";
 
 // Type definitions
-interface VideoData {
+export interface VideoData {
   id: string;
   title: {
     en: string;
@@ -12,7 +12,7 @@ interface VideoData {
   price: number;
 }
 
-interface ProfilePageData {
+export interface ProfilePageData {
   profileId: string;
   displayName: {
     en: string;
@@ -340,6 +340,8 @@ export function initProfilePage(data: ProfilePageData) {
   // Handle successful content purchase
   if (contentPurchaseStatus === "success" && purchasedVideoId) {
     (async () => {
+      let purchasedForProfile: string[] = [];
+      
       try {
         // Refresh token to get updated purchased content list
         const token = getAccessToken();
@@ -355,7 +357,7 @@ export function initProfilePage(data: ProfilePageData) {
           if (response.ok) {
             const data = await response.json();
             const purchasedContent = data.data.purchasedContent || [];
-            const purchasedForProfile = purchasedContent
+            purchasedForProfile = purchasedContent
               .filter((pc: any) => pc.profileId === currentProfileId)
               .map((pc: any) => pc.videoId);
 

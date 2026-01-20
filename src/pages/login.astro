@@ -181,9 +181,9 @@ const t = useTranslations(lang);
       throw new Error("Redirecting to account");
     }
 
-    const authBtn = document.getElementById("auth-btn");
+    const authBtn = document.getElementById("auth-btn") as HTMLButtonElement | null;
     const authBtnText = document.getElementById("auth-btn-text");
-    const emailInput = document.getElementById("email");
+    const emailInput = document.getElementById("email") as HTMLInputElement | null;
     const formContainer = document.getElementById("form-container");
     const successContainer = document.getElementById("success-container");
     const errorContainer = document.getElementById("error-container");
@@ -214,7 +214,10 @@ const t = useTranslations(lang);
           if (errorContainer) errorContainer.classList.add("hidden");
 
           // Prepare request body
-          const requestBody = { email, language: lang };
+          const requestBody: { email: string; language: Language; redirectUrl?: string; openStripe?: boolean } = { 
+            email, 
+            language: lang 
+          };
           if (redirectUrl) {
             requestBody.redirectUrl = redirectUrl;
           }
@@ -250,7 +253,8 @@ const t = useTranslations(lang);
           }
         } catch (error) {
           console.error("Authentication error:", error);
-          showError(error.message || "Failed to send authentication link");
+          const errorMsg = error instanceof Error ? error.message : "Failed to send authentication link";
+          showError(errorMsg);
 
           // Re-enable button
           authBtn.disabled = false;

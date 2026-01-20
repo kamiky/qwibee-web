@@ -117,14 +117,6 @@ const getVideoFilename = (
   return hasAccess(contentType, videoId) ? paidFilename : previewFilename;
 };
 
-// Helper to get content label
-const getContentLabel = (contentType: ContentType) => {
-  if (contentType === "free") return t.profile.freeLabel;
-  if (contentType === "membership") return t.profile.membersOnlyLabel;
-  if (contentType === "paid") return t.profile.payPerViewLabel;
-  return "";
-};
-
 // Keep original order from data file
 const sortedVideos = [...profile.videos];
 ---
@@ -284,7 +276,6 @@ const sortedVideos = [...profile.videos];
             const thumbnailFilename = userHasAccess 
               ? (video.paidThumbnail || video.paidFilename)
               : (video.previewThumbnail || video.previewFilename);
-            const contentLabel = getContentLabel(video.type);
             const isImage = video.mimetype?.startsWith('image/');
 
             return (
@@ -424,7 +415,7 @@ const sortedVideos = [...profile.videos];
                       {!userHasAccess && video.type === "paid" && (
                         <div class="paid-content-pricing flex items-center gap-4" style="display: none;">
                           <div class="flex items-baseline gap-2">
-                            {profile.promotionPercentage > 0 && (
+                            {profile.promotionPercentage && profile.promotionPercentage > 0 && (
                               <span class="text-gray-400 line-through text-sm">{formatPrice(video.price)}</span>
                             )}
                             <span class="locked-label text-brand-blue-500 font-bold text-lg">
@@ -507,9 +498,10 @@ const sortedVideos = [...profile.videos];
   <script>
     /* import to keep the full path for generated /fr files */
     import { initProfilePage } from "@/pages/[profileId]/profilePage.script.ts";
+    import type { ProfilePageData } from "@/pages/[profileId]/profilePage.script.ts";
     
     if (window.__profilePageData) {
-      initProfilePage(window.__profilePageData);
+      initProfilePage(window.__profilePageData as ProfilePageData);
     }
   </script>
 

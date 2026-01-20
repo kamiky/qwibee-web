@@ -125,6 +125,13 @@ const t = useTranslations(lang);
   <script>
     import { storeAuth, getAccessToken, getUser } from "@/lib/auth";
 
+    // Type declaration for window.__translations
+    declare global {
+      interface Window {
+        __translations: any;
+      }
+    }
+
     const loadingContainer = document.getElementById("loading-container");
     const successContainer = document.getElementById("success-container");
     const userEmailEl = document.getElementById("user-email");
@@ -198,7 +205,7 @@ const t = useTranslations(lang);
       }
     }
 
-    function showSuccess(email, redirectTo, shouldOpenStripe) {
+    function showSuccess(email: string | null, redirectTo: string | null, shouldOpenStripe: boolean) {
       // Hide loading, show success
       if (loadingContainer) loadingContainer.classList.add("hidden");
       if (successContainer) successContainer.classList.remove("hidden");
