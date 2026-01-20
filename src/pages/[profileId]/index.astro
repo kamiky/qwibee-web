@@ -415,7 +415,7 @@ const sortedVideos = [...profile.videos];
                       {!userHasAccess && video.type === "paid" && (
                         <div class="paid-content-pricing flex items-center gap-4" style="display: none;">
                           <div class="flex items-baseline gap-2">
-                            {profile.promotionPercentage && profile.promotionPercentage > 0 && (
+                            {!!(profile.promotionPercentage && profile.promotionPercentage > 0) && (
                               <span class="text-gray-400 line-through text-sm">{formatPrice(video.price)}</span>
                             )}
                             <span class="locked-label text-brand-blue-500 font-bold text-lg">
