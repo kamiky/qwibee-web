@@ -239,7 +239,7 @@ export function initAccountPage() {
             );
             const price = `$${(pc.amount / 100).toFixed(2)}`;
             const profileUrl =
-              lang === "fr" ? `/fr/${pc.profileId}` : `/${pc.profileId}`;
+              lang === "fr" ? `/fr/creator/${pc.profileId}` : `/creator/${pc.profileId}`;
 
             return `
               <div class="bg-gray-50 rounded-lg p-5">
@@ -325,7 +325,7 @@ export function initAccountPage() {
             }
 
             const profileUrl =
-              lang === "fr" ? `/fr/${m.profileId}` : `/${m.profileId}`;
+              lang === "fr" ? `/fr/creator/${m.profileId}` : `/creator/${m.profileId}`;
 
             // Determine button label and icon based on cancel status
             const buttonLabel = m.cancelAtPeriodEnd

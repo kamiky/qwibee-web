@@ -105,8 +105,8 @@ The `storeAuth()` and `clearAuth()` functions automatically clean up any old loc
 ## Files Updated
 
 1. ✅ `src/lib/auth.ts` - Core auth functions (cookies only)
-2. ✅ `src/pages/[profileId]/index.astro` - Server-side content unlocking
-3. ✅ `src/pages/[profileId]/profilePage.script.ts` - Client-side auth usage
+2. ✅ `src/pages/creator/[profileId]/index.astro` - Server-side content unlocking
+3. ✅ `src/pages/creator/[profileId]/profilePage.script.ts` - Client-side auth usage
 4. ✅ `src/pages/account/account.script.ts` - Account page auth
 5. ✅ `src/pages/login.astro` - Login page auth check
 6. ✅ `src/pages/login/success.astro` - Already using `storeAuth()`

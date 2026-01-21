@@ -41,8 +41,8 @@ export const POST: APIRoute = async ({ request, url }) => {
     const backendUrl = import.meta.env.PUBLIC_API_URL || "http://localhost:5002";
 
     // Prepare success and cancel URLs
-    const successUrl = `${baseUrl}/${profileId}?membership=success&session_id={CHECKOUT_SESSION_ID}`;
-    const cancelUrl = `${baseUrl}/${profileId}?membership=canceled`;
+    const successUrl = `${baseUrl}/creator/${profileId}?membership=success&session_id={CHECKOUT_SESSION_ID}`;
+    const cancelUrl = `${baseUrl}/creator/${profileId}?membership=canceled`;
 
     // Call backend API to create checkout session
     const response = await fetch(

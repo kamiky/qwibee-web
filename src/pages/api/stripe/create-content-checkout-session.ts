@@ -48,8 +48,8 @@ export const POST: APIRoute = async ({ request, url }) => {
     const backendUrl = import.meta.env.PUBLIC_API_URL || "http://localhost:5002";
 
     // Prepare success and cancel URLs
-    const successUrl = `${baseUrl}/${profileId}?content_purchase=success&video_id=${videoId}`;
-    const cancelUrl = `${baseUrl}/${profileId}?content_purchase=canceled`;
+    const successUrl = `${baseUrl}/creator/${profileId}?content_purchase=success&video_id=${videoId}`;
+    const cancelUrl = `${baseUrl}/creator/${profileId}?content_purchase=canceled`;
 
     // Call backend API to create content checkout session
     const response = await fetch(

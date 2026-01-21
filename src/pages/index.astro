@@ -25,7 +25,7 @@ const profile3Avatar = "/home/avatar3.jpg";
 
 // Helper function to generate profile URL based on language
 const getProfileUrl = (profileId: string) => {
-  return (lang as string) === "en" ? `/${profileId}` : `/${lang}/${profileId}`;
+  return (lang as string) === "en" ? `/creator/${profileId}` : `/${lang}/creator/${profileId}`;
 };
 ---
 
