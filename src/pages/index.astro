@@ -13,8 +13,7 @@ const t = useTranslations(lang);
 const isReadyForProduction = import.meta.env.MODE === "production" ? false : true;
 
 // Check if we're in development mode
-const isDevelopment = false
-// const isDevelopment = import.meta.env.MODE === "development";
+const isDevelopment = import.meta.env.MODE === "development";
 
 // Get all profiles as array
 const allProfiles = Object.values(profiles);
@@ -51,22 +50,60 @@ const getProfileUrl = (profileId: string) => {
     <section class="pt-32 pb-20 px-6">
       <div class="max-w-7xl mx-auto">
         <div class="grid lg:grid-cols-2 gap-12 items-center">
-          <!-- Left Content -->
-          <div class="space-y-8">
+          <!-- Mobile: Images First (Above Text) -->
+          <div class="lg:hidden relative flex items-center justify-center mb-8">
+            <div class="relative w-full h-[300px] flex items-center justify-center gap-3">
+              <!-- Image 1 - Left (smaller on mobile) -->
+              <div
+                class="relative w-24 h-36 sm:w-32 sm:h-48 rounded-2xl overflow-hidden shadow-xl transform -rotate-6"
+              >
+                <img
+                  src={profile1Avatar}
+                  alt="Creator 1"
+                  class="w-full h-full object-cover"
+                />
+              </div>
+
+              <!-- Image 2 - Center (larger on mobile) -->
+              <div
+                class="relative w-32 h-48 sm:w-40 sm:h-60 rounded-2xl overflow-hidden shadow-xl z-10"
+              >
+                <img
+                  src={profile2Avatar}
+                  alt="Creator 2"
+                  class="w-full h-full object-cover"
+                />
+              </div>
+
+              <!-- Image 3 - Right (smaller on mobile) -->
+              <div
+                class="relative w-24 h-36 sm:w-32 sm:h-48 rounded-2xl overflow-hidden shadow-xl transform rotate-6"
+              >
+                <img
+                  src={profile3Avatar}
+                  alt="Creator 3"
+                  class="w-full h-full object-cover"
+                />
+              </div>
+            </div>
+          </div>
+
+          <!-- Text Content -->
+          <div class="space-y-8 text-center lg:text-left">
             <h1
               class="text-4xl sm:text-5xl lg:text-6xl font-bold text-gray-900 leading-tight"
             >
               {t.hero.title}
             </h1>
             <p
-              class="text-lg sm:text-xl text-gray-600 leading-relaxed max-w-xl"
+              class="text-lg sm:text-xl text-gray-600 leading-relaxed max-w-xl mx-auto lg:mx-0"
             >
               {t.hero.subtitle}
             </p>
           </div>
 
-          <!-- Right Content - Creator Images -->
-          <div class="relative hidden lg:flex items-center justify-center">
+          <!-- Desktop: Images on Right (Original Layout) -->
+          <div class="hidden lg:flex relative items-center justify-center">
             <div
               class="relative w-full h-[600px] flex items-center justify-end gap-6"
             >
