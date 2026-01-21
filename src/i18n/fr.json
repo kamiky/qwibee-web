@@ -5,8 +5,8 @@
     "contact": "Contact"
   },
   "hero": {
-    "title": "Accède aux contenus exclusifs de tes Créateurs",
-    "subtitle": "Rejoins WatchMeFans et accède aux profils de créateurs partageant du contenu exclusif et premium.",
+    "title": "Vendez vos produits numériques en toute simplicité",
+    "subtitle": "Rejoignez WatchMeFans et commencez à monétiser votre contenu numérique. Créez votre profil, fixez vos prix et touchez directement votre audience.",
     "cta": "Explorer"
   },
   "sections": {
@@ -41,6 +41,29 @@
       "successTitle": "✓ Message envoyé avec succès !",
       "successSubtitle": "Nous vous répondrons bientôt.",
       "errorTitle": "✗ Échec de l'envoi du message",
+      "errorDefault": "Veuillez réessayer plus tard.",
+      "errorNetwork": "Erreur réseau. Veuillez vérifier votre connexion et réessayer."
+    }
+  },
+  "creatorContact": {
+    "title": "Vous souhaitez vendre vos produits numériques ?",
+    "subtitle": "Parlez-nous de vous et du type de contenu que vous souhaitez vendre. Nous vous répondrons rapidement.",
+    "form": {
+      "name": "Nom",
+      "namePlaceholder": "Votre nom complet",
+      "email": "Email",
+      "emailPlaceholder": "votre@email.com",
+      "job": "Métier / Profession",
+      "jobPlaceholder": "ex. Photographe, Artiste, Coach",
+      "productType": "Type de produits numériques à vendre",
+      "productTypePlaceholder": "Décrivez le type de contenu numérique que vous souhaitez vendre (vidéos, photos, cours, etc.)",
+      "submit": "Envoyer la candidature",
+      "sending": "Envoi en cours..."
+    },
+    "messages": {
+      "successTitle": "✓ Candidature envoyée avec succès !",
+      "successSubtitle": "Nous examinerons votre candidature et vous répondrons bientôt.",
+      "errorTitle": "✗ Échec de l'envoi de la candidature",
       "errorDefault": "Veuillez réessayer plus tard.",
       "errorNetwork": "Erreur réseau. Veuillez vérifier votre connexion et réessayer."
     }

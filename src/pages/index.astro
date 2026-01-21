@@ -12,6 +12,10 @@ const t = useTranslations(lang);
 // website is ready for production now
 const isReadyForProduction = import.meta.env.MODE === "production" ? false : true;
 
+// Check if we're in development mode
+const isDevelopment = false
+// const isDevelopment = import.meta.env.MODE === "development";
+
 // Get all profiles as array
 const allProfiles = Object.values(profiles);
 
@@ -59,14 +63,6 @@ const getProfileUrl = (profileId: string) => {
             >
               {t.hero.subtitle}
             </p>
-            <div>
-              <a
-                href="#creators"
-                class="inline-flex items-center justify-center bg-brand-blue-500 hover:bg-brand-blue-600 text-white font-semibold py-4 px-10 rounded-full transition-all transform hover:scale-105 shadow-lg hover:shadow-xl"
-              >
-                {t.hero.cta}
-              </a>
-            </div>
           </div>
 
           <!-- Right Content - Creator Images -->
@@ -112,8 +108,148 @@ const getProfileUrl = (profileId: string) => {
       </div>
     </section>
 
+    <!-- Creator Contact Form Section -->
+    <section id="creator-contact" class="py-20 px-6 bg-white">
+      <div class="max-w-3xl mx-auto">
+        <div class="text-center mb-12">
+          <h2
+            class="text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-900 mb-4"
+          >
+            {t.creatorContact.title}
+          </h2>
+          <p class="text-lg sm:text-xl text-gray-600 max-w-2xl mx-auto">
+            {t.creatorContact.subtitle}
+          </p>
+        </div>
+
+        <!-- Creator Contact Form -->
+        <div
+          id="creator-contact-form-container"
+          class="bg-white rounded-2xl shadow-lg p-8 border border-gray-200"
+        >
+          <form id="creator-contact-form" class="space-y-6">
+            <!-- Name Field -->
+            <div>
+              <label
+                for="creator-name"
+                class="block text-sm font-semibold text-gray-700 mb-2"
+              >
+                {t.creatorContact.form.name}
+              </label>
+              <input
+                type="text"
+                id="creator-name"
+                name="name"
+                required
+                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-blue-500 focus:border-transparent transition-all"
+                placeholder={t.creatorContact.form.namePlaceholder}
+              />
+            </div>
+
+            <!-- Email Field -->
+            <div>
+              <label
+                for="creator-email"
+                class="block text-sm font-semibold text-gray-700 mb-2"
+              >
+                {t.creatorContact.form.email}
+              </label>
+              <input
+                type="email"
+                id="creator-email"
+                name="email"
+                required
+                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-blue-500 focus:border-transparent transition-all"
+                placeholder={t.creatorContact.form.emailPlaceholder}
+              />
+            </div>
+
+            <!-- Job Field -->
+            <div>
+              <label
+                for="creator-job"
+                class="block text-sm font-semibold text-gray-700 mb-2"
+              >
+                {t.creatorContact.form.job}
+              </label>
+              <input
+                type="text"
+                id="creator-job"
+                name="job"
+                required
+                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-blue-500 focus:border-transparent transition-all"
+                placeholder={t.creatorContact.form.jobPlaceholder}
+              />
+            </div>
+
+            <!-- Product Type Field -->
+            <div>
+              <label
+                for="creator-product-type"
+                class="block text-sm font-semibold text-gray-700 mb-2"
+              >
+                {t.creatorContact.form.productType}
+              </label>
+              <textarea
+                id="creator-product-type"
+                name="productType"
+                required
+                rows="4"
+                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-blue-500 focus:border-transparent transition-all resize-none"
+                placeholder={t.creatorContact.form.productTypePlaceholder}
+              ></textarea>
+            </div>
+
+            <!-- Submit Button -->
+            <div>
+              <button
+                type="submit"
+                id="creator-submit-btn"
+                class="w-full bg-brand-blue-500 hover:bg-brand-blue-600 text-white font-semibold py-4 px-8 rounded-full transition-all transform hover:scale-105 shadow-lg hover:shadow-xl"
+              >
+                {t.creatorContact.form.submit}
+              </button>
+            </div>
+          </form>
+
+          <!-- Success Message (hidden by default) -->
+          <div
+            id="creator-success-message"
+            class="hidden text-center space-y-4"
+          >
+            <div class="text-green-600 text-5xl">✓</div>
+            <h3 class="text-2xl font-bold text-gray-900">
+              {t.creatorContact.messages.successTitle}
+            </h3>
+            <p class="text-gray-600">
+              {t.creatorContact.messages.successSubtitle}
+            </p>
+          </div>
+
+          <!-- Error Message (hidden by default) -->
+          <div
+            id="creator-error-message"
+            class="hidden bg-red-50 border border-red-200 rounded-lg p-4"
+          >
+            <div class="flex items-start">
+              <div class="text-red-600 text-xl mr-3">✗</div>
+              <div>
+                <h4 class="font-semibold text-red-900">
+                  {t.creatorContact.messages.errorTitle}
+                </h4>
+                <p id="creator-error-text" class="text-red-700 text-sm mt-1">
+                  {t.creatorContact.messages.errorDefault}
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    {isDevelopment && (
     <!-- Featured Creators Section -->
-    <section id="creators" class="py-20 px-6 bg-white">
+    <section id="creators" class="py-20 px-6 bg-gray-50">
       <div class="max-w-7xl mx-auto">
         <div class="text-center mb-16">
           <h2
@@ -169,26 +305,113 @@ const getProfileUrl = (profileId: string) => {
         </div>
       </div>
     </section>
+    )}
       </main>
 
       <Footer lang={lang} />
 
-      <script>
-    // Smooth scroll for anchor links
-    document.querySelectorAll('a[href^="#"]').forEach((anchor) => {
-      anchor.addEventListener("click", (e) => {
-        e.preventDefault();
-        const href = anchor.getAttribute("href");
-        if (href) {
-          const target = document.querySelector(href);
-          if (target) {
-            target.scrollIntoView({
-              behavior: "smooth",
-              block: "start",
-            });
+      <script is:inline>
+    document.addEventListener("DOMContentLoaded", function() {
+      // Smooth scroll for anchor links
+      document.querySelectorAll('a[href^="#"]').forEach((anchor) => {
+        anchor.addEventListener("click", (e) => {
+          e.preventDefault();
+          const href = anchor.getAttribute("href");
+          if (href) {
+            const target = document.querySelector(href);
+            if (target) {
+              target.scrollIntoView({
+                behavior: "smooth",
+                block: "start",
+              });
+            }
           }
-        }
+        });
       });
+
+      // Creator Contact Form Handler
+      const creatorForm = document.getElementById("creator-contact-form");
+      const creatorSubmitBtn = document.getElementById("creator-submit-btn");
+      const creatorSuccessMessage = document.getElementById("creator-success-message");
+      const creatorErrorMessage = document.getElementById("creator-error-message");
+      const creatorErrorText = document.getElementById("creator-error-text");
+
+      console.log("Creator form found:", creatorForm);
+      console.log("Submit button found:", creatorSubmitBtn);
+
+      if (creatorForm && creatorSubmitBtn) {
+        creatorForm.addEventListener("submit", async (e) => {
+          e.preventDefault();
+          e.stopPropagation();
+
+          console.log("Form submitted via JavaScript");
+
+          // Hide any previous messages
+          if (creatorSuccessMessage) creatorSuccessMessage.classList.add("hidden");
+          if (creatorErrorMessage) creatorErrorMessage.classList.add("hidden");
+
+          // Get form data
+          const formData = new FormData(creatorForm);
+          const data = {
+            name: formData.get("name"),
+            email: formData.get("email"),
+            job: formData.get("job"),
+            productType: formData.get("productType"),
+          };
+
+          console.log("Form data:", data);
+
+          // Disable submit button and show loading state
+          creatorSubmitBtn.disabled = true;
+          const originalButtonText = creatorSubmitBtn.textContent;
+          creatorSubmitBtn.textContent = "Sending...";
+
+          try {
+            console.log("Sending request to /api/contact/creator");
+            const response = await fetch("/api/contact/creator", {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify(data),
+            });
+
+            console.log("Response status:", response.status);
+            const result = await response.json();
+            console.log("Response result:", result);
+
+            if (response.ok) {
+              // Show success message
+              creatorForm.classList.add("hidden");
+              if (creatorSuccessMessage) creatorSuccessMessage.classList.remove("hidden");
+              
+              // Reset form
+              creatorForm.reset();
+            } else {
+              // Show error message
+              if (creatorErrorMessage && creatorErrorText) {
+                creatorErrorText.textContent = result.error || "Failed to send application. Please try again.";
+                creatorErrorMessage.classList.remove("hidden");
+              }
+            }
+          } catch (error) {
+            console.error("Error submitting creator contact form:", error);
+            // Show error message
+            if (creatorErrorMessage && creatorErrorText) {
+              creatorErrorText.textContent = "Network error. Please check your connection and try again.";
+              creatorErrorMessage.classList.remove("hidden");
+            }
+          } finally {
+            // Re-enable submit button and restore original text
+            creatorSubmitBtn.disabled = false;
+            if (originalButtonText) creatorSubmitBtn.textContent = originalButtonText;
+          }
+        });
+
+        console.log("Form submit event listener attached");
+      } else {
+        console.error("Form or submit button not found!");
+      }
     });
       </script>
     </>

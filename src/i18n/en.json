@@ -5,8 +5,8 @@
     "contact": "Contact"
   },
   "hero": {
-    "title": "Access Exclusive Content from Your Creators",
-    "subtitle": "Join WatchMeFans and access creator profiles sharing exclusive and premium content.",
+    "title": "Sell Your Digital Products with Ease",
+    "subtitle": "Join WatchMeFans and start monetizing your digital content. Create your profile, set your prices, and reach your audience directly.",
     "cta": "Explore"
   },
   "sections": {
@@ -41,6 +41,29 @@
       "successTitle": "✓ Message sent successfully!",
       "successSubtitle": "We'll get back to you soon.",
       "errorTitle": "✗ Failed to send message",
+      "errorDefault": "Please try again later.",
+      "errorNetwork": "Network error. Please check your connection and try again."
+    }
+  },
+  "creatorContact": {
+    "title": "Want to sell your digital products?",
+    "subtitle": "Tell us about yourself and the type of content you want to sell. We'll get back to you shortly.",
+    "form": {
+      "name": "Name",
+      "namePlaceholder": "Your full name",
+      "email": "Email",
+      "emailPlaceholder": "your@email.com",
+      "job": "Job / Occupation",
+      "jobPlaceholder": "e.g. Photographer, Artist, Coach",
+      "productType": "Kind of digital products to sell",
+      "productTypePlaceholder": "Describe the type of digital content you want to sell (videos, photos, courses, etc.)",
+      "submit": "Send Application",
+      "sending": "Sending..."
+    },
+    "messages": {
+      "successTitle": "✓ Application sent successfully!",
+      "successSubtitle": "We'll review your application and get back to you soon.",
+      "errorTitle": "✗ Failed to send application",
       "errorDefault": "Please try again later.",
       "errorNetwork": "Network error. Please check your connection and try again."
     }
