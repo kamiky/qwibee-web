@@ -197,7 +197,7 @@ const sortedVideos = [...profile.videos];
             {
               profile.avatar ? (
                 <img
-                  src={profile.avatar}
+                  src={profile.avatar + "xxx"}
                   alt={profile.displayName[lang]}
                   class="w-full h-full object-cover"
                 />
@@ -292,7 +292,7 @@ const sortedVideos = [...profile.videos];
                     {isImage ? (
                       <img
                         class="w-full object-cover video-player"
-                        src={`/uploads/${profile.id}/${videoFilename}`}
+                        src={`/uploads/${profile.id}/${videoFilename}xxx`}
                         alt={video.title[lang]}
                         data-paid-src={`/uploads/${profile.id}/${video.paidFilename}`}
                         data-preview-src={`/uploads/${profile.id}/${video.previewFilename}`}
@@ -303,7 +303,7 @@ const sortedVideos = [...profile.videos];
                         {/* Thumbnail image - shown by default */}
                         <img
                           class="video-thumbnail w-full object-cover"
-                          src={`/uploads/${profile.id}/${thumbnailFilename}`}
+                          src={`/uploads/${profile.id}/${thumbnailFilename}xxx`}
                           alt={video.title[lang]}
                         />
                         {/* Video player - hidden by default, loaded on click */}
@@ -311,7 +311,7 @@ const sortedVideos = [...profile.videos];
                           class="w-full aspect-video object-contain video-player bg-black hidden"
                           controls
                           preload="none"
-                          data-video-src={`/uploads/${profile.id}/${videoFilename}`}
+                          data-video-src={`/uploads/${profile.id}/${videoFilename}xxx`}
                           data-mimetype={video.mimetype || "video/mp4"}
                         >
                         </video>
