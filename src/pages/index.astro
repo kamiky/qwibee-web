@@ -10,7 +10,7 @@ const lang: Language = "en";
 const t = useTranslations(lang);
 
 // website is ready for production now
-const isReadyForProduction = import.meta.env.MODE === "production" ? false : true;
+const isReadyForProduction = import.meta.env.MODE === "production" ? true : true;
 
 // Check if we're in development mode
 const isDevelopment = import.meta.env.MODE === "development";
