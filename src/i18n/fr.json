@@ -96,7 +96,7 @@
     "membershipEndsOn": "L'abonnement se termine le"
   },
   "footer": {
-    "tagline": "Contenu premium de créateurs que vous aimez.",
+    "tagline": "Produits uniques de créateurs du monde entier.",
     "termsOfSale": "Conditions de vente",
     "privacyPolicy": "Politique de confidentialité"
   },
@@ -362,6 +362,17 @@
       "watchNow": "Regarder Maintenant",
       "purchasedOn": "Acheté le",
       "for": "pour"
+    }
+  },
+  "notFound": {
+    "title": "404 - Page Non Trouvée",
+    "heading": "Oups ! Page Non Trouvée",
+    "message": "La page que vous recherchez n'existe pas ou a été déplacée.",
+    "suggestions": {
+      "title": "Voici quelques liens utiles :",
+      "home": "Aller à l'accueil",
+      "contact": "Nous contacter",
+      "login": "Se connecter"
     }
   }
 }

@@ -96,7 +96,7 @@
     "membershipEndsOn": "Membership ends on"
   },
   "footer": {
-    "tagline": "Premium content from creators you love.",
+    "tagline": "Unique products from creators all over the world.",
     "termsOfSale": "Terms of Sale",
     "privacyPolicy": "Privacy Policy"
   },
@@ -362,6 +362,17 @@
       "watchNow": "Watch Now",
       "purchasedOn": "Purchased on",
       "for": "for"
+    }
+  },
+  "notFound": {
+    "title": "404 - Page Not Found",
+    "heading": "Oops! Page Not Found",
+    "message": "The page you're looking for doesn't exist or has been moved.",
+    "suggestions": {
+      "title": "Here are some helpful links:",
+      "home": "Go to Home",
+      "contact": "Contact Us",
+      "login": "Sign In"
     }
   }
 }
