@@ -24,6 +24,7 @@ export interface ProfilePageData {
     isDebugMode: boolean;
     simulateMode: string | null;
   };
+  stripeDebugSecret: string | null;
 }
 
 export function initProfilePage(data: ProfilePageData) {
@@ -33,6 +34,7 @@ export function initProfilePage(data: ProfilePageData) {
     promotionPercentage,
     videos: profileVideos,
     debug,
+    stripeDebugSecret,
   } = data;
 
   // Helper function to calculate promotional price
@@ -745,6 +747,7 @@ export function initProfilePage(data: ProfilePageData) {
                 customerEmail,
                 language: lang,
                 displayName: displayName[lang],
+                debugSecret: stripeDebugSecret || undefined,
               }),
             }
           );
@@ -904,6 +907,7 @@ export function initProfilePage(data: ProfilePageData) {
               language: lang,
               videoTitle: videoData.title[lang],
               creatorDisplayName: displayName[lang],
+              debugSecret: stripeDebugSecret || undefined,
             }),
           }
         );

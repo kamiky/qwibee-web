@@ -20,6 +20,9 @@ const simulateMode = isDebugMode ? Astro.url.searchParams.get('simulate') : null
 // Check if debug=true to show media titles
 const showMediaTitles = Astro.url.searchParams.get('debug') === 'true';
 
+// Stripe debug secret: capture from URL params (?secret=XXX) for testing on production
+const stripeDebugSecret = Astro.url.searchParams.get('secret');
+
 // Check user authentication and access on server-side
 let USER_PLAN: "free" | "membership" = "free";
 let PURCHASED_VIDEO_IDS: string[] = [];
@@ -487,6 +490,7 @@ const sortedVideos = [...profile.videos];
           isDebugMode,
           simulateMode,
         },
+        stripeDebugSecret: stripeDebugSecret || null,
       },
     }}
   >
