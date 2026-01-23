@@ -17,52 +17,52 @@ export interface PriceGroup {
 
 export const PRICING_GROUPS: PriceGroup[] = [
   {
-    id: "group_a",
+    id: "2ji7jtkf",
     membership: { monthly: 5, currency: "USD" },
     lifetime: { price: 25, currency: "USD" },
   },
   {
-    id: "group_b",
+    id: "8k3m9pqr",
     membership: { monthly: 7, currency: "USD" },
     lifetime: { price: 30, currency: "USD" },
   },
   {
-    id: "group_c",
+    id: "5nw2xhzv",
     membership: { monthly: 9, currency: "USD" },
     lifetime: { price: 35, currency: "USD" },
   },
   {
-    id: "group_d",
+    id: "7b4c6dgf",
     membership: { monthly: 10, currency: "USD" },
     lifetime: { price: 40, currency: "USD" },
   },
   {
-    id: "group_e",
+    id: "9p1q8rty",
     membership: { monthly: 12, currency: "USD" },
     lifetime: { price: 45, currency: "USD" },
   },
   {
-    id: "group_f",
+    id: "3l5m7wsx",
     membership: { monthly: 15, currency: "USD" },
     lifetime: { price: 50, currency: "USD" },
   },
   {
-    id: "group_g",
+    id: "6h8j2kpz",
     membership: { monthly: 8, currency: "USD" },
     lifetime: { price: 32, currency: "USD" },
   },
   {
-    id: "group_h",
+    id: "4t9v3bnc",
     membership: { monthly: 6, currency: "USD" },
     lifetime: { price: 25, currency: "USD" },
   },
   {
-    id: "group_i",
+    id: "1a2s5dfg",
     membership: { monthly: 11, currency: "USD" },
     lifetime: { price: 42, currency: "USD" },
   },
   {
-    id: "group_j",
+    id: "0z9x4cvb",
     membership: { monthly: 13, currency: "USD" },
     lifetime: { price: 48, currency: "USD" },
   },
