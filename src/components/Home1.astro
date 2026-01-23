@@ -1,5 +1,6 @@
 ---
 import { useTranslations, type Language } from "@/i18n/translations";
+import { PRICING_GROUPS, type PriceGroup } from "@/data/pricing-groups";
 
 interface Props {
   lang: Language;
@@ -7,6 +8,35 @@ interface Props {
 
 const { lang } = Astro.props;
 const t = useTranslations(lang);
+
+// Get or assign price group from cookie
+const PRICE_GROUP_COOKIE = "wmf_price_group";
+function getPriceGroupFromCookie(): PriceGroup {
+  const priceGroupId = Astro.cookies.get(PRICE_GROUP_COOKIE)?.value;
+
+  if (!priceGroupId) {
+    // First time visitor - assign random price group
+    const randomIndex = Math.floor(Math.random() * PRICING_GROUPS.length);
+    const priceGroup = PRICING_GROUPS[randomIndex];
+    Astro.cookies.set(PRICE_GROUP_COOKIE, priceGroup.id, {
+      path: "/",
+      maxAge: 60 * 60 * 24 * 365, // 1 year
+      sameSite: "lax",
+      secure: import.meta.env.PROD,
+    });
+    return priceGroup;
+  }
+
+  // Return existing price group
+  const priceGroup = PRICING_GROUPS.find((g) => g.id === priceGroupId);
+  return priceGroup || PRICING_GROUPS[0];
+}
+
+const selectedPriceGroup = getPriceGroupFromCookie();
+
+// Check authentication on server-side
+const ACCESS_TOKEN_KEY = "wmf_access_token";
+const isUserAuthenticated = !!Astro.cookies.get(ACCESS_TOKEN_KEY)?.value;
 ---
 
 <div class="home-wrapper">
@@ -32,11 +62,32 @@ const t = useTranslations(lang);
       <p class="message message-3">Are you ready to see?</p>
     </div>
 
-    <!-- Mysterious CTA Button -->
-    <button class="enter-btn">
-      <span class="btn-text">Get Access</span>
-      <span class="btn-glow"></span>
-    </button>
+    <!-- CTA Buttons Container -->
+    <div class="cta-container">
+      <!-- Not authenticated: Single "Get Access" button -->
+      <button class="enter-btn single-btn">
+        <span class="btn-text">Get Access</span>
+        <span class="btn-glow"></span>
+      </button>
+
+      <!-- Authenticated: Two buttons with prices -->
+      <div class="dual-buttons" style="display: none;">
+        <div class="price-button-wrapper">
+          <button class="enter-btn membership-btn">
+            <span class="btn-text">Monthly Access</span>
+            <span class="btn-price"></span>
+            <span class="btn-glow"></span>
+          </button>
+        </div>
+        <div class="price-button-wrapper">
+          <button class="enter-btn lifetime-btn">
+            <span class="btn-text">Lifetime Access</span>
+            <span class="btn-price"></span>
+            <span class="btn-glow"></span>
+          </button>
+        </div>
+      </div>
+    </div>
 
     <!-- Floating Orbs -->
     <div class="orbs">
@@ -264,13 +315,35 @@ const t = useTranslations(lang);
       }
     }
 
+    /* CTA Container */
+    .home-wrapper .cta-container {
+      margin-top: 2rem;
+      opacity: 0;
+      animation: fade-in 2s ease-in-out 2s forwards;
+    }
+
+    /* Dual Buttons Layout */
+    .home-wrapper .dual-buttons {
+      display: flex;
+      gap: 1.5rem;
+      align-items: center;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    .home-wrapper .price-button-wrapper {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
     /* Enter Button */
     .home-wrapper .enter-btn {
       position: relative;
-      padding: 1.2rem 4rem;
-      font-size: clamp(1rem, 2vw, 1.3rem);
+      padding: 1.2rem 3rem;
+      font-size: clamp(0.9rem, 2vw, 1.1rem);
       font-weight: 700;
-      letter-spacing: 0.5rem;
+      letter-spacing: 0.3rem;
       color: #fff;
       background: transparent;
       border: 2px solid rgba(255, 0, 255, 0.6);
@@ -278,12 +351,15 @@ const t = useTranslations(lang);
       overflow: hidden;
       transition: all 0.3s ease;
       font-family: "Courier New", monospace;
-      margin-top: 2rem;
-      opacity: 0;
-      animation: fade-in 2s ease-in-out 2s forwards;
       box-shadow:
         0 0 30px rgba(255, 0, 255, 0.3),
         inset 0 0 30px rgba(255, 0, 255, 0.1);
+    }
+
+    .home-wrapper .single-btn {
+      padding: 1.2rem 4rem;
+      font-size: clamp(1rem, 2vw, 1.3rem);
+      letter-spacing: 0.5rem;
     }
 
     .home-wrapper .enter-btn:hover {
@@ -297,6 +373,18 @@ const t = useTranslations(lang);
     .home-wrapper .btn-text {
       position: relative;
       z-index: 2;
+      display: block;
+    }
+
+    .home-wrapper .btn-price {
+      position: relative;
+      z-index: 2;
+      display: block;
+      font-size: clamp(1.2rem, 3vw, 1.8rem);
+      font-weight: 900;
+      margin-top: 0.5rem;
+      color: #00ffff;
+      text-shadow: 0 0 20px rgba(0, 255, 255, 0.8);
     }
 
     .home-wrapper .btn-glow {
@@ -317,6 +405,26 @@ const t = useTranslations(lang);
 
     .enter-btn:hover .btn-glow {
       left: 100%;
+    }
+
+    /* Lifetime button variation */
+    .home-wrapper .lifetime-btn {
+      border-color: rgba(0, 255, 255, 0.6);
+      box-shadow:
+        0 0 30px rgba(0, 255, 255, 0.3),
+        inset 0 0 30px rgba(0, 255, 255, 0.1);
+    }
+
+    .home-wrapper .lifetime-btn:hover {
+      border-color: rgba(255, 0, 255, 0.8);
+      box-shadow:
+        0 0 50px rgba(255, 0, 255, 0.6),
+        inset 0 0 30px rgba(255, 0, 255, 0.2);
+    }
+
+    .home-wrapper .lifetime-btn .btn-price {
+      color: #ff00ff;
+      text-shadow: 0 0 20px rgba(255, 0, 255, 0.8);
     }
 
     /* Floating Orbs */
@@ -442,8 +550,21 @@ const t = useTranslations(lang);
       }
 
       .enter-btn {
+        padding: 1rem 2rem;
+        letter-spacing: 0.2rem;
+      }
+
+      .single-btn {
         padding: 1rem 3rem;
         letter-spacing: 0.3rem;
+      }
+
+      .dual-buttons {
+        gap: 1rem;
+      }
+
+      .btn-price {
+        font-size: clamp(1rem, 4vw, 1.5rem);
       }
 
       .cryptic {
@@ -456,26 +577,74 @@ const t = useTranslations(lang);
     }
   </style>
 
-  <script>
-    // Button click effect
-    const enterBtn = document.querySelector(".enter-btn");
+  <script
+    define:vars={{
+      priceGroup: selectedPriceGroup,
+      authenticated: isUserAuthenticated,
+    }}
+  >
+    // Initialize page based on auth state
+    function initializePage() {
+      const singleBtn = document.querySelector(".single-btn");
+      const dualButtons = document.querySelector(".dual-buttons");
 
-    if (enterBtn) {
-      enterBtn.addEventListener("click", () => {
-        // Add ripple effect
-        (enterBtn as HTMLElement).style.transform = "scale(0.95)";
-        setTimeout(() => {
-          (enterBtn as HTMLElement).style.transform = "scale(1.05)";
-        }, 100);
+      if (authenticated) {
+        // User is logged in - show pricing buttons
+        if (singleBtn) singleBtn.style.display = "none";
+        if (dualButtons) {
+          dualButtons.style.display = "flex";
 
-        // Navigate or trigger something mysterious
-        setTimeout(() => {
-          // For now, just log - you can redirect or show more content
-          console.log("◯ Entering the realm... ◯");
-          // window.location.href = '/somewhere-mysterious';
-        }, 300);
-      });
+          // Update membership button
+          const membershipBtn = document.querySelector(".membership-btn");
+          const membershipPrice = membershipBtn?.querySelector(".btn-price");
+          if (membershipPrice) {
+            membershipPrice.textContent = `$${priceGroup.membership.monthly}/mo`;
+          }
+
+          // Update lifetime button
+          const lifetimeBtn = document.querySelector(".lifetime-btn");
+          const lifetimePrice = lifetimeBtn?.querySelector(".btn-price");
+          if (lifetimePrice) {
+            lifetimePrice.textContent = `$${priceGroup.lifetime.price}`;
+          }
+
+          // Add click handlers
+          membershipBtn?.addEventListener("click", () => {
+            handleButtonClick(membershipBtn);
+            console.log("Membership subscription clicked", priceGroup);
+            // TODO: Redirect to membership checkout
+          });
+
+          lifetimeBtn?.addEventListener("click", () => {
+            handleButtonClick(lifetimeBtn);
+            console.log("Lifetime purchase clicked", priceGroup);
+            // TODO: Redirect to lifetime checkout
+          });
+        }
+      } else {
+        // User is not logged in - show Get Access button
+        if (singleBtn) singleBtn.style.display = "block";
+        if (dualButtons) dualButtons.style.display = "none";
+
+        singleBtn?.addEventListener("click", () => {
+          handleButtonClick(singleBtn);
+          // Redirect to login with return URL
+          const currentUrl = window.location.pathname;
+          window.location.href = `/login?redirect=${encodeURIComponent(currentUrl)}`;
+        });
+      }
     }
+
+    // Button click effect
+    function handleButtonClick(btn) {
+      btn.style.transform = "scale(0.95)";
+      setTimeout(() => {
+        btn.style.transform = "scale(1.05)";
+      }, 100);
+    }
+
+    // Initialize on page load
+    initializePage();
 
     // Add random glitch intervals
     setInterval(() => {
@@ -495,8 +664,7 @@ const t = useTranslations(lang);
 
       orbs.forEach((orb, index) => {
         const speed = (index + 1) * 20;
-        (orb as HTMLElement).style.transform =
-          `translate(${x * speed}px, ${y * speed}px)`;
+        orb.style.transform = `translate(${x * speed}px, ${y * speed}px)`;
       });
     });
   </script>
