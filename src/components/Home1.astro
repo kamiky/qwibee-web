@@ -674,6 +674,7 @@ const selectedPriceGroup = getPriceGroupFromCookie();
           body: JSON.stringify({
             profileId: "home", // Special profile ID for home page
             membershipPrice: priceGroup.membership.monthly * 100, // Convert to cents
+            priceId: priceGroup.id, // Pass price group ID for A/B testing tracking
             customerEmail,
             language: "en", // TODO: Get from page language
             displayName: "Premium Access",
@@ -790,6 +791,7 @@ const selectedPriceGroup = getPriceGroupFromCookie();
               profileId: "home", // Special profile ID for home page
               videoId: "lifetime", // Special video ID for lifetime access
               contentPrice: priceGroup.lifetime.price * 100, // Convert to cents
+              priceId: priceGroup.id, // Pass price group ID for A/B testing tracking
               successUrl: `${window.location.origin}/?purchase=success&type=lifetime`,
               cancelUrl: `${window.location.origin}/?purchase=canceled`,
               customerEmail,

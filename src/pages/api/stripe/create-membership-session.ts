@@ -5,7 +5,15 @@ export const prerender = false;
 export const POST: APIRoute = async ({ request, url }) => {
   try {
     const body = await request.json();
-    const { profileId, membershipPrice, customerEmail, language, displayName, debugSecret } = body;
+    const {
+      profileId,
+      membershipPrice,
+      priceId,
+      customerEmail,
+      language,
+      displayName,
+      debugSecret,
+    } = body;
 
     // Validate required fields
     if (!profileId) {
@@ -27,18 +35,16 @@ export const POST: APIRoute = async ({ request, url }) => {
 
     // Validate customer email if provided
     if (customerEmail && !customerEmail.includes("@")) {
-      return new Response(
-        JSON.stringify({ error: "Invalid customerEmail" }),
-        {
-          status: 400,
-          headers: { "Content-Type": "application/json" },
-        }
-      );
+      return new Response(JSON.stringify({ error: "Invalid customerEmail" }), {
+        status: 400,
+        headers: { "Content-Type": "application/json" },
+      });
     }
 
     // Get the base URL
     const baseUrl = import.meta.env.PUBLIC_APP_URL || url.origin;
-    const backendUrl = import.meta.env.PUBLIC_API_URL || "http://localhost:5002";
+    const backendUrl =
+      import.meta.env.PUBLIC_API_URL || "http://localhost:5002";
 
     // Prepare success and cancel URLs
     const successUrl = `${baseUrl}/creator/${profileId}?membership=success&session_id={CHECKOUT_SESSION_ID}`;
@@ -55,6 +61,7 @@ export const POST: APIRoute = async ({ request, url }) => {
         body: JSON.stringify({
           profileId,
           membershipPrice,
+          priceId,
           successUrl,
           cancelUrl,
           customerEmail,
