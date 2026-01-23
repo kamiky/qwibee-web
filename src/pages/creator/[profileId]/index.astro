@@ -8,6 +8,14 @@ import { profiles, type ContentType } from "@/data/profiles";
 
 const { profileId } = Astro.params;
 
+// Set cookie to indicate user is in creator mode
+Astro.cookies.set('quibee-creator-mode', 'true', {
+  path: '/',
+  maxAge: 60 * 60 * 24 * 365, // 1 year
+  httpOnly: false, // Allow client-side access if needed
+  sameSite: 'lax',
+});
+
 // Detect language from URL path
 const pathname = Astro.url.pathname;
 const lang: Language = pathname.startsWith('/fr/') || pathname === '/fr' ? 'fr' : 'en';
