@@ -1,0 +1,214 @@
+---
+import LayoutApp from "@/layouts/LayoutApp.astro";
+import { APPS_TUTORIALS } from "@/data/apps-tutorials";
+import { useTranslations, type Language } from "@/i18n/translations";
+
+// Detect language from URL path
+const pathname = Astro.url.pathname;
+const lang: Language =
+  pathname.startsWith("/fr/") || pathname === "/fr" ? "fr" : "en";
+const t = useTranslations(lang);
+
+// Check if user has app membership or lifetime purchase
+let hasAppAccess = false;
+const accessToken = Astro.cookies.get("wmf_access_token")?.value;
+
+if (accessToken) {
+  try {
+    const backendUrl =
+      import.meta.env.PUBLIC_API_URL || "http://localhost:5002";
+    const response = await fetch(`${backendUrl}/auth/verify-token`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ token: accessToken }),
+    });
+
+    if (response.ok) {
+      const data = await response.json();
+
+      if (data.data.valid) {
+        // Check for app membership (profileId === null, type === "apps")
+        const appMembership = data.data.memberships?.find(
+          (m: any) =>
+            m.type === "apps" &&
+            (m.status === "active" || m.status === "trialing")
+        );
+
+        // Check for app lifetime purchase (type === "apps")
+        const appLifetimePurchase = data.data.purchasedContent?.find(
+          (pc: any) => pc.type === "apps"
+        );
+
+        hasAppAccess = !!(appMembership || appLifetimePurchase);
+      }
+    }
+  } catch (error) {
+    console.error("Error verifying app access:", error);
+  }
+}
+
+// Redirect to home if no access
+if (!hasAppAccess) {
+  return Astro.redirect(lang === "fr" ? "/fr/home/app" : "/home/app");
+}
+---
+
+<LayoutApp title={t.apps.pageTitle} description={t.apps.subtitle} lang={lang}>
+  <main class="pt-24 pb-12 min-h-screen apps-main">
+    <div class="max-w-5xl mx-auto px-6">
+      <!-- Header -->
+      <div class="mb-12 text-center">
+        <h1 class="text-4xl font-bold mb-3 text-white glitch-text">
+          {t.apps.title}
+        </h1>
+        <p class="text-lg text-gray-300 max-w-2xl mx-auto">
+          {t.apps.subtitle}
+        </p>
+      </div>
+
+      <!-- Apps & Tutorials Grid -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        {
+          APPS_TUTORIALS.map((item) => (
+            <div class="app-card rounded-2xl p-6 transition-all duration-300 hover:scale-[1.02] cursor-pointer">
+              {/* Logo */}
+              <div class="flex items-start gap-4 mb-4">
+                <div class="app-logo flex-shrink-0 w-16 h-16 rounded-xl flex items-center justify-center text-4xl">
+                  {item.logo}
+                </div>
+                <div class="flex-1 min-w-0">
+                  <h3 class="text-xl font-bold text-white mb-2 led-text">
+                    {item.title}
+                  </h3>
+                  <div class="flex gap-2 flex-wrap">
+                    <span class="badge-category text-xs px-3 py-1 rounded-full font-medium">
+                      {item.category === "app"
+                        ? t.apps.categoryApp
+                        : t.apps.categoryTutorial}
+                    </span>
+                    <span class="badge-platform text-xs px-3 py-1 rounded-full font-medium">
+                      {item.platform}
+                    </span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Description */}
+              <p class="text-gray-300 text-sm leading-relaxed mb-4">
+                {item.description}
+              </p>
+
+              {/* Coming Soon Badge */}
+              <div class="flex items-center justify-between">
+                <span class="text-xs text-cyan-400 font-medium led-text">
+                  {t.apps.comingSoon}
+                </span>
+                <svg
+                  class="w-5 h-5 text-cyan-400 opacity-50"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M9 5l7 7-7 7"
+                  />
+                </svg>
+              </div>
+            </div>
+          ))
+        }
+      </div>
+
+      <!-- Info Card -->
+      <div class="mt-12 info-card rounded-2xl p-6 text-center">
+        <div class="text-4xl mb-3">✨</div>
+        <h3 class="text-lg font-semibold text-cyan-400 mb-2 led-text">
+          {t.apps.moreComingSoon.title}
+        </h3>
+        <p class="text-gray-300 text-sm">
+          {t.apps.moreComingSoon.message}
+        </p>
+      </div>
+    </div>
+  </main>
+
+  <style>
+    /* Main Content */
+    .apps-main {
+      position: relative;
+      z-index: 10;
+      background: transparent;
+    }
+
+    /* App Card - Blurry/Semi-transparent Block */
+    .app-card {
+      background: rgba(0, 0, 0, 0.6);
+      backdrop-filter: blur(20px);
+      border: 1px solid rgba(255, 0, 255, 0.3);
+      box-shadow:
+        0 0 30px rgba(255, 0, 255, 0.2),
+        0 0 60px rgba(0, 255, 255, 0.1),
+        inset 0 0 30px rgba(255, 0, 255, 0.05);
+    }
+
+    .app-card:hover {
+      border-color: rgba(0, 255, 255, 0.5);
+      box-shadow:
+        0 0 40px rgba(0, 255, 255, 0.3),
+        0 0 80px rgba(255, 0, 255, 0.2),
+        inset 0 0 40px rgba(0, 255, 255, 0.08);
+    }
+
+    /* App Logo */
+    .app-logo {
+      background: rgba(0, 0, 0, 0.5);
+      border: 1px solid rgba(0, 255, 255, 0.3);
+      box-shadow:
+        0 0 20px rgba(0, 255, 255, 0.2),
+        inset 0 0 15px rgba(0, 255, 255, 0.1);
+    }
+
+    /* Badges */
+    .badge-category {
+      background: rgba(0, 255, 255, 0.15);
+      border: 1px solid rgba(0, 255, 255, 0.4);
+      color: rgba(0, 255, 255, 0.9);
+      text-shadow: 0 0 10px rgba(0, 255, 255, 0.5);
+    }
+
+    .badge-platform {
+      background: rgba(255, 0, 255, 0.15);
+      border: 1px solid rgba(255, 0, 255, 0.4);
+      color: rgba(255, 0, 255, 0.9);
+      text-shadow: 0 0 10px rgba(255, 0, 255, 0.5);
+    }
+
+    /* Info Card */
+    .info-card {
+      background: rgba(0, 0, 0, 0.5);
+      backdrop-filter: blur(15px);
+      border: 1px solid rgba(0, 255, 255, 0.3);
+      box-shadow:
+        0 0 25px rgba(0, 255, 255, 0.15),
+        inset 0 0 25px rgba(0, 255, 255, 0.05);
+    }
+
+    /* LED Style Text Effects */
+    .led-text {
+      text-shadow:
+        0 0 10px rgba(0, 255, 255, 0.8),
+        0 0 20px rgba(0, 255, 255, 0.5);
+    }
+
+    .glitch-text {
+      text-shadow:
+        0 0 20px rgba(255, 0, 255, 0.8),
+        0 0 40px rgba(0, 255, 255, 0.6);
+    }
+  </style>
+</LayoutApp>
