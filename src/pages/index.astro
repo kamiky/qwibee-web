@@ -1,20 +1,10 @@
 ---
-import Layout from "@/layouts/Layout.astro";
-import HomeApp from "@/components/HomeApp/Page.astro";
-import HomeCreator from "@/components/HomeCreator/Page.astro";
-import { useTranslations, type Language } from "@/i18n/translations";
-
-const lang: Language = "en";
-const t = useTranslations(lang);
-
-// Check for qwibee-creator-mode cookie
+// Check for qwibee-creator-mode cookie and serve appropriate page
 const creatorMode = Astro.cookies.get("qwibee-creator-mode")?.value === "true";
----
 
-<Layout
-  title={t.seo.home.title}
-  description={t.seo.home.description}
-  lang={lang}
->
-  {creatorMode ? <HomeCreator lang={lang} /> : <HomeApp lang={lang} />}
-</Layout>
+if (creatorMode) {
+  return Astro.rewrite("/home/creator");
+} else {
+  return Astro.rewrite("/home/app");
+}
+---
