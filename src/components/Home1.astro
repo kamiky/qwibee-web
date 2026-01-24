@@ -36,6 +36,8 @@ const selectedPriceGroup = getPriceGroupFromCookie();
 
 // Check if user has app membership or lifetime purchase
 let hasAppAccess = false;
+let userEmail: string | null = null;
+let isLoggedIn = false;
 const accessToken = Astro.cookies.get('wmf_access_token')?.value;
 
 if (accessToken) {
@@ -53,6 +55,9 @@ if (accessToken) {
       const data = await response.json();
       
       if (data.data.valid) {
+        isLoggedIn = true;
+        userEmail = data.data.user?.email || null;
+        
         // Check for app membership (profileId === null, type === "apps")
         const appMembership = data.data.memberships?.find(
           (m: any) => m.type === 'apps' && (m.status === 'active' || m.status === 'trialing')
@@ -81,6 +86,15 @@ if (accessToken) {
     <div class="video-overlay"></div>
   </div>
 
+  <!-- Top right corner - User info -->
+  {isLoggedIn && userEmail && (
+    <div class="user-info-corner">
+      <a href="/account" class="user-email-link">
+        {userEmail}
+      </a>
+    </div>
+  )}
+
   <!-- Mysterious Content -->
   <div class="content">
     <!-- Glitch Logo/Title -->
@@ -98,14 +112,12 @@ if (accessToken) {
     <!-- CTA Buttons Container -->
     <div class="cta-container">
       {hasAppAccess ? (
-        <!-- Access granted message -->
-        <div class="access-granted">
-          <div class="access-message">
-            <svg class="checkmark" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-            </svg>
-            <h2 class="access-text">YEAAA ! I HAVE ACCESS</h2>
-          </div>
+        <!-- Single CTA to explore apps -->
+        <div class="explore-apps">
+          <a href="/apps" class="enter-btn explore-btn">
+            <span class="btn-text">Explore apps & tutos</span>
+            <span class="btn-glow"></span>
+          </a>
         </div>
       ) : (
         <!-- Two buttons with prices (shown when no access) -->
@@ -126,6 +138,15 @@ if (accessToken) {
               <span class="btn-glow"></span>
             </button>
           </div>
+        </div>
+      )}
+      
+      {/* Show login link if user is not logged in */}
+      {!isLoggedIn && !hasAppAccess && (
+        <div class="login-link-container">
+          <a href="/login" class="login-link">
+            Already have access? Login
+          </a>
         </div>
       )}
     </div>
@@ -356,11 +377,69 @@ if (accessToken) {
       }
     }
 
+    /* User Info Corner */
+    .home-wrapper .user-info-corner {
+      position: fixed;
+      top: 2rem;
+      right: 2rem;
+      z-index: 200;
+      opacity: 0;
+      animation: fade-in 1s ease-in-out 0.5s forwards;
+    }
+
+    .home-wrapper .user-email-link {
+      color: rgba(255, 255, 255, 0.9);
+      text-decoration: none;
+      font-size: 0.9rem;
+      padding: 0.6rem 1.2rem;
+      border: 1px solid rgba(255, 0, 255, 0.4);
+      border-radius: 4px;
+      background: rgba(0, 0, 0, 0.5);
+      backdrop-filter: blur(10px);
+      transition: all 0.3s ease;
+      box-shadow: 0 0 20px rgba(255, 0, 255, 0.2);
+      display: inline-block;
+    }
+
+    .home-wrapper .user-email-link:hover {
+      border-color: rgba(0, 255, 255, 0.6);
+      box-shadow: 0 0 30px rgba(0, 255, 255, 0.4);
+      transform: translateY(-2px);
+      background: rgba(0, 0, 0, 0.7);
+    }
+
     /* CTA Container */
     .home-wrapper .cta-container {
       margin-top: 2rem;
       opacity: 0;
       animation: fade-in 2s ease-in-out 2s forwards;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 1.5rem;
+    }
+
+    /* Explore Apps Button */
+    .home-wrapper .explore-apps {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .home-wrapper .explore-btn {
+      text-decoration: none;
+      display: inline-block;
+      border-color: rgba(0, 255, 255, 0.8);
+      box-shadow:
+        0 0 40px rgba(0, 255, 255, 0.5),
+        inset 0 0 40px rgba(0, 255, 255, 0.2);
+    }
+
+    .home-wrapper .explore-btn:hover {
+      border-color: rgba(255, 0, 255, 0.9);
+      box-shadow:
+        0 0 60px rgba(255, 0, 255, 0.7),
+        inset 0 0 40px rgba(255, 0, 255, 0.3);
     }
 
     /* Dual Buttons Layout */
@@ -462,49 +541,26 @@ if (accessToken) {
       text-shadow: 0 0 20px rgba(255, 0, 255, 0.8);
     }
 
-    /* Access Granted Styles */
-    .home-wrapper .access-granted {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-    }
-
-    .home-wrapper .access-message {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 1.5rem;
-    }
-
-    .home-wrapper .checkmark {
-      width: 80px;
-      height: 80px;
-      color: #00ffff;
-      filter: drop-shadow(0 0 20px rgba(0, 255, 255, 0.8));
-      animation: pulse-glow 2s ease-in-out infinite;
-    }
-
-    @keyframes pulse-glow {
-      0%, 100% {
-        filter: drop-shadow(0 0 20px rgba(0, 255, 255, 0.8));
-        transform: scale(1);
-      }
-      50% {
-        filter: drop-shadow(0 0 40px rgba(0, 255, 255, 1));
-        transform: scale(1.05);
-      }
-    }
-
-    .home-wrapper .access-text {
-      font-size: clamp(1.5rem, 5vw, 3rem);
-      font-weight: 900;
-      text-transform: uppercase;
-      letter-spacing: 0.3rem;
-      color: #fff;
-      text-shadow:
-        0 0 20px rgba(0, 255, 255, 0.8),
-        0 0 40px rgba(255, 0, 255, 0.6);
+    /* Login Link */
+    .home-wrapper .login-link-container {
+      margin-top: 1rem;
       text-align: center;
+    }
+
+    .home-wrapper .login-link {
+      color: rgba(255, 255, 255, 0.7);
+      text-decoration: none;
+      font-size: clamp(0.85rem, 1.8vw, 1rem);
+      letter-spacing: 0.1rem;
+      transition: all 0.3s ease;
+      border-bottom: 1px solid transparent;
+      padding-bottom: 2px;
+    }
+
+    .home-wrapper .login-link:hover {
+      color: rgba(0, 255, 255, 0.9);
+      border-bottom-color: rgba(0, 255, 255, 0.5);
+      text-shadow: 0 0 10px rgba(0, 255, 255, 0.5);
     }
 
     /* Floating Orbs */
@@ -648,6 +704,16 @@ if (accessToken) {
 
       .orb {
         filter: blur(30px);
+      }
+
+      .home-wrapper .user-info-corner {
+        top: 1rem;
+        right: 1rem;
+      }
+
+      .home-wrapper .user-email-link {
+        font-size: 0.75rem;
+        padding: 0.5rem 0.8rem;
       }
     }
   </style>
