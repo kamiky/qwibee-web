@@ -59,9 +59,10 @@ if (accessToken) {
         );
         
         // Check for app lifetime purchase (profileId === "home", videoId === "lifetime")
-        const appLifetimePurchase = data.data.purchasedContent?.find(
-          (pc: any) => pc.type === 'apps'
-        );
+        // const appLifetimePurchase = data.data.purchasedContent?.find(
+        //   (pc: any) => pc.type === 'apps'
+        // );
+        const appLifetimePurchase = null
         
         hasAppAccess = !!(appMembership || appLifetimePurchase);
       }
@@ -766,6 +767,8 @@ if (accessToken) {
             profileId: "home", // Special profile ID for home page
             membershipPrice: priceGroup.membership.monthly * 100, // Convert to cents
             priceId: priceGroup.id, // Pass price group ID for A/B testing tracking
+            successUrl: `${window.location.origin}/?membership=success&session_id={CHECKOUT_SESSION_ID}`,
+            cancelUrl: `${window.location.origin}/?membership=canceled`,
             customerEmail,
             language: "en", // TODO: Get from page language
             displayName: "Premium Access",

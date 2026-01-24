@@ -9,6 +9,8 @@ export const POST: APIRoute = async ({ request, url }) => {
       profileId,
       membershipPrice,
       priceId,
+      successUrl,
+      cancelUrl,
       customerEmail,
       language,
       displayName,
@@ -46,9 +48,9 @@ export const POST: APIRoute = async ({ request, url }) => {
     const backendUrl =
       import.meta.env.PUBLIC_API_URL || "http://localhost:5002";
 
-    // Prepare success and cancel URLs
-    const successUrl = `${baseUrl}/creator/${profileId}?membership=success&session_id={CHECKOUT_SESSION_ID}`;
-    const cancelUrl = `${baseUrl}/creator/${profileId}?membership=canceled`;
+    // Use provided success/cancel URLs, or fall back to default behavior
+    const finalSuccessUrl = successUrl || `${baseUrl}/creator/${profileId}?membership=success&session_id={CHECKOUT_SESSION_ID}`;
+    const finalCancelUrl = cancelUrl || `${baseUrl}/creator/${profileId}?membership=canceled`;
 
     // Call backend API to create checkout session
     const response = await fetch(
@@ -62,8 +64,8 @@ export const POST: APIRoute = async ({ request, url }) => {
           profileId,
           membershipPrice,
           priceId,
-          successUrl,
-          cancelUrl,
+          successUrl: finalSuccessUrl,
+          cancelUrl: finalCancelUrl,
           customerEmail,
           language,
           displayName,
