@@ -1,8 +1,5 @@
 ---
-import Layout from "@/layouts/Layout.astro";
-import Header from "@/components/Header.astro";
-import Footer from "@/components/Footer.astro";
-import LanguageSwitcher from "@/components/LanguageSwitcher.astro";
+import LayoutCreator from "@/layouts/LayoutCreator.astro";
 import { useTranslations, type Language } from "@/i18n/translations";
 import { profiles, type ContentType } from "@/data/profiles";
 
@@ -132,14 +129,11 @@ const getVideoFilename = (
 const sortedVideos = [...profile.videos];
 ---
 
-<Layout
+<LayoutCreator
   title={`${profile.displayName[lang]} - WatchMeFans`}
   description={profile.bio[lang]}
   lang={lang}
 >
-  <Header lang={lang} />
-  <LanguageSwitcher lang={lang} />
-
   <main class="pt-24 pb-12 min-h-screen bg-white">
     <div class="max-w-6xl mx-auto px-6">
       <!-- Success/Cancel Messages -->
@@ -527,4 +521,4 @@ const sortedVideos = [...profile.videos];
       object-fit: contain !important;
     }
   </style>
-</Layout>
+</LayoutCreator>

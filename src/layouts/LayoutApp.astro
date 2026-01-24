@@ -1,0 +1,253 @@
+---
+import Layout from "@/layouts/Layout.astro";
+import { useTranslations, type Language } from "@/i18n/translations";
+
+interface Props {
+  title: string;
+  description: string;
+  lang: Language;
+}
+
+const { title, description, lang } = Astro.props;
+const t = useTranslations(lang);
+
+// Check if user is logged in
+let isLoggedIn = false;
+let userEmail: string | null = null;
+const accessToken = Astro.cookies.get('wmf_access_token')?.value;
+
+if (accessToken) {
+  try {
+    const backendUrl = import.meta.env.PUBLIC_API_URL || 'http://localhost:5002';
+    const response = await fetch(`${backendUrl}/auth/verify-token`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ token: accessToken }),
+    });
+
+    if (response.ok) {
+      const data = await response.json();
+      if (data.data.valid) {
+        isLoggedIn = true;
+        userEmail = data.data.user?.email || null;
+      }
+    }
+  } catch (error) {
+    console.error('Error verifying token:', error);
+  }
+}
+---
+
+<Layout title={title} description={description} lang={lang}>
+  <!-- Video Background -->
+  <div class="video-container">
+    <video autoplay muted loop playsinline class="video-bg">
+      <source src="/animations/glowing-circles.mp4" type="video/mp4" />
+    </video>
+    <div class="video-overlay"></div>
+  </div>
+
+  <!-- Top right corner - User info -->
+  {isLoggedIn && userEmail && (
+    <div class="user-info-corner">
+      <a href="/account" class="user-email-link">
+        {userEmail}
+      </a>
+    </div>
+  )}
+
+  <!-- Floating Orbs -->
+  <div class="orbs">
+    <div class="orb orb-1"></div>
+    <div class="orb orb-2"></div>
+    <div class="orb orb-3"></div>
+  </div>
+
+  <!-- Scanlines Effect -->
+  <div class="scanlines"></div>
+
+  <!-- Page Content -->
+  <slot />
+
+  <style>
+    /* Video Background */
+    .video-container {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 1;
+    }
+
+    .video-bg {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      filter: brightness(0.6) contrast(1.2);
+    }
+
+    .video-overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: radial-gradient(
+        circle at center,
+        transparent 0%,
+        rgba(0, 0, 0, 0.7) 100%
+      );
+      pointer-events: none;
+    }
+
+    /* User Info Corner */
+    .user-info-corner {
+      position: fixed;
+      top: 2rem;
+      right: 2rem;
+      z-index: 200;
+      opacity: 0;
+      animation: fade-in 1s ease-in-out 0.5s forwards;
+    }
+
+    .user-email-link {
+      color: rgba(255, 255, 255, 0.9);
+      text-decoration: none;
+      font-size: 0.9rem;
+      padding: 0.6rem 1.2rem;
+      border: 1px solid rgba(255, 0, 255, 0.4);
+      border-radius: 4px;
+      background: rgba(0, 0, 0, 0.5);
+      backdrop-filter: blur(10px);
+      transition: all 0.3s ease;
+      box-shadow: 0 0 20px rgba(255, 0, 255, 0.2);
+      display: inline-block;
+    }
+
+    .user-email-link:hover {
+      border-color: rgba(0, 255, 255, 0.6);
+      box-shadow: 0 0 30px rgba(0, 255, 255, 0.4);
+      transform: translateY(-2px);
+      background: rgba(0, 0, 0, 0.7);
+    }
+
+    @keyframes fade-in {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    /* Floating Orbs */
+    .orbs {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 5;
+    }
+
+    .orb {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(40px);
+      opacity: 0.3;
+      animation: float 8s infinite ease-in-out;
+    }
+
+    .orb-1 {
+      width: 200px;
+      height: 200px;
+      background: radial-gradient(circle, #ff00ff, transparent);
+      top: 20%;
+      left: 10%;
+      animation-delay: 0s;
+    }
+
+    .orb-2 {
+      width: 300px;
+      height: 300px;
+      background: radial-gradient(circle, #00ffff, transparent);
+      top: 60%;
+      right: 15%;
+      animation-delay: 2s;
+    }
+
+    .orb-3 {
+      width: 150px;
+      height: 150px;
+      background: radial-gradient(circle, #ff00ff, transparent);
+      bottom: 15%;
+      left: 20%;
+      animation-delay: 4s;
+    }
+
+    @keyframes float {
+      0%,
+      100% {
+        transform: translate(0, 0) scale(1);
+      }
+      33% {
+        transform: translate(30px, -30px) scale(1.1);
+      }
+      66% {
+        transform: translate(-20px, 20px) scale(0.9);
+      }
+    }
+
+    /* Scanlines Effect */
+    .scanlines {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: repeating-linear-gradient(
+        0deg,
+        rgba(0, 0, 0, 0.15),
+        rgba(0, 0, 0, 0.15) 1px,
+        transparent 1px,
+        transparent 2px
+      );
+      pointer-events: none;
+      z-index: 100;
+      opacity: 0.3;
+      animation: scanline-anim 8s linear infinite;
+    }
+
+    @keyframes scanline-anim {
+      0% {
+        transform: translateY(0);
+      }
+      100% {
+        transform: translateY(10px);
+      }
+    }
+
+    /* Mobile Adjustments */
+    @media (max-width: 768px) {
+      .user-info-corner {
+        top: 1rem;
+        right: 1rem;
+      }
+
+      .user-email-link {
+        font-size: 0.75rem;
+        padding: 0.5rem 0.8rem;
+      }
+
+      .orb {
+        filter: blur(30px);
+      }
+    }
+  </style>
+</Layout>

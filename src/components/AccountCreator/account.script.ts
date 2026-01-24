@@ -34,6 +34,7 @@ interface PurchasedContent {
 }
 
 export function initAccountPage() {
+  console.log('Init account page')
   // Detect language from URL
   const lang: Language = window.location.pathname.startsWith("/fr")
     ? "fr"

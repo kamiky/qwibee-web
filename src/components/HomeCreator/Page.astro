@@ -1,8 +1,5 @@
 ---
-import Layout from "@/layouts/Layout.astro";
-import Header from "@/components/Header.astro";
-import Footer from "@/components/Footer.astro";
-import LanguageSwitcher from "@/components/LanguageSwitcher.astro";
+import LayoutCreator from "@/layouts/LayoutCreator.astro";
 import { useTranslations, type Language } from "@/i18n/translations";
 import { profiles } from "@/data/profiles";
 
@@ -29,7 +26,7 @@ const getProfileUrl = (profileId: string) => {
 };
 ---
 
-<Layout
+<LayoutCreator
   title={t.seo.home.title}
   description={t.seo.home.description}
   lang={lang}
@@ -42,9 +39,6 @@ const getProfileUrl = (profileId: string) => {
     </main>
   ) : (
     <>
-      <Header lang={lang} />
-      <LanguageSwitcher lang={lang} />
-
       <main class="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
     <!-- Hero Section -->
     <section class="pt-32 pb-20 px-6">
@@ -345,8 +339,6 @@ const getProfileUrl = (profileId: string) => {
     )}
       </main>
 
-      <Footer lang={lang} />
-
       <script is:inline>
     document.addEventListener("DOMContentLoaded", function() {
       // Smooth scroll for anchor links
@@ -453,4 +445,4 @@ const getProfileUrl = (profileId: string) => {
       </script>
     </>
   )}
-</Layout>
+</LayoutCreator>

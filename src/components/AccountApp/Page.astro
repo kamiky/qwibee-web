@@ -1,8 +1,5 @@
 ---
-import Layout from "@/layouts/Layout.astro";
-import Header from "@/components/Header.astro";
-import Footer from "@/components/Footer.astro";
-import LanguageSwitcher from "@/components/LanguageSwitcher.astro";
+import LayoutApp from "@/layouts/LayoutApp.astro";
 import { useTranslations, type Language } from "@/i18n/translations";
 
 // Detect language from URL path
@@ -16,32 +13,11 @@ const lang: Language =
 const t = useTranslations(lang);
 ---
 
-<Layout
+<LayoutApp
   title={t.seo.account.title}
   description={t.seo.account.description}
   lang={lang}
 >
-  <Header lang={lang} />
-  <LanguageSwitcher lang={lang} />
-
-  <!-- Video Background -->
-  <div class="video-container">
-    <video autoplay muted loop playsinline class="video-bg">
-      <source src="/animations/glowing-circles.mp4" type="video/mp4" />
-    </video>
-    <div class="video-overlay"></div>
-  </div>
-
-  <!-- Floating Orbs -->
-  <div class="orbs">
-    <div class="orb orb-1"></div>
-    <div class="orb orb-2"></div>
-    <div class="orb orb-3"></div>
-  </div>
-
-  <!-- Scanlines Effect -->
-  <div class="scanlines"></div>
-
   <main class="pt-24 pb-12 min-h-screen account-main">
     <div class="max-w-3xl mx-auto px-6">
       <!-- Loading State -->
@@ -104,7 +80,7 @@ const t = useTranslations(lang);
             <div class="flex items-center justify-between mb-4">
               <div class="flex items-center gap-2">
                 <svg
-                  class="w-5 h-5 text-brand-blue-500"
+                  class="w-5 h-5 text-cyan-400"
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
@@ -116,13 +92,13 @@ const t = useTranslations(lang);
                     d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z"
                   ></path>
                 </svg>
-                <h2 class="text-xl font-semibold text-gray-900">
+                <h2 class="text-xl font-semibold text-cyan-400 led-text">
                   {t.account.activeMemberships}
                 </h2>
               </div>
               <button
                 id="manage-all-btn"
-                class="hidden bg-brand-blue-500 hover:bg-brand-blue-600 text-white font-semibold py-2.5 px-5 rounded-full transition-all gap-2 text-sm"
+                class="hidden neon-btn text-white font-semibold py-2.5 px-5 rounded-full transition-all gap-2 text-sm"
               >
                 <svg
                   class="w-4 h-4"
@@ -230,7 +206,7 @@ const t = useTranslations(lang);
         <!-- Logout Modal -->
         <div
           id="logout-modal"
-          class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-black bg-opacity-70 backdrop-blur-sm transition-opacity duration-200"
+          class="fixed inset-0 z-50 hidden items-center justify-center p-4 bg-black bg-opacity-70 backdrop-blur-sm transition-opacity duration-200"
         >
           <div
             class="account-card rounded-lg max-w-md w-full p-5 transform transition-all duration-200 scale-100 animate-fadeIn"
@@ -270,7 +246,7 @@ const t = useTranslations(lang);
         <!-- Delete Account Modal -->
         <div
           id="delete-account-modal"
-          class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-black bg-opacity-70 backdrop-blur-sm transition-opacity duration-200"
+          class="fixed inset-0 z-50 hidden items-center justify-center p-4 bg-black bg-opacity-70 backdrop-blur-sm transition-opacity duration-200"
         >
           <div
             class="account-card rounded-lg max-w-md w-full p-5 transform transition-all duration-200 scale-100 animate-fadeIn"
@@ -475,109 +451,10 @@ const t = useTranslations(lang);
       box-shadow: 0 0 20px rgba(0, 255, 255, 0.6);
     }
 
-    /* Floating Orbs */
-    .orbs {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      pointer-events: none;
-      z-index: 5;
-    }
-
-    .orb {
-      position: absolute;
-      border-radius: 50%;
-      filter: blur(40px);
-      opacity: 0.3;
-      animation: float 8s infinite ease-in-out;
-    }
-
-    .orb-1 {
-      width: 200px;
-      height: 200px;
-      background: radial-gradient(circle, #ff00ff, transparent);
-      top: 20%;
-      left: 10%;
-      animation-delay: 0s;
-    }
-
-    .orb-2 {
-      width: 300px;
-      height: 300px;
-      background: radial-gradient(circle, #00ffff, transparent);
-      top: 60%;
-      right: 15%;
-      animation-delay: 2s;
-    }
-
-    .orb-3 {
-      width: 150px;
-      height: 150px;
-      background: radial-gradient(circle, #ff00ff, transparent);
-      bottom: 15%;
-      left: 20%;
-      animation-delay: 4s;
-    }
-
-    @keyframes float {
-      0%,
-      100% {
-        transform: translate(0, 0) scale(1);
-      }
-      33% {
-        transform: translate(30px, -30px) scale(1.1);
-      }
-      66% {
-        transform: translate(-20px, 20px) scale(0.9);
-      }
-    }
-
-    /* Scanlines Effect */
-    .scanlines {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: repeating-linear-gradient(
-        0deg,
-        rgba(0, 0, 0, 0.15),
-        rgba(0, 0, 0, 0.15) 1px,
-        transparent 1px,
-        transparent 2px
-      );
-      pointer-events: none;
-      z-index: 100;
-      opacity: 0.3;
-      animation: scanline-anim 8s linear infinite;
-    }
-
-    @keyframes scanline-anim {
-      0% {
-        transform: translateY(0);
-      }
-      100% {
-        transform: translateY(10px);
-      }
-    }
-
-    /* Mobile Adjustments */
-    @media (max-width: 768px) {
-      .orb {
-        filter: blur(30px);
-      }
+    /* Modal Display */
+    #logout-modal:not(.hidden),
+    #delete-account-modal:not(.hidden) {
+      display: flex;
     }
   </style>
-
-  <Footer lang={lang} />
-
-  <!-- Initialize the page with the external script -->
-  <script>
-    /* import to keep the full path for generated /fr files */
-    import { initAccountPage } from "@/components/AccountCreator/account.script.ts";
-
-    initAccountPage();
-  </script>
-</Layout>
+</LayoutApp>

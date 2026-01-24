@@ -1,0 +1,25 @@
+---
+import Layout from "@/layouts/Layout.astro";
+import Header from "@/components/Header.astro";
+import Footer from "@/components/Footer.astro";
+import LanguageSwitcher from "@/components/LanguageSwitcher.astro";
+import { type Language } from "@/i18n/translations";
+
+interface Props {
+  title: string;
+  description: string;
+  lang: Language;
+}
+
+const { title, description, lang } = Astro.props;
+---
+
+<Layout title={title} description={description} lang={lang}>
+  <Header lang={lang} />
+  <LanguageSwitcher lang={lang} />
+  
+  <!-- Page Content -->
+  <slot />
+  
+  <Footer lang={lang} />
+</Layout>

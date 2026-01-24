@@ -1,8 +1,5 @@
 ---
-import Layout from "@/layouts/Layout.astro";
-import Header from "@/components/Header.astro";
-import Footer from "@/components/Footer.astro";
-import LanguageSwitcher from "@/components/LanguageSwitcher.astro";
+import LayoutCreator from "@/layouts/LayoutCreator.astro";
 import { useTranslations, type Language } from "@/i18n/translations";
 
 // Detect language from URL path
@@ -16,14 +13,11 @@ const lang: Language =
 const t = useTranslations(lang);
 ---
 
-<Layout
+<LayoutCreator
   title={t.seo.account.title}
   description={t.seo.account.description}
   lang={lang}
 >
-  <Header lang={lang} />
-  <LanguageSwitcher lang={lang} />
-
   <main class="pt-24 pb-12 min-h-screen bg-gray-100">
     <div class="max-w-3xl mx-auto px-6">
       <!-- Loading State -->
@@ -376,8 +370,6 @@ const t = useTranslations(lang);
     </div>
   </main>
 
-  <Footer lang={lang} />
-
   <!-- Initialize the page with the external script -->
   <script>
     /* import to keep the full path for generated /fr files */
@@ -385,4 +377,4 @@ const t = useTranslations(lang);
 
     initAccountPage();
   </script>
-</Layout>
+</LayoutCreator>
