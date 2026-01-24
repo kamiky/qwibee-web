@@ -7,8 +7,8 @@ import { useTranslations, type Language } from "@/i18n/translations";
 const lang: Language = "en";
 const t = useTranslations(lang);
 
-// Check for quibee-creator-mode cookie
-const creatorMode = Astro.cookies.get("quibee-creator-mode")?.value === "true";
+// Check for qwibee-creator-mode cookie
+const creatorMode = Astro.cookies.get("qwibee-creator-mode")?.value === "true";
 ---
 
 <Layout

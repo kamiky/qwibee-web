@@ -9,7 +9,7 @@ import { profiles, type ContentType } from "@/data/profiles";
 const { profileId } = Astro.params;
 
 // Set cookie to indicate user is in creator mode
-Astro.cookies.set('quibee-creator-mode', 'true', {
+Astro.cookies.set('qwibee-creator-mode', 'true', {
   path: '/',
   maxAge: 60 * 60 * 24 * 365, // 1 year
   httpOnly: false, // Allow client-side access if needed
