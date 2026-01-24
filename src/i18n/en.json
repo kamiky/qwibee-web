@@ -374,5 +374,17 @@
       "contact": "Contact Us",
       "login": "Sign In"
     }
+  },
+  "apps": {
+    "pageTitle": "Apps & Tutorials - WatchMeFans",
+    "title": "Apps & Tutorials",
+    "subtitle": "Discover useful Mac apps and step-by-step tutorials to enhance your productivity and customize your workspace.",
+    "categoryApp": "App",
+    "categoryTutorial": "Tutorial",
+    "comingSoon": "Details coming soon",
+    "moreComingSoon": {
+      "title": "More Coming Soon",
+      "message": "We're constantly adding new apps and tutorials. Stay tuned for updates!"
+    }
   }
 }

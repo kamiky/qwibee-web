@@ -4,11 +4,15 @@ import { useTranslations, type Language } from "@/i18n/translations";
 
 interface Props {
   title: string;
-  description: string;
+  description?: string;
   lang: Language;
 }
 
-const { title, description, lang } = Astro.props;
+const {
+  title,
+  description = "WatchMeFans Apps & Tutorials",
+  lang,
+} = Astro.props;
 const t = useTranslations(lang);
 
 // Check if user is logged in

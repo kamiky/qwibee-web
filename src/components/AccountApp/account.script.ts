@@ -24,6 +24,7 @@ interface Membership {
   cancelAtPeriodEnd: boolean;
   currentPeriodEnd: string;
   stripeSubscriptionId: string;
+  type?: string;
 }
 
 interface PurchasedContent {
@@ -31,6 +32,7 @@ interface PurchasedContent {
   videoId: string;
   amount: number;
   createdAt: string;
+  type?: string;
 }
 
 export function initAccountPage() {
@@ -198,6 +200,16 @@ export function initAccountPage() {
 
       const data = await response.json();
       const memberships = data.data.memberships || [];
+      const purchasedContent = data.data.purchasedContent || [];
+
+      // Check if user has app access
+      const hasAppAccess = checkAppAccess(memberships, purchasedContent);
+      
+      // Show quick access section if user has app access
+      if (hasAppAccess) {
+        const quickAccessSection = document.getElementById("quick-access-section");
+        if (quickAccessSection) quickAccessSection.classList.remove("hidden");
+      }
 
       // Load memberships
       loadMemberships(memberships);
@@ -206,6 +218,21 @@ export function initAccountPage() {
       if (membershipsList) membershipsList.classList.add("hidden");
       if (noMemberships) noMemberships.classList.remove("hidden");
     }
+  }
+
+  // Check if user has app access (membership or lifetime purchase)
+  function checkAppAccess(memberships: Membership[], purchasedContent: PurchasedContent[]): boolean {
+    // Check for app membership (type === "apps")
+    const hasAppMembership = memberships.some(
+      (m) => m.type === "apps" && (m.status === "active" || m.status === "trialing")
+    );
+    
+    // Check for app lifetime purchase (type === "apps")
+    const hasAppLifetime = purchasedContent.some(
+      (pc) => pc.type === "apps"
+    );
+    
+    return hasAppMembership || hasAppLifetime;
   }
 
   function loadMemberships(memberships: Membership[]) {
