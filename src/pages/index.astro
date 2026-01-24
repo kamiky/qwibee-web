@@ -1,7 +1,7 @@
 ---
 import Layout from "@/layouts/Layout.astro";
-import Home1 from "@/components/Home1.astro";
-import Home2 from "@/components/Home2.astro";
+import HomeApp from "@/components/HomeApp/Page.astro";
+import HomeCreator from "@/components/HomeCreator/Page.astro";
 import { useTranslations, type Language } from "@/i18n/translations";
 
 const lang: Language = "en";
@@ -16,5 +16,5 @@ const creatorMode = Astro.cookies.get("qwibee-creator-mode")?.value === "true";
   description={t.seo.home.description}
   lang={lang}
 >
-  {creatorMode ? <Home2 lang={lang} /> : <Home1 lang={lang} />}
+  {creatorMode ? <HomeCreator lang={lang} /> : <HomeApp lang={lang} />}
 </Layout>
