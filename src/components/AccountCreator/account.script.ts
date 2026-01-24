@@ -34,7 +34,14 @@ interface PurchasedContent {
 }
 
 export function initAccountPage() {
-  console.log('Init account page')
+  // Only run on creator account pages (check if we're in creator mode)
+  const creatorMode = document.cookie.includes("qwibee-creator-mode=true");
+  if (!creatorMode) {
+    console.log("App mode detected, skipping creator account initialization");
+    return;
+  }
+
+  console.log("Init account creator page");
   // Detect language from URL
   const lang: Language = window.location.pathname.startsWith("/fr")
     ? "fr"
@@ -588,5 +595,4 @@ export function initAccountPage() {
       }
     }
   });
-
 }

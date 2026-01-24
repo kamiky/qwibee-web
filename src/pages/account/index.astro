@@ -1,20 +1,9 @@
 ---
-import Layout from "@/layouts/Layout.astro";
 import AccountApp from "@/components/AccountApp/Page.astro";
 import AccountCreator from "@/components/AccountCreator/Page.astro";
-import { useTranslations, type Language } from "@/i18n/translations";
-
-const lang: Language = "en";
-const t = useTranslations(lang);
 
 // Check for qwibee-creator-mode cookie
 const creatorMode = Astro.cookies.get("qwibee-creator-mode")?.value === "true";
 ---
 
-<Layout
-  title={t.seo.home.title}
-  description={t.seo.home.description}
-  lang={lang}
->
-  {creatorMode ? <AccountCreator lang={lang} /> : <AccountApp lang={lang} />}
-</Layout>
+{creatorMode ? <AccountCreator /> : <AccountApp />}

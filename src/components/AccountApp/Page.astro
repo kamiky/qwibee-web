@@ -457,4 +457,12 @@ const t = useTranslations(lang);
       display: flex;
     }
   </style>
+
+  <!-- Initialize the page with the external script -->
+  <script>
+    /* import to keep the full path for generated /fr files */
+    import { initAccountPage } from "@/components/AccountApp/account.script.ts";
+
+    initAccountPage();
+  </script>
 </LayoutApp>
