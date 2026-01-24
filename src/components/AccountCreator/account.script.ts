@@ -288,7 +288,13 @@ export function initAccountPage() {
       if (noMemberships) noMemberships.classList.remove("hidden");
       if (manageAllBtn) manageAllBtn.style.display = "none";
     } else {
-      if (manageAllBtn) manageAllBtn.style.display = "flex";
+      if (manageAllBtn) {
+        manageAllBtn.style.display = "flex";
+        // Remove any existing event listeners by cloning the button
+        const newManageAllBtn = manageAllBtn.cloneNode(true) as HTMLElement;
+        manageAllBtn.parentNode?.replaceChild(newManageAllBtn, manageAllBtn);
+        newManageAllBtn.addEventListener("click", handleManageAllSubscriptions);
+      }
       if (membershipsList) {
         membershipsList.innerHTML = memberships
           .map((m) => {
@@ -582,9 +588,4 @@ export function initAccountPage() {
     }
   });
 
-  // Manage All Subscriptions button
-  const manageAllBtn = document.getElementById("manage-all-btn");
-  if (manageAllBtn) {
-    manageAllBtn.addEventListener("click", handleManageAllSubscriptions);
-  }
 }

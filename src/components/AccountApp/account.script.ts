@@ -49,10 +49,6 @@ export function initAccountPage() {
   const userEmailEl = document.getElementById("user-email");
   const membershipsList = document.getElementById("memberships-list");
   const noMemberships = document.getElementById("no-memberships");
-  const purchasedContentList = document.getElementById(
-    "purchased-content-list"
-  );
-  const noPurchasedContent = document.getElementById("no-purchased-content");
   const logoutBtn = document.getElementById("logout-btn");
   const logoutModal = document.getElementById("logout-modal");
   const modalCancel = document.getElementById("modal-cancel");
@@ -183,7 +179,7 @@ export function initAccountPage() {
     }
   }
 
-  // Load both memberships and purchased content in a single API call
+  // Load memberships data
   async function loadAccountData() {
     if (!auth) return;
 
@@ -200,83 +196,13 @@ export function initAccountPage() {
 
       const data = await response.json();
       const memberships = data.data.memberships || [];
-      const purchasedContent = data.data.purchasedContent || [];
 
       // Load memberships
       loadMemberships(memberships);
-
-      // Load purchased content
-      loadPurchasedContent(purchasedContent);
     } catch (error) {
       console.error("Error loading account data:", error);
       if (membershipsList) membershipsList.classList.add("hidden");
       if (noMemberships) noMemberships.classList.remove("hidden");
-      if (purchasedContentList) purchasedContentList.classList.add("hidden");
-      if (noPurchasedContent) noPurchasedContent.classList.remove("hidden");
-    }
-  }
-
-  function loadPurchasedContent(purchasedContent: PurchasedContent[]) {
-    if (purchasedContent.length === 0) {
-      if (purchasedContentList) purchasedContentList.classList.add("hidden");
-      if (noPurchasedContent) noPurchasedContent.classList.remove("hidden");
-    } else {
-      if (purchasedContentList) {
-        purchasedContentList.innerHTML = purchasedContent
-          .map((pc) => {
-            // Get profile and video data for display names
-            const profile = profiles[pc.profileId];
-            const displayName = profile
-              ? profile.displayName[lang]
-              : pc.profileId;
-
-            const video = profile?.videos.find((v) => v.id === pc.videoId);
-            const videoTitle = video ? video.title[lang] : pc.videoId;
-
-            const dateOptions: Intl.DateTimeFormatOptions = {
-              year: "numeric",
-              month: "short",
-              day: "numeric",
-            };
-            const purchaseDate = new Date(pc.createdAt).toLocaleDateString(
-              lang === "fr" ? "fr-FR" : "en-US",
-              dateOptions
-            );
-            const price = `$${(pc.amount / 100).toFixed(2)}`;
-            const profileUrl =
-              lang === "fr"
-                ? `/fr/creator/${pc.profileId}`
-                : `/creator/${pc.profileId}`;
-
-            return `
-              <div class="bg-gray-50 rounded-lg p-5">
-                <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-                  <div class="flex-1">
-                    <h3 class="font-semibold text-lg text-gray-900">
-                      ${videoTitle}
-                    </h3>
-                    <p class="text-sm text-gray-600">
-                      ${displayName}
-                    </p>
-                    <p class="text-xs text-gray-500">
-                      ${translations.account.purchasedContent.purchasedOn} ${purchaseDate} ${translations.account.purchasedContent.for} ${price}
-                    </p>
-                  </div>
-                  <div class="flex-shrink-0">
-                    <a href="${profileUrl}" class="bg-brand-blue-500 hover:bg-brand-blue-600 text-white font-semibold py-3.5 px-6 rounded-full transition-all inline-flex items-center justify-center gap-2 whitespace-nowrap w-full sm:w-auto text-xs">
-                      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"/>
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                      </svg>
-                      ${translations.account.purchasedContent.watchNow}
-                    </a>
-                  </div>
-                </div>
-              </div>
-            `;
-          })
-          .join("");
-      }
     }
   }
 
@@ -288,7 +214,13 @@ export function initAccountPage() {
       if (noMemberships) noMemberships.classList.remove("hidden");
       if (manageAllBtn) manageAllBtn.style.display = "none";
     } else {
-      if (manageAllBtn) manageAllBtn.style.display = "flex";
+      if (manageAllBtn) {
+        manageAllBtn.style.display = "flex";
+        // Remove any existing event listeners by cloning the button
+        const newManageAllBtn = manageAllBtn.cloneNode(true) as HTMLElement;
+        manageAllBtn.parentNode?.replaceChild(newManageAllBtn, manageAllBtn);
+        newManageAllBtn.addEventListener("click", handleManageAllSubscriptions);
+      }
       if (membershipsList) {
         membershipsList.innerHTML = memberships
           .map((m) => {
@@ -582,9 +514,4 @@ export function initAccountPage() {
     }
   });
 
-  // Manage All Subscriptions button
-  const manageAllBtn = document.getElementById("manage-all-btn");
-  if (manageAllBtn) {
-    manageAllBtn.addEventListener("click", handleManageAllSubscriptions);
-  }
 }
