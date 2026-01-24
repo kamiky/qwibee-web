@@ -38,6 +38,7 @@ export const APPS_TUTORIALS: AppTutorial[] = [
     logo: "🎥",
     category: "app",
     platform: "Web",
+    link: "/apps/youtube-4k",
   },
   {
     id: "window-management",
