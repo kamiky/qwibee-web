@@ -34,13 +34,6 @@ interface PurchasedContent {
 }
 
 export function initAccountPage() {
-  // Only run on app account pages (check if we're in creator mode)
-  const creatorMode = document.cookie.includes("qwibee-creator-mode=true");
-  if (creatorMode) {
-    console.log("Creator mode detected, skipping app account initialization");
-    return;
-  }
-
   console.log("Init account app page");
 
   // Detect language from URL

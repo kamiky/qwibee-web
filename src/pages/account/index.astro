@@ -1,9 +1,10 @@
 ---
-import AccountApp from "@/components/AccountApp/Page.astro";
-import AccountCreator from "@/components/AccountCreator/Page.astro";
-
-// Check for qwibee-creator-mode cookie
+// Check for qwibee-creator-mode cookie and serve appropriate page
 const creatorMode = Astro.cookies.get("qwibee-creator-mode")?.value === "true";
----
 
-{creatorMode ? <AccountCreator /> : <AccountApp />}
+if (creatorMode) {
+  return Astro.rewrite("/account/creator");
+} else {
+  return Astro.rewrite("/account/app");
+}
+---
