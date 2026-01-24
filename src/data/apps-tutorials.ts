@@ -10,6 +10,7 @@ export interface AppTutorial {
   logo: string; // emoji for now
   category: "app" | "tutorial";
   platform: "macOS" | "Web" | "Multi";
+  link?: string; // Optional link to tutorial page
 }
 
 export const APPS_TUTORIALS: AppTutorial[] = [
@@ -20,6 +21,7 @@ export const APPS_TUTORIALS: AppTutorial[] = [
     logo: "💻",
     category: "tutorial",
     platform: "macOS",
+    link: "/apps/vscode-transparency",
   },
   {
     id: "animated-wallpapers",

@@ -72,7 +72,10 @@ if (!hasAppAccess) {
       <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
         {
           APPS_TUTORIALS.map((item) => (
-            <div class="app-card rounded-2xl p-6 transition-all duration-300 hover:scale-[1.02] cursor-pointer">
+            <a 
+              href={item.link || '#'} 
+              class={`app-card rounded-2xl p-6 transition-all duration-300 hover:scale-[1.02] ${item.link ? 'cursor-pointer' : 'cursor-default'}`}
+            >
               {/* Logo */}
               <div class="flex items-start gap-4 mb-4">
                 <div class="app-logo flex-shrink-0 w-16 h-16 rounded-xl flex items-center justify-center text-4xl">
@@ -100,13 +103,13 @@ if (!hasAppAccess) {
                 {item.description}
               </p>
 
-              {/* Coming Soon Badge */}
+              {/* Coming Soon Badge or Available Badge */}
               <div class="flex items-center justify-between">
-                <span class="text-xs text-cyan-400 font-medium led-text">
-                  {t.apps.comingSoon}
+                <span class={`text-xs font-medium led-text ${item.link ? 'text-green-400' : 'text-cyan-400'}`}>
+                  {item.link ? 'Available Now' : t.apps.comingSoon}
                 </span>
                 <svg
-                  class="w-5 h-5 text-cyan-400 opacity-50"
+                  class={`w-5 h-5 ${item.link ? 'text-green-400' : 'text-cyan-400 opacity-50'}`}
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
@@ -119,7 +122,7 @@ if (!hasAppAccess) {
                   />
                 </svg>
               </div>
-            </div>
+            </a>
           ))
         }
       </div>
