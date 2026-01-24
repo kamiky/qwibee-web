@@ -34,8 +34,42 @@ function getPriceGroupFromCookie(): PriceGroup {
 
 const selectedPriceGroup = getPriceGroupFromCookie();
 
-// No need to check authentication on server-side
-// We'll check on button click instead
+// Check if user has app membership or lifetime purchase
+let hasAppAccess = false;
+const accessToken = Astro.cookies.get('wmf_access_token')?.value;
+
+if (accessToken) {
+  try {
+    const backendUrl = import.meta.env.PUBLIC_API_URL || 'http://localhost:5002';
+    const response = await fetch(`${backendUrl}/auth/verify-token`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ token: accessToken }),
+    });
+
+    if (response.ok) {
+      const data = await response.json();
+      
+      if (data.data.valid) {
+        // Check for app membership (profileId === "home")
+        const appMembership = data.data.memberships?.find(
+          (m: any) => m.profileId === 'home' && (m.status === 'active' || m.status === 'trialing')
+        );
+        
+        // Check for app lifetime purchase (profileId === "home", videoId === "lifetime")
+        const appLifetimePurchase = data.data.purchasedContent?.find(
+          (pc: any) => pc.type === 'apps'
+        );
+        
+        hasAppAccess = !!(appMembership || appLifetimePurchase);
+      }
+    }
+  } catch (error) {
+    console.error('Error verifying app access:', error);
+  }
+}
 ---
 
 <div class="home-wrapper">
@@ -63,25 +97,37 @@ const selectedPriceGroup = getPriceGroupFromCookie();
 
     <!-- CTA Buttons Container -->
     <div class="cta-container">
-      <!-- Two buttons with prices (always visible) -->
-      <div class="dual-buttons">
-        <div class="price-button-wrapper">
-          <button class="enter-btn membership-btn">
-            <span class="btn-text">Monthly Access</span>
-            <span class="btn-price"
-              >${selectedPriceGroup.membership.monthly}/mo</span
-            >
-            <span class="btn-glow"></span>
-          </button>
+      {hasAppAccess ? (
+        <!-- Access granted message -->
+        <div class="access-granted">
+          <div class="access-message">
+            <svg class="checkmark" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+            </svg>
+            <h2 class="access-text">YEAAA ! I HAVE ACCESS</h2>
+          </div>
         </div>
-        <div class="price-button-wrapper">
-          <button class="enter-btn lifetime-btn">
-            <span class="btn-text">Lifetime Access</span>
-            <span class="btn-price">${selectedPriceGroup.lifetime.price}</span>
-            <span class="btn-glow"></span>
-          </button>
+      ) : (
+        <!-- Two buttons with prices (shown when no access) -->
+        <div class="dual-buttons">
+          <div class="price-button-wrapper">
+            <button class="enter-btn membership-btn">
+              <span class="btn-text">Monthly Access</span>
+              <span class="btn-price"
+                >${selectedPriceGroup.membership.monthly}/mo</span
+              >
+              <span class="btn-glow"></span>
+            </button>
+          </div>
+          <div class="price-button-wrapper">
+            <button class="enter-btn lifetime-btn">
+              <span class="btn-text">Lifetime Access</span>
+              <span class="btn-price">${selectedPriceGroup.lifetime.price}</span>
+              <span class="btn-glow"></span>
+            </button>
+          </div>
         </div>
-      </div>
+      )}
     </div>
 
     <!-- Floating Orbs -->
@@ -414,6 +460,51 @@ const selectedPriceGroup = getPriceGroupFromCookie();
     .home-wrapper .lifetime-btn .btn-price {
       color: #ff00ff;
       text-shadow: 0 0 20px rgba(255, 0, 255, 0.8);
+    }
+
+    /* Access Granted Styles */
+    .home-wrapper .access-granted {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .home-wrapper .access-message {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 1.5rem;
+    }
+
+    .home-wrapper .checkmark {
+      width: 80px;
+      height: 80px;
+      color: #00ffff;
+      filter: drop-shadow(0 0 20px rgba(0, 255, 255, 0.8));
+      animation: pulse-glow 2s ease-in-out infinite;
+    }
+
+    @keyframes pulse-glow {
+      0%, 100% {
+        filter: drop-shadow(0 0 20px rgba(0, 255, 255, 0.8));
+        transform: scale(1);
+      }
+      50% {
+        filter: drop-shadow(0 0 40px rgba(0, 255, 255, 1));
+        transform: scale(1.05);
+      }
+    }
+
+    .home-wrapper .access-text {
+      font-size: clamp(1.5rem, 5vw, 3rem);
+      font-weight: 900;
+      text-transform: uppercase;
+      letter-spacing: 0.3rem;
+      color: #fff;
+      text-shadow:
+        0 0 20px rgba(0, 255, 255, 0.8),
+        0 0 40px rgba(255, 0, 255, 0.6);
+      text-align: center;
     }
 
     /* Floating Orbs */
@@ -792,7 +883,7 @@ const selectedPriceGroup = getPriceGroupFromCookie();
               videoId: "lifetime", // Special video ID for lifetime access
               contentPrice: priceGroup.lifetime.price * 100, // Convert to cents
               priceId: priceGroup.id, // Pass price group ID for A/B testing tracking
-              successUrl: `${window.location.origin}/?purchase=success&type=lifetime`,
+              successUrl: `${window.location.origin}/?purchase=success&type=apps`,
               cancelUrl: `${window.location.origin}/?purchase=canceled`,
               customerEmail,
               language: "en", // TODO: Get from page language

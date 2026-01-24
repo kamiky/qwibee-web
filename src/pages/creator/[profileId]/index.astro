@@ -8,7 +8,15 @@ import { profiles, type ContentType } from "@/data/profiles";
 
 const { profileId } = Astro.params;
 
-// Set cookie to indicate user is in creator mode
+// Get profile data first to check if it exists
+const profile = profiles[profileId || ""];
+
+// Return 404 if profile not found (before setting any cookies)
+if (!profile) {
+  return Astro.redirect("/404");
+}
+
+// Set cookie to indicate user is in creator mode (only if profile exists)
 Astro.cookies.set('qwibee-creator-mode', 'true', {
   path: '/',
   maxAge: 60 * 60 * 24 * 365, // 1 year
@@ -75,14 +83,6 @@ if (accessToken) {
     console.error('Error verifying token on server:', error);
     // Continue with USER_PLAN = "free" if verification fails
   }
-}
-
-// Get profile data
-const profile = profiles[profileId || ""];
-
-// Return 404 if profile not found
-if (!profile) {
-  return Astro.redirect("/404");
 }
 
 // Format price helper

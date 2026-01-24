@@ -5,7 +5,7 @@ export const prerender = false;
 export const POST: APIRoute = async ({ request, url }) => {
   try {
     const body = await request.json();
-    const { profileId, videoId, contentPrice, priceId, customerEmail, language, videoTitle, creatorDisplayName, debugSecret } = body;
+    const { profileId, videoId, contentPrice, priceId, successUrl, cancelUrl, customerEmail, language, videoTitle, creatorDisplayName, debugSecret } = body;
 
     // Validate required fields
     if (!profileId) {
@@ -47,9 +47,9 @@ export const POST: APIRoute = async ({ request, url }) => {
     const baseUrl = import.meta.env.PUBLIC_APP_URL || url.origin;
     const backendUrl = import.meta.env.PUBLIC_API_URL || "http://localhost:5002";
 
-    // Prepare success and cancel URLs
-    const successUrl = `${baseUrl}/creator/${profileId}?content_purchase=success&video_id=${videoId}`;
-    const cancelUrl = `${baseUrl}/creator/${profileId}?content_purchase=canceled`;
+    // Use provided success/cancel URLs, or fall back to default behavior
+    const finalSuccessUrl = successUrl || `${baseUrl}/creator/${profileId}?content_purchase=success&video_id=${videoId}`;
+    const finalCancelUrl = cancelUrl || `${baseUrl}/creator/${profileId}?content_purchase=canceled`;
 
     // Call backend API to create content checkout session
     const response = await fetch(
@@ -64,8 +64,8 @@ export const POST: APIRoute = async ({ request, url }) => {
           videoId,
           contentPrice,
           priceId,
-          successUrl,
-          cancelUrl,
+          successUrl: finalSuccessUrl,
+          cancelUrl: finalCancelUrl,
           customerEmail,
           language,
           videoTitle,
