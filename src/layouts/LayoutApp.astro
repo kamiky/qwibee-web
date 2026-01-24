@@ -14,15 +14,16 @@ const t = useTranslations(lang);
 // Check if user is logged in
 let isLoggedIn = false;
 let userEmail: string | null = null;
-const accessToken = Astro.cookies.get('wmf_access_token')?.value;
+const accessToken = Astro.cookies.get("wmf_access_token")?.value;
 
 if (accessToken) {
   try {
-    const backendUrl = import.meta.env.PUBLIC_API_URL || 'http://localhost:5002';
+    const backendUrl =
+      import.meta.env.PUBLIC_API_URL || "http://localhost:5002";
     const response = await fetch(`${backendUrl}/auth/verify-token`, {
-      method: 'POST',
+      method: "POST",
       headers: {
-        'Content-Type': 'application/json',
+        "Content-Type": "application/json",
       },
       body: JSON.stringify({ token: accessToken }),
     });
@@ -35,7 +36,7 @@ if (accessToken) {
       }
     }
   } catch (error) {
-    console.error('Error verifying token:', error);
+    console.error("Error verifying token:", error);
   }
 }
 ---
@@ -49,14 +50,23 @@ if (accessToken) {
     <div class="video-overlay"></div>
   </div>
 
+  <!-- Top left corner - Logo -->
+  <div class="logo-corner">
+    <a href="/" class="logo-link">
+      <span class="logo-text">q</span>
+    </a>
+  </div>
+
   <!-- Top right corner - User info -->
-  {isLoggedIn && userEmail && (
-    <div class="user-info-corner">
-      <a href="/account" class="user-email-link">
-        {userEmail}
-      </a>
-    </div>
-  )}
+  {
+    isLoggedIn && userEmail && (
+      <div class="user-info-corner">
+        <a href="/account" class="user-email-link">
+          {userEmail}
+        </a>
+      </div>
+    )
+  }
 
   <!-- Floating Orbs -->
   <div class="orbs">
@@ -101,6 +111,42 @@ if (accessToken) {
         rgba(0, 0, 0, 0.7) 100%
       );
       pointer-events: none;
+    }
+
+    /* Logo Corner */
+    .logo-corner {
+      position: fixed;
+      top: 2rem;
+      left: 2rem;
+      z-index: 200;
+      opacity: 0;
+      animation: fade-in 1s ease-in-out 0.5s forwards;
+    }
+
+    .logo-link {
+      color: rgba(255, 255, 255, 0.9);
+      text-decoration: none;
+      display: inline-block;
+      transition: all 0.3s ease;
+    }
+
+    .logo-text {
+      font-size: 2rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      text-shadow:
+        0 0 20px rgba(255, 0, 255, 0.8),
+        0 0 40px rgba(0, 255, 255, 0.6);
+      letter-spacing: 0.2rem;
+      display: block;
+      transition: all 0.3s ease;
+    }
+
+    .logo-link:hover .logo-text {
+      text-shadow:
+        0 0 30px rgba(0, 255, 255, 0.9),
+        0 0 50px rgba(255, 0, 255, 0.7);
+      transform: scale(1.1);
     }
 
     /* User Info Corner */
@@ -235,6 +281,15 @@ if (accessToken) {
 
     /* Mobile Adjustments */
     @media (max-width: 768px) {
+      .logo-corner {
+        top: 1rem;
+        left: 1rem;
+      }
+
+      .logo-text {
+        font-size: 1.5rem;
+      }
+
       .user-info-corner {
         top: 1rem;
         right: 1rem;

@@ -1,5 +1,16 @@
 ---
+import LayoutApp from "@/layouts/LayoutApp.astro";
 import AccountApp from "@/components/AccountApp/Page.astro";
+import { useTranslations } from "@/i18n/translations";
+
+const lang = "en";
+const t = useTranslations(lang);
 ---
 
-<AccountApp />
+<LayoutApp
+  title={t.seo.account.title}
+  description={t.seo.account.description}
+  lang={lang}
+>
+  <AccountApp />
+</LayoutApp>

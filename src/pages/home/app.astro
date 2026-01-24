@@ -1,5 +1,16 @@
 ---
+import LayoutApp from "@/layouts/LayoutApp.astro";
 import HomeApp from "@/components/HomeApp/Page.astro";
+import { useTranslations } from "@/i18n/translations";
+
+const lang = "en";
+const t = useTranslations(lang);
 ---
 
-<HomeApp lang="en" />
+<LayoutApp
+  title={t.seo.home.title}
+  description={t.seo.home.description}
+  lang={lang}
+>
+  <HomeApp lang={lang} />
+</LayoutApp>
