@@ -53,16 +53,15 @@ if (accessToken) {
       const data = await response.json();
       
       if (data.data.valid) {
-        // Check for app membership (profileId === "home")
+        // Check for app membership (profileId === null, type === "apps")
         const appMembership = data.data.memberships?.find(
-          (m: any) => m.profileId === 'home' && (m.status === 'active' || m.status === 'trialing')
+          (m: any) => m.type === 'apps' && (m.status === 'active' || m.status === 'trialing')
         );
         
-        // Check for app lifetime purchase (profileId === "home", videoId === "lifetime")
-        // const appLifetimePurchase = data.data.purchasedContent?.find(
-        //   (pc: any) => pc.type === 'apps'
-        // );
-        const appLifetimePurchase = null
+        // Check for app lifetime purchase (type === "apps")
+        const appLifetimePurchase = data.data.purchasedContent?.find(
+          (pc: any) => pc.type === 'apps'
+        );
         
         hasAppAccess = !!(appMembership || appLifetimePurchase);
       }
@@ -764,7 +763,7 @@ if (accessToken) {
             "Content-Type": "application/json",
           },
           body: JSON.stringify({
-            profileId: "home", // Special profile ID for home page
+            profileId: null, // null for app memberships
             membershipPrice: priceGroup.membership.monthly * 100, // Convert to cents
             priceId: priceGroup.id, // Pass price group ID for A/B testing tracking
             successUrl: `${window.location.origin}/?membership=success&session_id={CHECKOUT_SESSION_ID}`,
@@ -882,8 +881,8 @@ if (accessToken) {
               "Content-Type": "application/json",
             },
             body: JSON.stringify({
-              profileId: "home", // Special profile ID for home page
-              videoId: "lifetime", // Special video ID for lifetime access
+              profileId: null, // null for app lifetime access
+              videoId: null, // null for app lifetime access
               contentPrice: priceGroup.lifetime.price * 100, // Convert to cents
               priceId: priceGroup.id, // Pass price group ID for A/B testing tracking
               successUrl: `${window.location.origin}/?purchase=success&type=apps`,
@@ -1004,7 +1003,7 @@ if (accessToken) {
             },
             body: JSON.stringify({
               sessionId,
-              profileId: "home", // Special profile ID for home page
+              profileId: null, // null for app memberships
             }),
           });
 
