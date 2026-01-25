@@ -281,19 +281,19 @@
   },
   "seo": {
     "home": {
-      "title": "Qwibee - Plateforme de Contenu Vidéo Premium",
-      "description": "Accédez à du contenu vidéo exclusif de vos créateurs préférés. Abonnez-vous ou achetez des vidéos individuelles."
+      "title": "Qwibee - Où la magie se produit",
+      "description": "Ceux qui cherchent trouveront"
     },
     "contact": {
-      "title": "Contact - Qwibee",
-      "description": "Des questions ou envie de devenir créateur ? Contactez-nous."
+      "title": "Contactez-nous - Qwibee",
+      "description": "Des questions ? Contactez-nous."
     },
     "auth": {
       "title": "Connexion / Inscription - Qwibee",
       "description": "Connectez-vous ou créez un compte avec l'authentification par lien magique."
     },
     "recoverAccess": {
-      "title": "Récupérer l'accès - Qwibee",
+      "title": "Récupérer votre Accès - Qwibee",
       "description": "Vous avez perdu votre accès ? Entrez votre email pour récupérer votre contenu."
     },
     "account": {
