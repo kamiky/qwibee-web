@@ -953,10 +953,10 @@ export function initProfilePage(data: ProfilePageData) {
 
   // Check if we should open Stripe after login
   const shouldOpenStripe = sessionStorage.getItem(
-    "wmf_open_stripe_after_login"
+    "qwb_open_stripe_after_login"
   );
   if (shouldOpenStripe === "true") {
-    sessionStorage.removeItem("wmf_open_stripe_after_login");
+    sessionStorage.removeItem("qwb_open_stripe_after_login");
 
     // Wait a bit for the page to load, then click the CTA button
     setTimeout(() => {

@@ -14,7 +14,7 @@ const t = useTranslations(lang);
 // Check if user is logged in
 let isLoggedIn = false;
 let userEmail: string | null = null;
-const accessToken = Astro.cookies.get("wmf_access_token")?.value;
+const accessToken = Astro.cookies.get("qwb_access_token")?.value;
 
 if (accessToken) {
   try {

@@ -17,9 +17,9 @@ The authentication system has been migrated from localStorage to cookies for bet
 
 All authentication data is now stored in cookies:
 
-- `wmf_access_token` - Access token (7 days expiry)
-- `wmf_refresh_token` - Refresh token (90 days expiry)  
-- `wmf_user` - User data as JSON (90 days expiry)
+- `qwb_access_token` - Access token (7 days expiry)
+- `qwb_refresh_token` - Refresh token (90 days expiry)  
+- `qwb_user` - User data as JSON (90 days expiry)
 
 ### Cookie Settings
 
@@ -37,7 +37,7 @@ Pages can access authentication during SSR:
 
 ```typescript
 // In .astro files
-const accessToken = Astro.cookies.get('wmf_access_token')?.value;
+const accessToken = Astro.cookies.get('qwb_access_token')?.value;
 
 if (accessToken) {
   // Verify token and unlock content
@@ -84,9 +84,9 @@ clearAuth();
 
 ### Old (localStorage only)
 ```typescript
-localStorage.setItem("wmf_access_token", token);
-const token = localStorage.getItem("wmf_access_token");
-localStorage.removeItem("wmf_access_token");
+localStorage.setItem("qwb_access_token", token);
+const token = localStorage.getItem("qwb_access_token");
+localStorage.removeItem("qwb_access_token");
 ```
 
 ### New (cookies)

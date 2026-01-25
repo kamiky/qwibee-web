@@ -32,7 +32,7 @@ export const onRequest = defineMiddleware(async (context, next) => {
   // Check app access for /apps routes
   if (pathname.startsWith("/apps")) {
     let hasAppAccess = false;
-    const accessToken = context.cookies.get("wmf_access_token")?.value;
+    const accessToken = context.cookies.get("qwb_access_token")?.value;
 
     if (accessToken) {
       try {

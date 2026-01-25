@@ -3,9 +3,9 @@
  * Handles access tokens, refresh tokens, and user sessions using cookies
  */
 
-const ACCESS_TOKEN_KEY = "wmf_access_token";
-const REFRESH_TOKEN_KEY = "wmf_refresh_token";
-const USER_KEY = "wmf_user";
+const ACCESS_TOKEN_KEY = "qwb_access_token";
+const REFRESH_TOKEN_KEY = "qwb_refresh_token";
+const USER_KEY = "qwb_user";
 
 export interface User {
   id: string;
@@ -139,7 +139,7 @@ export function clearAuth(): void {
     localStorage.removeItem(ACCESS_TOKEN_KEY);
     localStorage.removeItem(REFRESH_TOKEN_KEY);
     localStorage.removeItem(USER_KEY);
-    localStorage.removeItem("wmf_profile_id");
+    localStorage.removeItem("qwb_profile_id");
   }
 }
 

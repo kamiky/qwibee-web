@@ -7,7 +7,7 @@ const lang = "en";
 const t = useTranslations(lang);
 
 // Get or assign price group from cookie
-const PRICE_GROUP_COOKIE = "wmf_price_group";
+const PRICE_GROUP_COOKIE = "qwb_price_group";
 function getPriceGroupFromCookie(): PriceGroup {
   const priceGroupId = Astro.cookies.get(PRICE_GROUP_COOKIE)?.value;
 
@@ -35,7 +35,7 @@ const selectedPriceGroup = getPriceGroupFromCookie();
 let hasAppAccess = false;
 let userEmail: string | null = null;
 let isLoggedIn = false;
-const accessToken = Astro.cookies.get('wmf_access_token')?.value;
+const accessToken = Astro.cookies.get('qwb_access_token')?.value;
 
 if (accessToken) {
   try {
@@ -1003,7 +1003,7 @@ if (accessToken) {
         // Check if user is logged in
         if (!isAuthenticated()) {
           // Store purchase type in sessionStorage for after login
-          sessionStorage.setItem("wmf_purchase_type", "membership");
+          sessionStorage.setItem("qwb_purchase_type", "membership");
 
           // User not logged in - redirect to login with return URL
           const currentUrl = window.location.pathname;
@@ -1025,7 +1025,7 @@ if (accessToken) {
         // Check if user is logged in
         if (!isAuthenticated()) {
           // Store purchase type in sessionStorage for after login
-          sessionStorage.setItem("wmf_purchase_type", "lifetime");
+          sessionStorage.setItem("qwb_purchase_type", "lifetime");
 
           // User not logged in - redirect to login with return URL
           const currentUrl = window.location.pathname;
@@ -1038,9 +1038,9 @@ if (accessToken) {
       });
 
       // Check if we should open checkout after login
-      const purchaseType = sessionStorage.getItem("wmf_purchase_type");
+      const purchaseType = sessionStorage.getItem("qwb_purchase_type");
       if (purchaseType && isAuthenticated()) {
-        sessionStorage.removeItem("wmf_purchase_type");
+        sessionStorage.removeItem("qwb_purchase_type");
 
         // Wait a bit for the page to load, then trigger checkout
         setTimeout(() => {
