@@ -9,6 +9,7 @@ export const onRequest = defineMiddleware(async (context, next) => {
   // List of routes that need mode-based routing
   const routes = [
     "/login",
+    "/login/success",
     "/account",
     "/contact",
     "/privacy-policy",

@@ -1,0 +1,363 @@
+---
+import LayoutApp from "@/layouts/LayoutApp.astro";
+import { useTranslations, type Language } from "@/i18n/translations";
+
+// Detect language from URL path
+const pathname = Astro.url.pathname;
+const lang: Language =
+  pathname.startsWith("/fr/") ||
+  pathname === "/fr" ||
+  pathname.startsWith("/fr/login")
+    ? "fr"
+    : "en";
+const t = useTranslations(lang);
+---
+
+<LayoutApp
+  title="Login Successful - WatchMeFans"
+  description="You've been successfully logged in"
+  lang={lang}
+>
+  <main class="main-container">
+    <div class="content-wrapper">
+      <!-- Loading State -->
+      <div id="loading-container" class="text-center">
+        <div class="mb-8">
+          <div
+            class="inline-block animate-spin rounded-full h-16 w-16 border-b-2 border-cyan-400 glow-cyan"
+          >
+          </div>
+        </div>
+        <h1 class="text-3xl font-bold mb-4 text-white led-text">
+          {t.auth.loginSuccess.verifying}
+        </h1>
+        <p class="text-xl text-gray-300">
+          {t.auth.loginSuccess.wait}
+        </p>
+      </div>
+
+      <!-- Success State -->
+      <div id="success-container" class="text-center hidden">
+        <div class="mb-8">
+          <div class="text-6xl mb-6 success-emoji">✅</div>
+          <h1 class="text-4xl sm:text-5xl font-extrabold mb-4 text-white glitch-text">
+            {t.auth.loginSuccess.successTitle}
+          </h1>
+          <p class="text-xl text-gray-300 mb-2">
+            {t.auth.loginSuccess.welcomeBack}
+          </p>
+          <p class="text-lg text-gray-400" id="redirect-message">
+            {t.auth.loginSuccess.redirecting}
+          </p>
+        </div>
+
+        <div class="success-card rounded-2xl p-8 mb-8">
+          <div class="email-box rounded-lg p-4 mb-6">
+            <p class="text-sm text-cyan-300">
+              <strong>Email:</strong>
+              <span id="user-email" class="ml-2"></span>
+            </p>
+          </div>
+
+          <div class="space-y-3">
+            <a
+              id="continue-link"
+              href="/"
+              class="block w-full neon-btn text-white font-bold py-3 px-6 rounded-lg text-center transition-all"
+            >
+              {t.auth.loginSuccess.continue}
+            </a>
+          </div>
+        </div>
+
+        <!-- Info Box -->
+        <div class="info-box rounded-xl p-6">
+          <h3 class="text-lg font-bold text-cyan-400 mb-3 led-text">
+            {t.auth.loginSuccess.whatsNext}
+          </h3>
+          <ul class="space-y-2 text-gray-300">
+            <li class="flex items-start gap-2">
+              <span class="text-cyan-400 mt-1">•</span>
+              <span>{t.auth.loginSuccess.saved}</span>
+            </li>
+            <li class="flex items-start gap-2">
+              <span class="text-cyan-400 mt-1">•</span>
+              <span>{t.auth.loginSuccess.accessContent}</span>
+            </li>
+            <li class="flex items-start gap-2">
+              <span class="text-cyan-400 mt-1">•</span>
+              <span>{t.auth.loginSuccess.lostAccess}</span>
+            </li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Back Link -->
+      <div class="text-center mt-8">
+        <a
+          href="/"
+          class="back-link transition-colors"
+        >
+          {t.auth.backLink}
+        </a>
+      </div>
+    </div>
+  </main>
+
+  <!-- Pass translations to client-side -->
+  <script define:vars={{ translations: t }}>
+    window.__translations = translations;
+  </script>
+
+  <!-- Main client-side logic as a module -->
+  <script>
+    import { storeAuth, getAccessToken, getUser } from "@/lib/auth";
+
+    // Type declaration for window.__translations
+    declare global {
+      interface Window {
+        __translations: any;
+      }
+    }
+
+    const loadingContainer = document.getElementById("loading-container");
+    const successContainer = document.getElementById("success-container");
+    const userEmailEl = document.getElementById("user-email");
+    const redirectMessage = document.getElementById("redirect-message");
+    const continueLink = document.getElementById("continue-link");
+    const translations = window.__translations;
+
+    async function verifyMagicLink() {
+      try {
+        // Get token and redirect from URL params
+        const urlParams = new URLSearchParams(window.location.search);
+        const token = urlParams.get("token");
+        const redirectTo = urlParams.get("redirect");
+        const openStripe = urlParams.get("openStripe");
+
+        if (!token) {
+          // No token - user navigated directly here, check if already logged in
+          const existingAuth = getAccessToken();
+          if (!existingAuth) {
+            window.location.href = "/login";
+            return;
+          }
+
+          // Already logged in, show success
+          showSuccess(null, redirectTo, openStripe === "true");
+          return;
+        }
+
+        // Verify the magic link
+        const response = await fetch("/api/auth/verify-magic-link", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ token }),
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+          throw new Error(data.error || "Failed to verify magic link");
+        }
+
+        const accessToken = data.data.accessToken;
+        const refreshToken = data.data.refreshToken;
+        const user = data.data.user;
+
+        // Store authentication data
+        storeAuth({
+          accessToken,
+          refreshToken,
+          user,
+        });
+        console.log("✓ Authentication stored successfully");
+
+        // Trigger header update by dispatching storage event
+        window.dispatchEvent(new Event("storage"));
+
+        // Show success
+        showSuccess(user.email, redirectTo, openStripe === "true");
+      } catch (error) {
+        console.error("Verification error:", error);
+        // Redirect to login with error
+        window.location.href =
+          "/login?error=" +
+          encodeURIComponent(
+            error instanceof Error
+              ? error.message
+              : "Failed to verify magic link"
+          );
+      }
+    }
+
+    function showSuccess(email: string | null, redirectTo: string | null, shouldOpenStripe: boolean) {
+      // Hide loading, show success
+      if (loadingContainer) loadingContainer.classList.add("hidden");
+      if (successContainer) successContainer.classList.remove("hidden");
+
+      // Get email from params or cookie storage
+      const user = getUser();
+      const finalEmail = email || user?.email;
+      if (userEmailEl && finalEmail) {
+        userEmailEl.textContent = finalEmail;
+      }
+
+      // Handle redirect
+      if (redirectTo) {
+        // Update UI
+        if (redirectMessage) {
+          redirectMessage.textContent =
+            translations.auth.loginSuccess.redirectingToCreator;
+        }
+        if (continueLink) {
+          continueLink.setAttribute("href", redirectTo);
+          continueLink.textContent =
+            translations.auth.loginSuccess.continueToCreator;
+        }
+
+        // Store flag if we need to open Stripe
+        if (shouldOpenStripe) {
+          sessionStorage.setItem("wmf_open_stripe_after_login", "true");
+        }
+
+        // Redirect after 2 seconds
+        setTimeout(() => {
+          window.location.href = redirectTo;
+        }, 2000);
+      } else {
+        // No redirect URL, just show generic message
+        if (redirectMessage) {
+          redirectMessage.textContent = translations.auth.loginSuccess.browse;
+        }
+        if (continueLink) {
+          continueLink.textContent = translations.auth.loginSuccess.goToHome;
+        }
+      }
+    }
+
+    // Auto-verify on page load
+    verifyMagicLink();
+  </script>
+</LayoutApp>
+
+<style>
+  .main-container {
+    position: relative;
+    z-index: 10;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 4rem 1.5rem;
+  }
+
+  .content-wrapper {
+    max-width: 42rem;
+    width: 100%;
+    background: rgba(0, 0, 0, 0.7);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 0, 255, 0.3);
+    border-radius: 12px;
+    padding: 3rem;
+    box-shadow: 0 0 50px rgba(255, 0, 255, 0.2);
+  }
+
+  /* LED Style Text Effects */
+  .led-text {
+    text-shadow:
+      0 0 10px rgba(0, 255, 255, 0.8),
+      0 0 20px rgba(0, 255, 255, 0.5);
+  }
+
+  .glitch-text {
+    text-shadow:
+      0 0 20px rgba(255, 0, 255, 0.8),
+      0 0 40px rgba(0, 255, 255, 0.6);
+  }
+
+  /* Success Emoji */
+  .success-emoji {
+    filter: drop-shadow(0 0 20px rgba(0, 255, 128, 0.5));
+  }
+
+  /* Success Card */
+  .success-card {
+    background: rgba(0, 0, 0, 0.5);
+    border: 1px solid rgba(0, 255, 255, 0.3);
+    box-shadow:
+      0 0 30px rgba(0, 255, 255, 0.2),
+      inset 0 0 30px rgba(0, 255, 255, 0.05);
+  }
+
+  .email-box {
+    background: rgba(0, 100, 100, 0.2);
+    border: 1px solid rgba(0, 200, 200, 0.4);
+    box-shadow: 0 0 20px rgba(0, 200, 200, 0.2);
+  }
+
+  /* Neon Button */
+  .neon-btn {
+    background: transparent;
+    border: 2px solid rgba(0, 255, 255, 0.6);
+    box-shadow:
+      0 0 30px rgba(0, 255, 255, 0.3),
+      inset 0 0 30px rgba(0, 255, 255, 0.1);
+    transition: all 0.3s ease;
+  }
+
+  .neon-btn:hover {
+    border-color: rgba(255, 0, 255, 0.8);
+    box-shadow:
+      0 0 40px rgba(255, 0, 255, 0.5),
+      inset 0 0 30px rgba(255, 0, 255, 0.2);
+    transform: translateY(-2px);
+  }
+
+  /* Info Box */
+  .info-box {
+    background: rgba(0, 100, 255, 0.1);
+    border: 1px solid rgba(0, 150, 255, 0.4);
+    box-shadow: 0 0 20px rgba(0, 150, 255, 0.2);
+  }
+
+  /* Back Link */
+  .back-link {
+    color: rgba(0, 255, 255, 0.9);
+    text-decoration: none;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    display: inline-block;
+  }
+
+  .back-link:hover {
+    color: rgba(255, 0, 255, 0.9);
+    text-shadow: 0 0 10px rgba(0, 255, 255, 0.5);
+  }
+
+  /* Glow effects */
+  .glow-cyan {
+    box-shadow: 0 0 30px rgba(0, 255, 255, 0.6);
+  }
+
+  /* Mobile Responsive */
+  @media (max-width: 768px) {
+    .main-container {
+      padding: 2rem 1rem;
+    }
+
+    .content-wrapper {
+      padding: 2rem 1.5rem;
+    }
+
+    .glitch-text {
+      font-size: 2rem;
+    }
+
+    .success-emoji {
+      font-size: 3rem;
+    }
+  }
+</style>
