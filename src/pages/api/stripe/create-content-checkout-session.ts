@@ -16,7 +16,7 @@ export const POST: APIRoute = async ({ request, url }) => {
       });
     }
 
-    if (!videoId) {
+    if (videoId === undefined) {
       console.log("[400] Missing videoId:", { error: "Missing videoId" });
       return new Response(JSON.stringify({ error: "Missing videoId" }), {
         status: 400,
