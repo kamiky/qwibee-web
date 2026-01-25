@@ -8,6 +8,7 @@ export const POST: APIRoute = async ({ request }) => {
 
     // Validate required fields
     if (!name || !email || !job || !productType) {
+      console.log("[400] Missing required fields:", { name, email, job, productType });
       return new Response(
         JSON.stringify({
           error: "Missing required fields",
@@ -22,6 +23,7 @@ export const POST: APIRoute = async ({ request }) => {
     // Validate email format
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(email)) {
+      console.log("[400] Invalid email format:", { email });
       return new Response(
         JSON.stringify({
           error: "Invalid email format",
@@ -46,11 +48,13 @@ export const POST: APIRoute = async ({ request }) => {
     const result = await response.json();
 
     if (!response.ok) {
+      const errorResponse = {
+        error: result.message || "Failed to send application",
+        details: result.errors,
+      };
+      console.log(`[${response.status}] Backend error:`, errorResponse);
       return new Response(
-        JSON.stringify({
-          error: result.message || "Failed to send application",
-          details: result.errors,
-        }),
+        JSON.stringify(errorResponse),
         {
           status: response.status,
           headers: { "Content-Type": "application/json" },
@@ -58,11 +62,13 @@ export const POST: APIRoute = async ({ request }) => {
       );
     }
 
+    const successResponse = {
+      success: true,
+      message: "Application sent successfully",
+    };
+    console.log("[200] Success:", successResponse);
     return new Response(
-      JSON.stringify({
-        success: true,
-        message: "Application sent successfully",
-      }),
+      JSON.stringify(successResponse),
       {
         status: 200,
         headers: { "Content-Type": "application/json" },
@@ -70,11 +76,13 @@ export const POST: APIRoute = async ({ request }) => {
     );
   } catch (error) {
     console.error("Unexpected error:", error);
+    const errorResponse = {
+      error: "An unexpected error occurred",
+      details: error instanceof Error ? error.message : "Unknown error",
+    };
+    console.log("[500] Error:", errorResponse);
     return new Response(
-      JSON.stringify({
-        error: "An unexpected error occurred",
-        details: error instanceof Error ? error.message : "Unknown error",
-      }),
+      JSON.stringify(errorResponse),
       {
         status: 500,
         headers: { "Content-Type": "application/json" },

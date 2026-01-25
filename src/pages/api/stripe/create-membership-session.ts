@@ -20,6 +20,7 @@ export const POST: APIRoute = async ({ request, url }) => {
     // Validate required fields
     // Note: profileId can be null for app memberships (not tied to a specific creator)
     if (profileId === undefined) {
+      console.log("[400] Missing profileId:", { error: "Missing profileId" });
       return new Response(JSON.stringify({ error: "Missing profileId" }), {
         status: 400,
         headers: { "Content-Type": "application/json" },
@@ -27,6 +28,7 @@ export const POST: APIRoute = async ({ request, url }) => {
     }
 
     if (!membershipPrice || membershipPrice < 1) {
+      console.log("[400] Invalid membershipPrice:", { error: "Invalid membershipPrice", membershipPrice });
       return new Response(
         JSON.stringify({ error: "Invalid membershipPrice" }),
         {
@@ -38,6 +40,7 @@ export const POST: APIRoute = async ({ request, url }) => {
 
     // Validate customer email if provided
     if (customerEmail && !customerEmail.includes("@")) {
+      console.log("[400] Invalid customerEmail:", { error: "Invalid customerEmail", customerEmail });
       return new Response(JSON.stringify({ error: "Invalid customerEmail" }), {
         status: 400,
         headers: { "Content-Type": "application/json" },
@@ -82,11 +85,13 @@ export const POST: APIRoute = async ({ request, url }) => {
 
     const data = await response.json();
 
+    const successResponse = {
+      sessionId: data.data.sessionId,
+      url: data.data.url,
+    };
+    console.log("[200] Success:", successResponse);
     return new Response(
-      JSON.stringify({
-        sessionId: data.data.sessionId,
-        url: data.data.url,
-      }),
+      JSON.stringify(successResponse),
       {
         status: 200,
         headers: { "Content-Type": "application/json" },
@@ -95,10 +100,12 @@ export const POST: APIRoute = async ({ request, url }) => {
   } catch (error: any) {
     console.error("Stripe membership checkout error:", error);
 
+    const errorResponse = {
+      error: error?.message || "Failed to create membership checkout session",
+    };
+    console.log("[500] Error:", errorResponse);
     return new Response(
-      JSON.stringify({
-        error: error?.message || "Failed to create membership checkout session",
-      }),
+      JSON.stringify(errorResponse),
       {
         status: 500,
         headers: { "Content-Type": "application/json" },

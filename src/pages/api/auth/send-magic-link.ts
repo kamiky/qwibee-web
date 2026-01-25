@@ -8,6 +8,7 @@ export const POST: APIRoute = async ({ request }) => {
     const { email, redirectUrl, openStripe, language } = body;
 
     if (!email) {
+      console.log("[400] Missing email:", { error: "Missing email" });
       return new Response(
         JSON.stringify({ error: "Missing email" }),
         {
@@ -40,6 +41,7 @@ export const POST: APIRoute = async ({ request }) => {
 
     const data = await response.json();
 
+    console.log("[200] Success:", data);
     return new Response(JSON.stringify(data), {
       status: 200,
       headers: { "Content-Type": "application/json" },
@@ -47,10 +49,12 @@ export const POST: APIRoute = async ({ request }) => {
   } catch (error: any) {
     console.error("Send magic link error:", error);
 
+    const errorResponse = {
+      error: error?.message || "Failed to send magic link",
+    };
+    console.log("[500] Error:", errorResponse);
     return new Response(
-      JSON.stringify({
-        error: error?.message || "Failed to send magic link",
-      }),
+      JSON.stringify(errorResponse),
       {
         status: 500,
         headers: { "Content-Type": "application/json" },

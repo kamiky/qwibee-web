@@ -8,7 +8,8 @@ export const POST: APIRoute = async ({ request, url }) => {
     const { profileId, videoId, contentPrice, priceId, successUrl, cancelUrl, customerEmail, language, videoTitle, creatorDisplayName, debugSecret } = body;
 
     // Validate required fields
-    if (!profileId) {
+    if (profileId === undefined) {
+      console.log("[400] Missing profileId:", { error: "Missing profileId" });
       return new Response(JSON.stringify({ error: "Missing profileId" }), {
         status: 400,
         headers: { "Content-Type": "application/json" },
@@ -16,6 +17,7 @@ export const POST: APIRoute = async ({ request, url }) => {
     }
 
     if (!videoId) {
+      console.log("[400] Missing videoId:", { error: "Missing videoId" });
       return new Response(JSON.stringify({ error: "Missing videoId" }), {
         status: 400,
         headers: { "Content-Type": "application/json" },
@@ -23,6 +25,7 @@ export const POST: APIRoute = async ({ request, url }) => {
     }
 
     if (!contentPrice || contentPrice < 1) {
+      console.log("[400] Invalid contentPrice:", { error: "Invalid contentPrice", contentPrice });
       return new Response(
         JSON.stringify({ error: "Invalid contentPrice" }),
         {
@@ -34,6 +37,7 @@ export const POST: APIRoute = async ({ request, url }) => {
 
     // Validate customer email if provided
     if (customerEmail && !customerEmail.includes("@")) {
+      console.log("[400] Invalid customerEmail:", { error: "Invalid customerEmail", customerEmail });
       return new Response(
         JSON.stringify({ error: "Invalid customerEmail" }),
         {
@@ -82,11 +86,13 @@ export const POST: APIRoute = async ({ request, url }) => {
 
     const data = await response.json();
 
+    const successResponse = {
+      sessionId: data.data.sessionId,
+      url: data.data.url,
+    };
+    console.log("[200] Success:", successResponse);
     return new Response(
-      JSON.stringify({
-        sessionId: data.data.sessionId,
-        url: data.data.url,
-      }),
+      JSON.stringify(successResponse),
       {
         status: 200,
         headers: { "Content-Type": "application/json" },
@@ -95,10 +101,12 @@ export const POST: APIRoute = async ({ request, url }) => {
   } catch (error: any) {
     console.error("Stripe content checkout error:", error);
 
+    const errorResponse = {
+      error: error?.message || "Failed to create content checkout session",
+    };
+    console.log("[500] Error:", errorResponse);
     return new Response(
-      JSON.stringify({
-        error: error?.message || "Failed to create content checkout session",
-      }),
+      JSON.stringify(errorResponse),
       {
         status: 500,
         headers: { "Content-Type": "application/json" },

@@ -9,6 +9,7 @@ export const POST: APIRoute = async ({ request }) => {
 
     // Validate required fields
     if (!paymentIntentId) {
+      console.log("[400] Missing paymentIntentId:", { error: "Missing paymentIntentId" });
       return new Response(JSON.stringify({ error: "Missing paymentIntentId" }), {
         status: 400,
         headers: { "Content-Type": "application/json" },
@@ -38,11 +39,13 @@ export const POST: APIRoute = async ({ request }) => {
 
     const data = await response.json();
 
+    const successResponse = {
+      success: true,
+      data: data.data,
+    };
+    console.log("[200] Success:", successResponse);
     return new Response(
-      JSON.stringify({
-        success: true,
-        data: data.data,
-      }),
+      JSON.stringify(successResponse),
       {
         status: 200,
         headers: { "Content-Type": "application/json" },
@@ -51,10 +54,12 @@ export const POST: APIRoute = async ({ request }) => {
   } catch (error: any) {
     console.error("Invoice generation error:", error);
 
+    const errorResponse = {
+      error: error?.message || "Failed to generate invoice",
+    };
+    console.log("[500] Error:", errorResponse);
     return new Response(
-      JSON.stringify({
-        error: error?.message || "Failed to generate invoice",
-      }),
+      JSON.stringify(errorResponse),
       {
         status: 500,
         headers: { "Content-Type": "application/json" },

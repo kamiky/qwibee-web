@@ -9,6 +9,7 @@ export const POST: APIRoute = async ({ request, url }) => {
 
     // Validate required fields
     if (!customerEmail || !customerEmail.includes("@")) {
+      console.log("[400] Invalid customerEmail:", { error: "Invalid customerEmail", customerEmail });
       return new Response(
         JSON.stringify({ error: "Invalid customerEmail" }),
         {
@@ -48,10 +49,12 @@ export const POST: APIRoute = async ({ request, url }) => {
 
     const data = await response.json();
 
+    const successResponse = {
+      url: data.data.url,
+    };
+    console.log("[200] Success:", successResponse);
     return new Response(
-      JSON.stringify({
-        url: data.data.url,
-      }),
+      JSON.stringify(successResponse),
       {
         status: 200,
         headers: { "Content-Type": "application/json" },
@@ -60,10 +63,12 @@ export const POST: APIRoute = async ({ request, url }) => {
   } catch (error: any) {
     console.error("Stripe portal session error:", error);
 
+    const errorResponse = {
+      error: error?.message || "Failed to create customer portal session",
+    };
+    console.log("[500] Error:", errorResponse);
     return new Response(
-      JSON.stringify({
-        error: error?.message || "Failed to create customer portal session",
-      }),
+      JSON.stringify(errorResponse),
       {
         status: 500,
         headers: { "Content-Type": "application/json" },

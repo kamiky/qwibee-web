@@ -8,6 +8,7 @@ export const POST: APIRoute = async ({ request }) => {
     const { token } = body;
 
     if (!token) {
+      console.log("[400] Missing token:", { error: "Missing token" });
       return new Response(JSON.stringify({ error: "Missing token" }), {
         status: 400,
         headers: { "Content-Type": "application/json" },
@@ -32,6 +33,7 @@ export const POST: APIRoute = async ({ request }) => {
 
     const data = await response.json();
 
+    console.log("[200] Success:", data);
     return new Response(JSON.stringify(data), {
       status: 200,
       headers: { "Content-Type": "application/json" },
@@ -39,10 +41,12 @@ export const POST: APIRoute = async ({ request }) => {
   } catch (error: any) {
     console.error("Verify token error:", error);
 
+    const errorResponse = {
+      error: error?.message || "Failed to verify token",
+    };
+    console.log("[500] Error:", errorResponse);
     return new Response(
-      JSON.stringify({
-        error: error?.message || "Failed to verify token",
-      }),
+      JSON.stringify(errorResponse),
       {
         status: 500,
         headers: { "Content-Type": "application/json" },

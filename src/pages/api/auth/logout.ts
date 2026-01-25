@@ -25,6 +25,7 @@ export const POST: APIRoute = async ({ request }) => {
 
     const data = await response.json();
 
+    console.log("[200] Success:", data);
     return new Response(JSON.stringify(data), {
       status: 200,
       headers: { "Content-Type": "application/json" },
@@ -32,10 +33,12 @@ export const POST: APIRoute = async ({ request }) => {
   } catch (error: any) {
     console.error("Logout error:", error);
 
+    const errorResponse = {
+      error: error?.message || "Failed to logout",
+    };
+    console.log("[500] Error:", errorResponse);
     return new Response(
-      JSON.stringify({
-        error: error?.message || "Failed to logout",
-      }),
+      JSON.stringify(errorResponse),
       {
         status: 500,
         headers: { "Content-Type": "application/json" },

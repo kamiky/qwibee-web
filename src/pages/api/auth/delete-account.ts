@@ -8,6 +8,7 @@ export const POST: APIRoute = async ({ request }) => {
     const { userId, confirmDelete } = body;
 
     if (!userId || !confirmDelete) {
+      console.log("[400] Missing userId or confirmDelete:", { userId, confirmDelete });
       return new Response(
         JSON.stringify({
           error: "User ID and confirmation are required",
@@ -37,6 +38,7 @@ export const POST: APIRoute = async ({ request }) => {
 
     const data = await response.json();
 
+    console.log("[200] Success:", data);
     return new Response(JSON.stringify(data), {
       status: 200,
       headers: { "Content-Type": "application/json" },
@@ -44,10 +46,12 @@ export const POST: APIRoute = async ({ request }) => {
   } catch (error: any) {
     console.error("Delete account error:", error);
 
+    const errorResponse = {
+      error: error?.message || "Failed to delete account",
+    };
+    console.log("[500] Error:", errorResponse);
     return new Response(
-      JSON.stringify({
-        error: error?.message || "Failed to delete account",
-      }),
+      JSON.stringify(errorResponse),
       {
         status: 500,
         headers: { "Content-Type": "application/json" },

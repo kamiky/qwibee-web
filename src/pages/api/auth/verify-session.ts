@@ -8,6 +8,7 @@ export const POST: APIRoute = async ({ request }) => {
     const { sessionId, profileId } = body;
 
     if (!sessionId || !profileId) {
+      console.log("[400] Missing sessionId or profileId:", { sessionId, profileId });
       return new Response(
         JSON.stringify({ error: "Missing sessionId or profileId" }),
         {
@@ -45,10 +46,12 @@ export const POST: APIRoute = async ({ request }) => {
   } catch (error: any) {
     console.error("Verify session error:", error);
 
+    const errorResponse = {
+      error: error?.message || "Failed to verify session",
+    };
+    console.log("[500] Error:", errorResponse);
     return new Response(
-      JSON.stringify({
-        error: error?.message || "Failed to verify session",
-      }),
+      JSON.stringify(errorResponse),
       {
         status: 500,
         headers: { "Content-Type": "application/json" },
