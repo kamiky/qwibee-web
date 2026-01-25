@@ -8,51 +8,6 @@ const pathname = Astro.url.pathname;
 const lang: Language =
   pathname.startsWith("/fr/") || pathname === "/fr" ? "fr" : "en";
 const t = useTranslations(lang);
-
-// Check if user has app membership or lifetime purchase
-let hasAppAccess = false;
-const accessToken = Astro.cookies.get("wmf_access_token")?.value;
-
-if (accessToken) {
-  try {
-    const backendUrl =
-      import.meta.env.PUBLIC_API_URL || "http://localhost:5002";
-    const response = await fetch(`${backendUrl}/auth/verify-token`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ token: accessToken }),
-    });
-
-    if (response.ok) {
-      const data = await response.json();
-
-      if (data.data.valid) {
-        // Check for app membership (profileId === null, type === "apps")
-        const appMembership = data.data.memberships?.find(
-          (m: any) =>
-            m.type === "apps" &&
-            (m.status === "active" || m.status === "trialing")
-        );
-
-        // Check for app lifetime purchase (type === "apps")
-        const appLifetimePurchase = data.data.purchasedContent?.find(
-          (pc: any) => pc.type === "apps"
-        );
-
-        hasAppAccess = !!(appMembership || appLifetimePurchase);
-      }
-    }
-  } catch (error) {
-    console.error("Error verifying app access:", error);
-  }
-}
-
-// Redirect to home if no access
-if (!hasAppAccess) {
-  return Astro.redirect(lang === "fr" ? "/fr" : "/");
-}
 ---
 
 <LayoutApp title={t.apps.pageTitle} description={t.apps.subtitle} lang={lang}>

@@ -1,6 +1,6 @@
 import { defineMiddleware } from "astro:middleware";
 
-export const onRequest = defineMiddleware((context, next) => {
+export const onRequest = defineMiddleware(async (context, next) => {
   const creatorMode = context.cookies.get("qwb-creator-mode")?.value === "true";
 
   const mode = creatorMode ? "creator" : "app";
@@ -20,6 +20,53 @@ export const onRequest = defineMiddleware((context, next) => {
   for (const route of routes) {
     if (pathname === route || pathname === `${route}/`) {
       return context.rewrite(`${route}/${mode}`);
+    }
+  }
+
+  // Check app access for /apps routes
+  if (pathname.startsWith("/apps")) {
+    let hasAppAccess = false;
+    const accessToken = context.cookies.get("wmf_access_token")?.value;
+
+    if (accessToken) {
+      try {
+        const backendUrl =
+          import.meta.env.PUBLIC_API_URL || "http://localhost:5002";
+        const response = await fetch(`${backendUrl}/auth/verify-token`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ token: accessToken }),
+        });
+
+        if (response.ok) {
+          const data = await response.json();
+
+          if (data.data.valid) {
+            // Check for app membership (profileId === null, type === "apps")
+            const appMembership = data.data.memberships?.find(
+              (m: any) =>
+                m.type === "apps" &&
+                (m.status === "active" || m.status === "trialing")
+            );
+
+            // Check for app lifetime purchase (type === "apps")
+            const appLifetimePurchase = data.data.purchasedContent?.find(
+              (pc: any) => pc.type === "apps"
+            );
+
+            hasAppAccess = !!(appMembership || appLifetimePurchase);
+          }
+        }
+      } catch (error) {
+        console.error("Error verifying app access:", error);
+      }
+    }
+
+    // Redirect to home if no access
+    if (!hasAppAccess) {
+      return context.redirect("/");
     }
   }
 
