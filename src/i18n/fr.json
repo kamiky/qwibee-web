@@ -104,17 +104,17 @@
     "backToHome": "Retour à l'accueil",
     "termsOfSale": {
       "title": "Conditions Générales de Vente",
-      "description": "Conditions générales de vente de WatchMeFans",
+      "description": "Conditions générales de vente de qwibee.com",
       "lastUpdated": "Dernière mise à jour : Janvier 2026",
       "section1": {
         "title": "1. Objet",
-        "content": "Les présentes conditions générales de vente régissent les relations contractuelles entre WatchMeFans et ses clients. En effectuant un achat sur notre plateforme, vous acceptez sans réserve les présentes conditions."
+        "content": "Les présentes conditions générales de vente régissent les relations contractuelles entre qwibee.com et ses clients. En effectuant un achat sur notre plateforme, vous acceptez sans réserve les présentes conditions."
       },
       "section2": {
         "title": "2. Services proposés",
-        "intro": "WatchMeFans propose deux types d'offres :",
-        "item1": "Abonnements mensuels : accès illimité au contenu d'un créateur pendant la durée de l'abonnement",
-        "item2": "Achat de vidéos à l'unité : accès permanent à une vidéo spécifique"
+        "intro": "qwibee.com propose deux types d'offres :",
+        "item1": "Abonnements mensuels : accès illimité aux tutoriels techniques et applications pendant la durée de l'abonnement",
+        "item2": "Achat à l'unité : accès permanent à des tutoriels ou applications spécifiques"
       },
       "section3": {
         "title": "3. Prix et paiement",
@@ -126,11 +126,11 @@
       },
       "section5": {
         "title": "5. Accès au contenu",
-        "content": "Après paiement, vous recevez un accès immédiat au contenu acheté ou souscrit. Les identifiants d'accès sont personnels et confidentiels. Tout partage non autorisé peut entraîner la suspension de votre accès."
+        "content": "Après paiement, vous recevez un accès immédiat aux tutoriels et applications achetés ou souscrits. Les identifiants d'accès sont personnels et confidentiels. Tout partage non autorisé peut entraîner la suspension de votre accès."
       },
       "section6": {
         "title": "6. Propriété intellectuelle",
-        "content": "Tous les contenus présents sur la plateforme (vidéos, images, textes) sont protégés par le droit d'auteur. Toute reproduction, distribution ou utilisation commerciale est strictement interdite sans autorisation préalable."
+        "content": "Tous les contenus présents sur la plateforme (tutoriels, applications, vidéos, images, textes) sont protégés par le droit d'auteur. Toute reproduction, distribution ou utilisation commerciale est strictement interdite sans autorisation préalable."
       },
       "section7": {
         "title": "7. Contact",
@@ -139,11 +139,11 @@
     },
     "privacyPolicy": {
       "title": "Politique de Confidentialité",
-      "description": "Politique de confidentialité de WatchMeFans",
+      "description": "Politique de confidentialité de qwibee.com",
       "lastUpdated": "Dernière mise à jour : Janvier 2026",
       "section1": {
         "title": "1. Introduction",
-        "content": "WatchMeFans s'engage à protéger votre vie privée et vos données personnelles. Cette politique de confidentialité décrit comment nous collectons, utilisons et protégeons vos informations personnelles."
+        "content": "qwibee.com s'engage à protéger votre vie privée et vos données personnelles. Cette politique de confidentialité décrit comment nous collectons, utilisons et protégeons vos informations personnelles."
       },
       "section2": {
         "title": "2. Données collectées",
@@ -156,7 +156,7 @@
       "section3": {
         "title": "3. Utilisation des données",
         "intro": "Vos données sont utilisées pour :",
-        "item1": "Gérer votre accès aux contenus achetés ou souscrits",
+        "item1": "Gérer votre accès aux tutoriels et applications achetés ou souscrits",
         "item2": "Traiter vos paiements et gérer votre compte",
         "item3": "Vous envoyer des communications relatives à vos achats",
         "item4": "Améliorer nos services et votre expérience utilisateur"
@@ -178,7 +178,7 @@
       },
       "section7": {
         "title": "7. Cookies",
-        "content": "Notre site utilise des cookies essentiels au fonctionnement de la plateforme et à la gestion de votre accès aux contenus. Vous pouvez paramétrer votre navigateur pour refuser les cookies, mais cela peut affecter votre expérience utilisateur."
+        "content": "Notre site utilise des cookies essentiels au fonctionnement de la plateforme et à la gestion de votre accès aux tutoriels et applications. Vous pouvez paramétrer votre navigateur pour refuser les cookies, mais cela peut affecter votre expérience utilisateur."
       },
       "section8": {
         "title": "8. Contact",

@@ -104,17 +104,17 @@
     "backToHome": "Back to Home",
     "termsOfSale": {
       "title": "Terms of Sale",
-      "description": "Terms of Sale for WatchMeFans",
+      "description": "Terms of Sale for qwibee.com",
       "lastUpdated": "Last updated: January 2026",
       "section1": {
         "title": "1. Purpose",
-        "content": "These terms and conditions of sale govern the contractual relationship between WatchMeFans and its customers. By making a purchase on our platform, you unconditionally accept these terms."
+        "content": "These terms and conditions of sale govern the contractual relationship between qwibee.com and its customers. By making a purchase on our platform, you unconditionally accept these terms."
       },
       "section2": {
         "title": "2. Services Offered",
-        "intro": "WatchMeFans offers two types of services:",
-        "item1": "Monthly subscriptions: unlimited access to a creator's content for the duration of the subscription",
-        "item2": "Individual video purchases: permanent access to a specific video"
+        "intro": "qwibee.com offers two types of services:",
+        "item1": "Monthly subscriptions: unlimited access to tech tutorials and applications for the duration of the subscription",
+        "item2": "Individual content purchases: permanent access to specific tutorials or applications"
       },
       "section3": {
         "title": "3. Pricing and Payment",
@@ -126,11 +126,11 @@
       },
       "section5": {
         "title": "5. Content Access",
-        "content": "After payment, you receive immediate access to the purchased or subscribed content. Access credentials are personal and confidential. Any unauthorized sharing may result in suspension of your access."
+        "content": "After payment, you receive immediate access to the purchased or subscribed tutorials and applications. Access credentials are personal and confidential. Any unauthorized sharing may result in suspension of your access."
       },
       "section6": {
         "title": "6. Intellectual Property",
-        "content": "All content on the platform (videos, images, texts) is protected by copyright. Any reproduction, distribution, or commercial use is strictly prohibited without prior authorization."
+        "content": "All content on the platform (tutorials, applications, videos, images, texts) is protected by copyright. Any reproduction, distribution, or commercial use is strictly prohibited without prior authorization."
       },
       "section7": {
         "title": "7. Contact",
@@ -139,11 +139,11 @@
     },
     "privacyPolicy": {
       "title": "Privacy Policy",
-      "description": "Privacy Policy for WatchMeFans",
+      "description": "Privacy Policy for qwibee.com",
       "lastUpdated": "Last updated: January 2026",
       "section1": {
         "title": "1. Introduction",
-        "content": "WatchMeFans is committed to protecting your privacy and personal data. This privacy policy describes how we collect, use, and protect your personal information."
+        "content": "qwibee.com is committed to protecting your privacy and personal data. This privacy policy describes how we collect, use, and protect your personal information."
       },
       "section2": {
         "title": "2. Data Collected",
@@ -156,7 +156,7 @@
       "section3": {
         "title": "3. Use of Data",
         "intro": "Your data is used to:",
-        "item1": "Manage your access to purchased or subscribed content",
+        "item1": "Manage your access to purchased or subscribed tutorials and applications",
         "item2": "Process your payments and manage your account",
         "item3": "Send you communications related to your purchases",
         "item4": "Improve our services and your user experience"
@@ -178,7 +178,7 @@
       },
       "section7": {
         "title": "7. Cookies",
-        "content": "Our site uses cookies essential to the operation of the platform and the management of your access to content. You can set your browser to refuse cookies, but this may affect your user experience."
+        "content": "Our site uses cookies essential to the operation of the platform and the management of your access to tutorials and applications. You can set your browser to refuse cookies, but this may affect your user experience."
       },
       "section8": {
         "title": "8. Contact",

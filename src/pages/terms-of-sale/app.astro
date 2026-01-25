@@ -1,0 +1,207 @@
+---
+import LayoutApp from "@/layouts/LayoutApp.astro";
+import { useTranslations } from "@/i18n/translations";
+
+const lang = (Astro.url.searchParams.get("lang") as "en" | "fr") || "en";
+const t = useTranslations(lang);
+---
+
+<LayoutApp
+  title={t.legal.termsOfSale.title}
+  description={t.legal.termsOfSale.description}
+  lang={lang}
+>
+  <main class="main-container">
+    <div class="content-wrapper">
+      <h1 class="page-title">
+        {t.legal.termsOfSale.title}
+      </h1>
+
+      <p class="last-updated">
+        {t.legal.termsOfSale.lastUpdated}
+      </p>
+
+      <div class="legal-content">
+        <section class="legal-section">
+          <h2 class="section-title">
+            {t.legal.termsOfSale.section1.title}
+          </h2>
+          <p class="section-text">
+            {t.legal.termsOfSale.section1.content}
+          </p>
+        </section>
+
+        <section class="legal-section">
+          <h2 class="section-title">
+            {t.legal.termsOfSale.section2.title}
+          </h2>
+          <p class="section-text">
+            {t.legal.termsOfSale.section2.intro}
+          </p>
+          <ul class="section-list">
+            <li>{t.legal.termsOfSale.section2.item1}</li>
+            <li>{t.legal.termsOfSale.section2.item2}</li>
+          </ul>
+        </section>
+
+        <section class="legal-section">
+          <h2 class="section-title">
+            {t.legal.termsOfSale.section3.title}
+          </h2>
+          <p class="section-text">
+            {t.legal.termsOfSale.section3.content}
+          </p>
+        </section>
+
+        <section class="legal-section">
+          <h2 class="section-title">
+            {t.legal.termsOfSale.section4.title}
+          </h2>
+          <p class="section-text">
+            {t.legal.termsOfSale.section4.content}
+          </p>
+        </section>
+
+        <section class="legal-section">
+          <h2 class="section-title">
+            {t.legal.termsOfSale.section5.title}
+          </h2>
+          <p class="section-text">
+            {t.legal.termsOfSale.section5.content}
+          </p>
+        </section>
+
+        <section class="legal-section">
+          <h2 class="section-title">
+            {t.legal.termsOfSale.section6.title}
+          </h2>
+          <p class="section-text">
+            {t.legal.termsOfSale.section6.content}
+          </p>
+        </section>
+
+        <section class="legal-section">
+          <h2 class="section-title">
+            {t.legal.termsOfSale.section7.title}
+          </h2>
+          <p class="section-text">
+            {t.legal.termsOfSale.section7.content}
+          </p>
+        </section>
+      </div>
+
+      <div class="back-link-container">
+        <a href="/home/app" class="back-link">
+          ← {t.legal.backToHome}
+        </a>
+      </div>
+    </div>
+  </main>
+</LayoutApp>
+
+<style>
+  .main-container {
+    position: relative;
+    z-index: 10;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 4rem 1.5rem;
+  }
+
+  .content-wrapper {
+    max-width: 56rem;
+    width: 100%;
+    background: rgba(0, 0, 0, 0.7);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 0, 255, 0.3);
+    border-radius: 12px;
+    padding: 3rem;
+    box-shadow: 0 0 50px rgba(255, 0, 255, 0.2);
+  }
+
+  .page-title {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: rgba(255, 255, 255, 0.95);
+    margin-bottom: 1rem;
+    text-shadow: 0 0 20px rgba(0, 255, 255, 0.5);
+  }
+
+  .last-updated {
+    color: rgba(255, 255, 255, 0.6);
+    margin-bottom: 2rem;
+    font-size: 0.95rem;
+  }
+
+  .legal-content {
+    margin-bottom: 2.5rem;
+  }
+
+  .legal-section {
+    margin-bottom: 2rem;
+  }
+
+  .section-title {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: rgba(255, 255, 255, 0.9);
+    margin-bottom: 1rem;
+    text-shadow: 0 0 10px rgba(255, 0, 255, 0.3);
+  }
+
+  .section-text {
+    color: rgba(255, 255, 255, 0.8);
+    line-height: 1.8;
+    margin-bottom: 1rem;
+  }
+
+  .section-list {
+    list-style: disc;
+    padding-left: 1.5rem;
+    color: rgba(255, 255, 255, 0.8);
+    line-height: 1.8;
+  }
+
+  .section-list li {
+    margin-bottom: 0.5rem;
+  }
+
+  .back-link-container {
+    padding-top: 2rem;
+    border-top: 1px solid rgba(255, 0, 255, 0.2);
+  }
+
+  .back-link {
+    color: rgba(0, 255, 255, 0.9);
+    text-decoration: none;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    display: inline-block;
+  }
+
+  .back-link:hover {
+    color: rgba(255, 0, 255, 0.9);
+    text-shadow: 0 0 10px rgba(0, 255, 255, 0.5);
+    transform: translateX(-5px);
+  }
+
+  @media (max-width: 768px) {
+    .main-container {
+      padding: 2rem 1rem;
+    }
+
+    .content-wrapper {
+      padding: 2rem 1.5rem;
+    }
+
+    .page-title {
+      font-size: 2rem;
+    }
+
+    .section-title {
+      font-size: 1.25rem;
+    }
+  }
+</style>
