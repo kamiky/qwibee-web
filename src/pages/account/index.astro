@@ -1,6 +1,6 @@
 ---
-// Check for qwibee-creator-mode cookie and serve appropriate page
-const creatorMode = Astro.cookies.get("qwibee-creator-mode")?.value === "true";
+// Check for qwb-creator-mode cookie and serve appropriate page
+const creatorMode = Astro.cookies.get("qwb-creator-mode")?.value === "true";
 
 if (creatorMode) {
   return Astro.rewrite("/account/creator");
