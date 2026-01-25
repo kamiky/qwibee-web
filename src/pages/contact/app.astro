@@ -1,0 +1,404 @@
+---
+import LayoutApp from "@/layouts/LayoutApp.astro";
+import { useTranslations } from "@/i18n/translations";
+
+const lang = (Astro.url.searchParams.get("lang") as "en" | "fr") || "en";
+const t = useTranslations(lang);
+---
+
+<LayoutApp
+  title={t.seo.contact.title}
+  description={t.seo.contact.description}
+  lang={lang}
+>
+  <main class="main-container">
+    <div class="content-wrapper">
+      <div class="header-section">
+        <h1 class="page-title">
+          {t.contact.title}
+        </h1>
+        <p class="page-subtitle">
+          {t.contact.subtitle}
+        </p>
+      </div>
+
+      <!-- Success Message -->
+      <div id="success-message" class="message-box success-message hidden">
+        <p class="message-title">{t.contact.messages.successTitle}</p>
+        <p class="message-subtitle">{t.contact.messages.successSubtitle}</p>
+      </div>
+
+      <!-- Error Message -->
+      <div id="error-message" class="message-box error-message hidden">
+        <p class="message-title">{t.contact.messages.errorTitle}</p>
+        <p class="message-subtitle" id="error-text"></p>
+      </div>
+
+      <form id="contact-form" class="contact-form">
+        <div class="form-group">
+          <label for="name" class="form-label">
+            {t.contact.form.name}
+          </label>
+          <input
+            type="text"
+            id="name"
+            name="name"
+            class="form-input"
+            placeholder={t.contact.form.namePlaceholder}
+            required
+          />
+        </div>
+
+        <div class="form-group">
+          <label for="email" class="form-label">
+            {t.contact.form.email}
+          </label>
+          <input
+            type="email"
+            id="email"
+            name="email"
+            class="form-input"
+            placeholder={t.contact.form.emailPlaceholder}
+            required
+          />
+        </div>
+
+        <div class="form-group">
+          <label for="message" class="form-label">
+            {t.contact.form.message}
+          </label>
+          <textarea
+            id="message"
+            name="message"
+            rows="6"
+            class="form-input form-textarea"
+            placeholder={t.contact.form.messagePlaceholder}
+            required></textarea>
+        </div>
+
+        <button type="submit" id="submit-button" class="submit-button">
+          <span id="button-text">{t.contact.form.submit}</span>
+          <span class="button-glow"></span>
+        </button>
+      </form>
+
+      <div class="back-link-container">
+        <a href="/home/app" class="back-link">
+          ← {t.legal.backToHome}
+        </a>
+      </div>
+    </div>
+  </main>
+</LayoutApp>
+
+<style>
+  .main-container {
+    position: relative;
+    z-index: 10;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 4rem 1.5rem;
+  }
+
+  .content-wrapper {
+    max-width: 48rem;
+    width: 100%;
+    background: rgba(0, 0, 0, 0.7);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 0, 255, 0.3);
+    border-radius: 12px;
+    padding: 3rem;
+    box-shadow: 0 0 50px rgba(255, 0, 255, 0.2);
+  }
+
+  .header-section {
+    text-align: center;
+    margin-bottom: 2.5rem;
+  }
+
+  .page-title {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: rgba(255, 255, 255, 0.95);
+    margin-bottom: 0.75rem;
+    text-shadow: 0 0 20px rgba(0, 255, 255, 0.5);
+  }
+
+  .page-subtitle {
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 1.1rem;
+    line-height: 1.6;
+  }
+
+  /* Message Boxes */
+  .message-box {
+    margin-bottom: 2rem;
+    padding: 1rem 1.25rem;
+    border-radius: 8px;
+    border: 1px solid;
+  }
+
+  .success-message {
+    background: rgba(0, 255, 128, 0.1);
+    border-color: rgba(0, 255, 128, 0.4);
+    box-shadow: 0 0 20px rgba(0, 255, 128, 0.2);
+  }
+
+  .success-message .message-title {
+    color: rgba(0, 255, 128, 0.95);
+    font-weight: 600;
+    margin-bottom: 0.25rem;
+    text-shadow: 0 0 10px rgba(0, 255, 128, 0.5);
+  }
+
+  .success-message .message-subtitle {
+    color: rgba(0, 255, 128, 0.8);
+    font-size: 0.9rem;
+  }
+
+  .error-message {
+    background: rgba(255, 0, 128, 0.1);
+    border-color: rgba(255, 0, 128, 0.4);
+    box-shadow: 0 0 20px rgba(255, 0, 128, 0.2);
+  }
+
+  .error-message .message-title {
+    color: rgba(255, 0, 128, 0.95);
+    font-weight: 600;
+    margin-bottom: 0.25rem;
+    text-shadow: 0 0 10px rgba(255, 0, 128, 0.5);
+  }
+
+  .error-message .message-subtitle {
+    color: rgba(255, 0, 128, 0.8);
+    font-size: 0.9rem;
+  }
+
+  .hidden {
+    display: none;
+  }
+
+  /* Form Styles */
+  .contact-form {
+    margin-bottom: 2.5rem;
+  }
+
+  .form-group {
+    margin-bottom: 1.5rem;
+  }
+
+  .form-label {
+    display: block;
+    color: rgba(255, 255, 255, 0.9);
+    font-size: 0.95rem;
+    font-weight: 500;
+    margin-bottom: 0.5rem;
+    text-shadow: 0 0 10px rgba(255, 0, 255, 0.3);
+  }
+
+  .form-input {
+    width: 100%;
+    padding: 0.875rem 1rem;
+    background: rgba(0, 0, 0, 0.5);
+    border: 1px solid rgba(255, 0, 255, 0.3);
+    border-radius: 8px;
+    color: rgba(255, 255, 255, 0.95);
+    font-size: 1rem;
+    transition: all 0.3s ease;
+    box-shadow: 0 0 10px rgba(255, 0, 255, 0.1);
+  }
+
+  .form-input::placeholder {
+    color: rgba(255, 255, 255, 0.4);
+  }
+
+  .form-input:focus {
+    outline: none;
+    border-color: rgba(0, 255, 255, 0.6);
+    box-shadow: 0 0 20px rgba(0, 255, 255, 0.3);
+    background: rgba(0, 0, 0, 0.6);
+  }
+
+  .form-textarea {
+    resize: vertical;
+    min-height: 150px;
+    font-family: inherit;
+  }
+
+  /* Submit Button */
+  .submit-button {
+    position: relative;
+    width: 100%;
+    padding: 1rem 2rem;
+    font-size: 1rem;
+    font-weight: 700;
+    letter-spacing: 0.1rem;
+    color: rgba(255, 255, 255, 0.95);
+    background: transparent;
+    border: 2px solid rgba(0, 255, 255, 0.6);
+    border-radius: 8px;
+    cursor: pointer;
+    overflow: hidden;
+    transition: all 0.3s ease;
+    text-transform: uppercase;
+    box-shadow:
+      0 0 30px rgba(0, 255, 255, 0.3),
+      inset 0 0 30px rgba(0, 255, 255, 0.1);
+  }
+
+  .submit-button:hover:not(:disabled) {
+    border-color: rgba(255, 0, 255, 0.8);
+    box-shadow:
+      0 0 40px rgba(255, 0, 255, 0.5),
+      inset 0 0 30px rgba(255, 0, 255, 0.2);
+    transform: translateY(-2px);
+  }
+
+  .submit-button:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+
+  .submit-button span {
+    position: relative;
+    z-index: 2;
+  }
+
+  .button-glow {
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(
+      90deg,
+      transparent,
+      rgba(255, 0, 255, 0.4),
+      rgba(0, 255, 255, 0.4),
+      transparent
+    );
+    transition: left 0.5s ease;
+  }
+
+  .submit-button:hover:not(:disabled) .button-glow {
+    left: 100%;
+  }
+
+  /* Back Link */
+  .back-link-container {
+    padding-top: 2rem;
+    border-top: 1px solid rgba(255, 0, 255, 0.2);
+  }
+
+  .back-link {
+    color: rgba(0, 255, 255, 0.9);
+    text-decoration: none;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    display: inline-block;
+  }
+
+  .back-link:hover {
+    color: rgba(255, 0, 255, 0.9);
+    text-shadow: 0 0 10px rgba(0, 255, 255, 0.5);
+    transform: translateX(-5px);
+  }
+
+  /* Mobile Responsive */
+  @media (max-width: 768px) {
+    .main-container {
+      padding: 2rem 1rem;
+    }
+
+    .content-wrapper {
+      padding: 2rem 1.5rem;
+    }
+
+    .page-title {
+      font-size: 2rem;
+    }
+
+    .page-subtitle {
+      font-size: 1rem;
+    }
+
+    .submit-button {
+      padding: 0.875rem 1.5rem;
+      font-size: 0.95rem;
+    }
+  }
+</style>
+
+<script define:vars={{ t }}>
+  // Translation values are now available in the script
+  const translations = t.contact;
+  const form = document.getElementById("contact-form");
+  const submitButton = document.getElementById("submit-button");
+  const buttonText = document.getElementById("button-text");
+  const successMessage = document.getElementById("success-message");
+  const errorMessage = document.getElementById("error-message");
+  const errorText = document.getElementById("error-text");
+
+  form.addEventListener("submit", async (e) => {
+    e.preventDefault();
+
+    // Hide previous messages
+    successMessage.classList.add("hidden");
+    errorMessage.classList.add("hidden");
+
+    // Disable button and show loading state
+    submitButton.disabled = true;
+    buttonText.textContent = translations.form.sending;
+
+    try {
+      // Get form data
+      const formData = new FormData(form);
+      const data = {
+        name: formData.get("name"),
+        email: formData.get("email"),
+        message: formData.get("message"),
+      };
+
+      // Send request
+      const response = await fetch("/api/contact", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(data),
+      });
+
+      const result = await response.json();
+
+      if (response.ok) {
+        // Success
+        successMessage.classList.remove("hidden");
+        form.reset();
+
+        // Scroll to success message
+        successMessage.scrollIntoView({ behavior: "smooth", block: "nearest" });
+      } else {
+        // Error
+        errorText.textContent =
+          result.error || translations.messages.errorDefault;
+        errorMessage.classList.remove("hidden");
+
+        // Scroll to error message
+        errorMessage.scrollIntoView({ behavior: "smooth", block: "nearest" });
+      }
+    } catch (error) {
+      // Network or other error
+      errorText.textContent = translations.messages.errorNetwork;
+      errorMessage.classList.remove("hidden");
+
+      // Scroll to error message
+      errorMessage.scrollIntoView({ behavior: "smooth", block: "nearest" });
+    } finally {
+      // Re-enable button
+      submitButton.disabled = false;
+      buttonText.textContent = translations.form.submit;
+    }
+  });
+</script>
