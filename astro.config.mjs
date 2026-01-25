@@ -9,7 +9,7 @@ export default defineConfig({
   adapter: node({
     mode: "standalone",
   }),
-  site: "https://watchmefans.com",
+  site: "https://qwibee.com",
   integrations: [react(), tailwind()],
   i18n: {
     defaultLocale: "en",

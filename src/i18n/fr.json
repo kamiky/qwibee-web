@@ -6,7 +6,7 @@
   },
   "hero": {
     "title": "Vendez vos produits numériques en toute simplicité",
-    "subtitle": "Rejoignez WatchMeFans et commencez à monétiser votre contenu numérique. Créez votre profil, fixez vos prix et touchez directement votre audience.",
+    "subtitle": "Rejoignez Qwibee et commencez à monétiser votre contenu numérique. Créez votre profil, fixez vos prix et touchez directement votre audience.",
     "cta": "Explorer"
   },
   "sections": {
@@ -281,24 +281,24 @@
   },
   "seo": {
     "home": {
-      "title": "WatchMeFans - Plateforme de Contenu Vidéo Premium",
+      "title": "Qwibee - Plateforme de Contenu Vidéo Premium",
       "description": "Accédez à du contenu vidéo exclusif de vos créateurs préférés. Abonnez-vous ou achetez des vidéos individuelles."
     },
     "contact": {
-      "title": "Contact - WatchMeFans",
+      "title": "Contact - Qwibee",
       "description": "Des questions ou envie de devenir créateur ? Contactez-nous."
     },
     "auth": {
-      "title": "Connexion / Inscription - WatchMeFans",
+      "title": "Connexion / Inscription - Qwibee",
       "description": "Connectez-vous ou créez un compte avec l'authentification par lien magique."
     },
     "recoverAccess": {
-      "title": "Récupérer l'accès - WatchMeFans",
+      "title": "Récupérer l'accès - Qwibee",
       "description": "Vous avez perdu votre accès ? Entrez votre email pour récupérer votre contenu."
     },
     "account": {
-      "title": "Mon Compte - WatchMeFans",
-      "description": "Gérez votre compte WatchMeFans et vos abonnements"
+      "title": "Mon Compte - Qwibee",
+      "description": "Gérez votre compte Qwibee et vos abonnements"
     }
   },
   "account": {
@@ -376,7 +376,7 @@
     }
   },
   "apps": {
-    "pageTitle": "Applications & Tutoriels - WatchMeFans",
+    "pageTitle": "Applications & Tutoriels - Qwibee",
     "title": "Applications & Tutoriels",
     "subtitle": "Découvrez des applications Mac utiles et des tutoriels détaillés pour améliorer votre productivité et personnaliser votre espace de travail.",
     "categoryApp": "Application",

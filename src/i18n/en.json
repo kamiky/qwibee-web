@@ -6,7 +6,7 @@
   },
   "hero": {
     "title": "Sell Your Digital Products with Ease",
-    "subtitle": "Join WatchMeFans and start monetizing your digital content. Create your profile, set your prices, and reach your audience directly.",
+    "subtitle": "Join Qwibee and start monetizing your digital content. Create your profile, set your prices, and reach your audience directly.",
     "cta": "Explore"
   },
   "sections": {
@@ -281,24 +281,24 @@
   },
   "seo": {
     "home": {
-      "title": "WatchMeFans - Premium Video Content Platform",
+      "title": "Qwibee - Premium Video Content Platform",
       "description": "Access exclusive video content from your favorite creators. Subscribe for membership or buy individual videos."
     },
     "contact": {
-      "title": "Contact - WatchMeFans",
+      "title": "Contact - Qwibee",
       "description": "Have questions or want to become a creator? Get in touch with us."
     },
     "auth": {
-      "title": "Sign In / Register - WatchMeFans",
+      "title": "Sign In / Register - Qwibee",
       "description": "Sign in or create an account with magic link authentication."
     },
     "recoverAccess": {
-      "title": "Recover Access - WatchMeFans",
+      "title": "Recover Access - Qwibee",
       "description": "Lost your access? Enter your email to retrieve your content."
     },
     "account": {
-      "title": "My Account - WatchMeFans",
-      "description": "Manage your WatchMeFans account and memberships"
+      "title": "My Account - Qwibee",
+      "description": "Manage your Qwibee account and memberships"
     }
   },
   "account": {
@@ -376,7 +376,7 @@
     }
   },
   "apps": {
-    "pageTitle": "Apps & Tutorials - WatchMeFans",
+    "pageTitle": "Apps & Tutorials - Qwibee",
     "title": "Apps & Tutorials",
     "subtitle": "Discover useful Mac apps and step-by-step tutorials to enhance your productivity and customize your workspace.",
     "categoryApp": "App",

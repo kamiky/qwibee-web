@@ -1,4 +1,4 @@
-# WatchMeFans - Video Content Platform
+# Qwibee - Video Content Platform
 
 A modern web application for creators to sell video content through memberships or one-time payments.
 

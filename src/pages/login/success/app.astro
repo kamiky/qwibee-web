@@ -14,7 +14,7 @@ const t = useTranslations(lang);
 ---
 
 <LayoutApp
-  title="Login Successful - WatchMeFans"
+  title="Login Successful - Qwibee"
   description="You've been successfully logged in"
   lang={lang}
 >
@@ -40,7 +40,9 @@ const t = useTranslations(lang);
       <div id="success-container" class="text-center hidden">
         <div class="mb-8">
           <div class="text-6xl mb-6 success-emoji">✅</div>
-          <h1 class="text-4xl sm:text-5xl font-extrabold mb-4 text-white glitch-text">
+          <h1
+            class="text-4xl sm:text-5xl font-extrabold mb-4 text-white glitch-text"
+          >
             {t.auth.loginSuccess.successTitle}
           </h1>
           <p class="text-xl text-gray-300 mb-2">
@@ -94,10 +96,7 @@ const t = useTranslations(lang);
 
       <!-- Back Link -->
       <div class="text-center mt-8">
-        <a
-          href="/"
-          class="back-link transition-colors"
-        >
+        <a href="/" class="back-link transition-colors">
           {t.auth.backLink}
         </a>
       </div>
@@ -193,7 +192,11 @@ const t = useTranslations(lang);
       }
     }
 
-    function showSuccess(email: string | null, redirectTo: string | null, shouldOpenStripe: boolean) {
+    function showSuccess(
+      email: string | null,
+      redirectTo: string | null,
+      shouldOpenStripe: boolean
+    ) {
       // Hide loading, show success
       if (loadingContainer) loadingContainer.classList.add("hidden");
       if (successContainer) successContainer.classList.remove("hidden");

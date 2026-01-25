@@ -19,6 +19,6 @@ ln -sf ../client ./client
 cd ../..
 
 echo "Restarting PM2 process..."
-pm2 restart watchmefans-web
+pm2 restart qwibee-web
 
 echo "Deployment complete!"

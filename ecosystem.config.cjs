@@ -1,9 +1,9 @@
 module.exports = {
   apps: [
     {
-      name: "watchmefans-web",
+      name: "qwibee-web",
       script: "dist/server/entry.mjs",
-      cwd: "/var/www/watchmefans-web",
+      cwd: "/var/www/qwibee-web",
       instances: 1,
       exec_mode: "fork",
       env: {

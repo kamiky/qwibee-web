@@ -17,14 +17,14 @@ interface Props {
 
 const {
   title,
-  description = "watchmefans - Solo Dev Making Apps. Quality crafted applications and digital life tips.",
+  description = "qwibee - Solo Dev Making Apps. Quality crafted applications and digital life tips.",
   lang,
   ogImage = "/ogimages/default.jpg",
   ogType = "website",
   twitterCard = "summary_large_image",
   canonicalUrl,
   keywords = "apps, developer, web apps, digital tools, animated wallpapers, VS Code, Cursor",
-  author = "watchmefans",
+  author = "qwibee",
   robots = "noindex, nofollow",
 } = Astro.props;
 
@@ -35,7 +35,7 @@ const canonical = canonicalUrl || new URL(Astro.url.pathname, Astro.site).href;
 const fullOgImage = new URL(ogImage, Astro.site).href;
 
 // Site name
-const siteName = "watchmefans";
+const siteName = "qwibee";
 ---
 
 <!doctype html>
@@ -76,10 +76,7 @@ const siteName = "watchmefans";
     <!-- Additional Meta Tags -->
     <meta name="theme-color" content="#ffffff" />
     <meta name="mobile-web-app-capable" content="yes" />
-    <meta
-      name="apple-mobile-web-app-status-bar-style"
-      content="default"
-    />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
   </head>
   <body class="bg-white text-gray-900 min-h-screen">
     <slot />
