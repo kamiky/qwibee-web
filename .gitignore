@@ -29,6 +29,7 @@ dist-ssr
 
 .env
 .env.production
+.env.wmf
 connect
 bin/deploy.prod.sh
 public/videos
