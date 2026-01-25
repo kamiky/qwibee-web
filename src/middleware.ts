@@ -17,10 +17,15 @@ export const onRequest = defineMiddleware(async (context, next) => {
     "/404",
   ];
 
+  // Extract language prefix if present (e.g., /fr/, /en/)
+  const langMatch = pathname.match(/^\/(fr|en)(\/|$)/);
+  const langPrefix = langMatch ? `/${langMatch[1]}` : "";
+  const pathWithoutLang = langPrefix ? pathname.substring(langPrefix.length) : pathname;
+
   // Check if the current pathname matches any route (with or without trailing slash)
   for (const route of routes) {
-    if (pathname === route || pathname === `${route}/`) {
-      return context.rewrite(`${route}/${mode}`);
+    if (pathWithoutLang === route || pathWithoutLang === `${route}/`) {
+      return context.rewrite(`${langPrefix}${route}/${mode}`);
     }
   }
 
