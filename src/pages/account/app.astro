@@ -1,9 +1,16 @@
 ---
 import LayoutApp from "@/layouts/LayoutApp.astro";
 import AccountApp from "@/components/AccountApp/Page.astro";
-import { useTranslations } from "@/i18n/translations";
+import { useTranslations, type Language } from "@/i18n/translations";
 
-const lang = "en";
+// Detect language from URL path
+const pathname = Astro.url.pathname;
+const lang: Language =
+  pathname.startsWith("/fr/") ||
+  pathname === "/fr" ||
+  pathname.startsWith("/fr/account")
+    ? "fr"
+    : "en";
 const t = useTranslations(lang);
 ---
 
@@ -12,5 +19,465 @@ const t = useTranslations(lang);
   description={t.seo.account.description}
   lang={lang}
 >
-  <AccountApp />
+  <main class="pt-24 pb-12 min-h-screen account-main">
+    <div class="max-w-3xl mx-auto px-6">
+      <!-- Loading State -->
+      <div id="loading-container" class="text-center py-12">
+        <div
+          class="inline-block animate-spin rounded-full h-10 w-10 border-b-2 border-cyan-400 mb-3 glow-cyan"
+        >
+        </div>
+        <p class="text-gray-300 text-sm">{t.account.loading}</p>
+      </div>
+
+      <!-- Account Info -->
+      <div id="account-container" class="hidden">
+        <!-- Header -->
+        <div class="mb-8 text-center">
+          <h1 class="text-4xl font-bold mb-2 text-white glitch-text">
+            {t.account.title}
+          </h1>
+        </div>
+
+        <!-- Single Unified Card -->
+        <div class="account-card rounded-2xl p-8">
+          <!-- User Info Section -->
+          <div class="mb-8">
+            <div class="flex items-center gap-2 mb-4">
+              <svg
+                class="w-5 h-5 text-cyan-400"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
+                ></path>
+              </svg>
+              <h2 class="text-xl font-semibold text-white led-text">
+                {t.account.accountInfo}
+              </h2>
+            </div>
+            <div class="space-y-2 ml-7">
+              <div>
+                <label
+                  class="text-xs font-medium text-gray-400 uppercase tracking-wide"
+                >
+                  {t.account.email}
+                </label>
+                <p class="text-base text-white font-medium" id="user-email"></p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Divider -->
+          <div class="border-t border-magenta-500/30 my-8"></div>
+
+          <!-- Quick Access Section (shown only if user has app access) -->
+          <div id="quick-access-section" class="mb-8 hidden">
+            <div class="flex items-center gap-2 mb-4">
+              <svg
+                class="w-5 h-5 text-cyan-400"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+              </svg>
+              <h2 class="text-xl font-semibold text-white led-text">
+                Quick Access
+              </h2>
+            </div>
+            <div class="ml-7">
+              <a
+                href="/apps/app"
+                class="w-full neon-btn text-white font-semibold py-3.5 px-6 rounded-full transition-all flex items-center justify-center gap-2"
+              >
+                <svg
+                  class="w-5 h-5"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"
+                  ></path>
+                </svg>
+                Apps & Tutorials
+              </a>
+            </div>
+          </div>
+
+          <!-- Divider -->
+          <div class="border-t border-magenta-500/30 my-8"></div>
+
+          <!-- Memberships Section -->
+          <div class="mb-8">
+            <div class="flex items-center justify-between mb-4">
+              <div class="flex items-center gap-2">
+                <svg
+                  class="w-5 h-5 text-cyan-400"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z"
+                  ></path>
+                </svg>
+                <h2 class="text-xl font-semibold text-cyan-400 led-text">
+                  {t.account.activeMemberships}
+                </h2>
+              </div>
+              <button
+                id="manage-all-btn"
+                class="hidden neon-btn text-white font-semibold py-2.5 px-5 rounded-full transition-all gap-2 text-sm"
+              >
+                <svg
+                  class="w-4 h-4"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"
+                  ></path>
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                </svg>
+                {t.account.manageAllSubscriptions}
+              </button>
+            </div>
+            <div id="memberships-list" class="space-y-3 ml-7">
+              <!-- Memberships will be loaded here -->
+            </div>
+            <div id="no-memberships" class="hidden text-center py-6 ml-7">
+              <div class="text-5xl mb-3">📭</div>
+              <p class="text-gray-300 mb-3 text-sm">
+                {t.account.noMemberships}
+              </p>
+            </div>
+          </div>
+
+          <!-- Divider -->
+          <div class="border-t border-magenta-500/30 my-8"></div>
+
+          <!-- Actions Section -->
+          <div>
+            <div class="flex items-center gap-2 mb-4">
+              <svg
+                class="w-5 h-5 text-cyan-400"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"
+                ></path>
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+              </svg>
+              <h2 class="text-xl font-semibold text-white led-text">
+                {t.account.actions}
+              </h2>
+            </div>
+            <div class="space-y-3 ml-7">
+              <button
+                id="logout-btn"
+                class="w-full neon-btn-secondary text-white font-semibold py-3.5 px-6 rounded-full transition-all flex items-center justify-center gap-2"
+              >
+                <svg
+                  class="w-5 h-5"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"
+                  ></path>
+                </svg>
+                {t.account.logout}
+              </button>
+              <button
+                id="delete-account-btn"
+                class="w-full neon-btn-danger text-white font-semibold py-3.5 px-6 rounded-full transition-all flex items-center justify-center gap-2"
+              >
+                <svg
+                  class="w-5 h-5"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+                  ></path>
+                </svg>
+                {t.account.deleteAccount}
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Logout Modal -->
+        <div
+          id="logout-modal"
+          class="fixed inset-0 z-50 hidden items-center justify-center p-4 bg-black bg-opacity-70 backdrop-blur-sm transition-opacity duration-200"
+        >
+          <div
+            class="account-card rounded-lg max-w-md w-full p-5 transform transition-all duration-200 scale-100 animate-fadeIn"
+          >
+            <!-- Header -->
+            <div class="mb-3">
+              <h3 class="text-xl font-semibold text-cyan-400 led-text">
+                {t.account.logoutModal.title}
+              </h3>
+            </div>
+
+            <!-- Message -->
+            <div class="mb-5">
+              <p class="text-gray-300 text-sm">
+                {t.account.logoutModal.message}
+              </p>
+            </div>
+
+            <!-- Actions -->
+            <div class="flex gap-3 justify-end">
+              <button
+                id="modal-cancel"
+                class="px-6 py-2.5 rounded-full font-semibold text-gray-300 neon-btn-secondary transition-colors focus:outline-none focus:ring-2 focus:ring-gray-500"
+              >
+                {t.account.logoutModal.cancel}
+              </button>
+              <button
+                id="modal-confirm"
+                class="px-6 py-2.5 rounded-full font-semibold text-white neon-btn-danger transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
+              >
+                {t.account.logoutModal.confirm}
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Delete Account Modal -->
+        <div
+          id="delete-account-modal"
+          class="fixed inset-0 z-50 hidden items-center justify-center p-4 bg-black bg-opacity-70 backdrop-blur-sm transition-opacity duration-200"
+        >
+          <div
+            class="account-card rounded-lg max-w-md w-full p-5 transform transition-all duration-200 scale-100 animate-fadeIn"
+          >
+            <!-- Header -->
+            <div class="mb-3">
+              <h3 class="text-xl font-semibold text-red-400 led-text">
+                {t.account.deleteAccountModal.title}
+              </h3>
+            </div>
+
+            <!-- Message -->
+            <div class="mb-3">
+              <p class="text-gray-300 font-medium mb-2 text-sm">
+                {t.account.deleteAccountModal.message}
+              </p>
+              <ul
+                class="list-disc list-inside space-y-1.5 text-gray-400 mb-3 text-sm"
+              >
+                <li>{t.account.deleteAccountModal.warning1}</li>
+                <li>{t.account.deleteAccountModal.warning2}</li>
+                <li>{t.account.deleteAccountModal.warning3}</li>
+              </ul>
+
+              <!-- Email Verification -->
+              <div
+                class="mt-4 p-3.5 bg-black/30 rounded-lg border border-magenta-500/30"
+              >
+                <label
+                  for="delete-email-verification"
+                  class="block text-xs font-medium text-gray-400 mb-2"
+                >
+                  {t.account.deleteAccountModal.verificationLabel}
+                </label>
+                <p
+                  id="delete-user-email-display"
+                  class="text-sm font-mono mb-2.5 text-cyan-400"
+                >
+                </p>
+                <input
+                  type="email"
+                  id="delete-email-verification"
+                  class="w-full px-3 py-2 border border-magenta-500/50 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent text-sm bg-black/50 text-white"
+                  placeholder={t.account.deleteAccountModal
+                    .verificationPlaceholder}
+                />
+              </div>
+            </div>
+
+            <!-- Actions -->
+            <div class="flex gap-3 justify-end mt-5">
+              <button
+                id="delete-modal-cancel"
+                class="px-6 py-2.5 rounded-full font-semibold text-gray-300 neon-btn-secondary transition-colors focus:outline-none focus:ring-2 focus:ring-gray-500"
+              >
+                {t.account.deleteAccountModal.cancel}
+              </button>
+              <button
+                id="delete-modal-confirm"
+                disabled
+                class="px-6 py-2.5 rounded-full font-semibold text-white neon-btn-danger transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-600 disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                {t.account.deleteAccountModal.confirm}
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Not Logged In State -->
+      <div id="not-logged-in" class="hidden text-center py-12">
+        <div class="text-6xl mb-5">{t.account.notLoggedIn.icon}</div>
+        <h1 class="text-3xl font-bold mb-3 text-white glitch-text">
+          {t.account.notLoggedIn.title}
+        </h1>
+        <p class="text-base text-gray-300 mb-8">
+          {t.account.notLoggedIn.message}
+        </p>
+        <a
+          href={lang === "fr" ? "/fr/login" : "/login"}
+          class="inline-block neon-btn text-white font-semibold py-3.5 px-8 rounded-full transition-all"
+        >
+          {t.account.notLoggedIn.loginButton}
+        </a>
+      </div>
+    </div>
+  </main>
 </LayoutApp>
+
+<style>
+  /* Main Content */
+  .account-main {
+    position: relative;
+    z-index: 10;
+    background: transparent;
+  }
+
+  /* Account Card - Blurry/Semi-transparent Block */
+  .account-card {
+    background: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 0, 255, 0.3);
+    box-shadow:
+      0 0 30px rgba(255, 0, 255, 0.2),
+      0 0 60px rgba(0, 255, 255, 0.1),
+      inset 0 0 30px rgba(255, 0, 255, 0.05);
+  }
+
+  /* LED Style Text Effects */
+  .led-text {
+    text-shadow:
+      0 0 10px rgba(0, 255, 255, 0.8),
+      0 0 20px rgba(0, 255, 255, 0.5);
+  }
+
+  .glitch-text {
+    text-shadow:
+      0 0 20px rgba(255, 0, 255, 0.8),
+      0 0 40px rgba(0, 255, 255, 0.6);
+  }
+
+  /* Neon Buttons */
+  .neon-btn {
+    background: transparent;
+    border: 2px solid rgba(0, 255, 255, 0.6);
+    box-shadow:
+      0 0 20px rgba(0, 255, 255, 0.3),
+      inset 0 0 20px rgba(0, 255, 255, 0.1);
+    transition: all 0.3s ease;
+  }
+
+  .neon-btn:hover {
+    border-color: rgba(255, 0, 255, 0.8);
+    box-shadow:
+      0 0 30px rgba(255, 0, 255, 0.5),
+      inset 0 0 20px rgba(255, 0, 255, 0.2);
+    transform: translateY(-2px);
+  }
+
+  .neon-btn-secondary {
+    background: rgba(0, 0, 0, 0.4);
+    border: 1px solid rgba(128, 128, 128, 0.5);
+    box-shadow:
+      0 0 15px rgba(128, 128, 128, 0.2),
+      inset 0 0 15px rgba(128, 128, 128, 0.1);
+  }
+
+  .neon-btn-secondary:hover {
+    border-color: rgba(0, 255, 255, 0.6);
+    box-shadow:
+      0 0 25px rgba(0, 255, 255, 0.4),
+      inset 0 0 15px rgba(0, 255, 255, 0.2);
+  }
+
+  .neon-btn-danger {
+    background: rgba(139, 0, 0, 0.3);
+    border: 1px solid rgba(255, 0, 100, 0.6);
+    box-shadow:
+      0 0 20px rgba(255, 0, 100, 0.3),
+      inset 0 0 20px rgba(255, 0, 100, 0.1);
+  }
+
+  .neon-btn-danger:hover {
+    border-color: rgba(255, 0, 100, 0.8);
+    box-shadow:
+      0 0 30px rgba(255, 0, 100, 0.5),
+      inset 0 0 20px rgba(255, 0, 100, 0.2);
+  }
+
+  /* Glow effects */
+  .glow-cyan {
+    box-shadow: 0 0 20px rgba(0, 255, 255, 0.6);
+  }
+
+  /* Modal Display */
+  #logout-modal:not(.hidden),
+  #delete-account-modal:not(.hidden) {
+    display: flex;
+  }
+</style>
+
+<!-- Initialize the page with the external script -->
+<script>
+  /* import to keep the full path for generated /fr files */
+  import { initAccountPage } from "@/pages/account/app.script.ts";
+
+  initAccountPage();
+</script>
