@@ -18,7 +18,8 @@ export const POST: APIRoute = async ({ request, url }) => {
     } = body;
 
     // Validate required fields
-    if (!profileId) {
+    // Note: profileId can be null for app memberships (not tied to a specific creator)
+    if (profileId === undefined) {
       return new Response(JSON.stringify({ error: "Missing profileId" }), {
         status: 400,
         headers: { "Content-Type": "application/json" },
