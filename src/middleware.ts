@@ -2,20 +2,25 @@ import { defineMiddleware } from "astro:middleware";
 
 export const onRequest = defineMiddleware((context, next) => {
   const creatorMode = context.cookies.get("qwb-creator-mode")?.value === "true";
-  console.log("MIDDLEWARE : ", { creatorMode });
 
-  // Handle login route
-  if (context.url.pathname === "/login" || context.url.pathname === "/login/") {
-    console.log(`REDIRECTING TO /login/${creatorMode ? "creator" : "app"}`);
-    return context.rewrite(`/login/${creatorMode ? "creator" : "app"}`);
-  }
+  const mode = creatorMode ? "creator" : "app";
+  const pathname = context.url.pathname;
 
-  // Handle account route
-  if (
-    context.url.pathname === "/account" ||
-    context.url.pathname === "/account/"
-  ) {
-    return context.rewrite(`/account/${creatorMode ? "creator" : "app"}`);
+  // List of routes that need mode-based routing
+  const routes = [
+    "/login",
+    "/account",
+    "/contact",
+    "/privacy-policy",
+    "/terms-of-sale",
+    "/404",
+  ];
+
+  // Check if the current pathname matches any route (with or without trailing slash)
+  for (const route of routes) {
+    if (pathname === route || pathname === `${route}/`) {
+      return context.rewrite(`${route}/${mode}`);
+    }
   }
 
   return next();
