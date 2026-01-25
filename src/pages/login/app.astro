@@ -1,0 +1,643 @@
+---
+import LayoutApp from "@/layouts/LayoutApp.astro";
+import { useTranslations } from "@/i18n/translations";
+
+const lang = (Astro.url.searchParams.get("lang") as "en" | "fr") || "en";
+const t = useTranslations(lang);
+---
+
+<LayoutApp
+  title={t.seo.auth.title}
+  description={t.seo.auth.description}
+  lang={lang}
+>
+  <main class="main-container">
+    <div class="content-wrapper">
+      <!-- Header -->
+      <div class="header-section">
+        <h1 class="page-title">
+          {t.auth.title}
+        </h1>
+        <p class="page-subtitle">
+          {t.auth.subtitle}
+        </p>
+      </div>
+
+      <!-- Auth Form -->
+      <div id="form-container" class="form-section">
+        <div class="form-group">
+          <label for="email" class="form-label">
+            {t.auth.form.emailLabel}
+          </label>
+          <input
+            type="email"
+            id="email"
+            name="email"
+            placeholder={t.auth.form.emailPlaceholder}
+            class="form-input"
+            required
+          />
+          <p class="form-help-text">
+            {t.auth.form.emailHelp}
+          </p>
+        </div>
+
+        <button id="auth-btn" class="submit-button">
+          <span id="auth-btn-text">{t.auth.form.submitButton}</span>
+          <span class="button-glow"></span>
+        </button>
+      </div>
+
+      <!-- Success Message (hidden by default) -->
+      <div id="success-container" class="hidden">
+        <div class="success-header">
+          <div class="success-icon">{t.auth.success.icon}</div>
+          <h2 class="success-title">
+            {t.auth.success.title}
+          </h2>
+          <p class="success-message">
+            {t.auth.success.message}
+            <strong id="auth-email" class="success-email"></strong>
+          </p>
+          <p class="success-info">
+            {t.auth.success.info}
+          </p>
+        </div>
+
+        <div class="info-box next-steps-box">
+          <h3 class="info-box-title">
+            {t.auth.success.nextSteps.title}
+          </h3>
+          <ul class="info-box-list">
+            <li>
+              <span class="step-number">1.</span>
+              <span>{t.auth.success.nextSteps.step1}</span>
+            </li>
+            <li>
+              <span class="step-number">2.</span>
+              <span>{t.auth.success.nextSteps.step2}</span>
+            </li>
+            <li>
+              <span class="step-number">3.</span>
+              <span>{t.auth.success.nextSteps.step3}</span>
+            </li>
+          </ul>
+        </div>
+
+        <div class="info-box warning-box">
+          <p class="warning-title">
+            {t.auth.success.important.title}
+          </p>
+          <p class="warning-message">
+            {t.auth.success.important.message}
+          </p>
+        </div>
+      </div>
+
+      <!-- Error Message (hidden by default) -->
+      <div id="error-container" class="message-box error-message hidden">
+        <p class="message-title">{t.auth.error.title}</p>
+        <p class="message-subtitle" id="error-message"></p>
+      </div>
+
+      <!-- Help Section -->
+      <div class="help-section">
+        <h3 class="help-title">{t.auth.help.title}</h3>
+        <ul class="help-list">
+          <li>
+            <span class="help-bullet">•</span>
+            <span>{t.auth.help.tip1}</span>
+          </li>
+          <li>
+            <span class="help-bullet">•</span>
+            <span>{t.auth.help.tip2}</span>
+          </li>
+          <li>
+            <span class="help-bullet">•</span>
+            <span
+              >{t.auth.help.tip3}
+              <a href="/contact/app" class="help-link"
+                >{t.auth.help.contactSupport}</a
+              ></span
+            >
+          </li>
+        </ul>
+      </div>
+
+      <!-- Back Link -->
+      <div class="back-link-container">
+        <a href="/" class="back-link">
+          {t.auth.backLink}
+        </a>
+      </div>
+    </div>
+  </main>
+</LayoutApp>
+
+<style>
+  .main-container {
+    position: relative;
+    z-index: 10;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 4rem 1.5rem;
+  }
+
+  .content-wrapper {
+    max-width: 42rem;
+    width: 100%;
+    background: rgba(0, 0, 0, 0.7);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 0, 255, 0.3);
+    border-radius: 12px;
+    padding: 3rem;
+    box-shadow: 0 0 50px rgba(255, 0, 255, 0.2);
+  }
+
+  /* Header Section */
+  .header-section {
+    text-align: center;
+    margin-bottom: 2.5rem;
+  }
+
+  .page-title {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: rgba(255, 255, 255, 0.95);
+    margin-bottom: 0.75rem;
+    text-shadow: 0 0 20px rgba(0, 255, 255, 0.5);
+  }
+
+  .page-subtitle {
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 1.1rem;
+    line-height: 1.6;
+  }
+
+  /* Form Section */
+  .form-section {
+    margin-bottom: 2rem;
+  }
+
+  .form-group {
+    margin-bottom: 1.5rem;
+  }
+
+  .form-label {
+    display: block;
+    color: rgba(255, 255, 255, 0.9);
+    font-size: 1rem;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+    text-shadow: 0 0 10px rgba(255, 0, 255, 0.3);
+  }
+
+  .form-input {
+    width: 100%;
+    padding: 0.875rem 1rem;
+    background: rgba(0, 0, 0, 0.5);
+    border: 1px solid rgba(255, 0, 255, 0.3);
+    border-radius: 8px;
+    color: rgba(255, 255, 255, 0.95);
+    font-size: 1rem;
+    transition: all 0.3s ease;
+    box-shadow: 0 0 10px rgba(255, 0, 255, 0.1);
+  }
+
+  .form-input::placeholder {
+    color: rgba(255, 255, 255, 0.4);
+  }
+
+  .form-input:focus {
+    outline: none;
+    border-color: rgba(0, 255, 255, 0.6);
+    box-shadow: 0 0 20px rgba(0, 255, 255, 0.3);
+    background: rgba(0, 0, 0, 0.6);
+  }
+
+  .form-help-text {
+    color: rgba(255, 255, 255, 0.6);
+    font-size: 0.875rem;
+    margin-top: 0.5rem;
+    line-height: 1.5;
+  }
+
+  /* Submit Button */
+  .submit-button {
+    position: relative;
+    width: 100%;
+    padding: 1rem 2rem;
+    font-size: 1rem;
+    font-weight: 700;
+    letter-spacing: 0.1rem;
+    color: rgba(255, 255, 255, 0.95);
+    background: transparent;
+    border: 2px solid rgba(0, 255, 255, 0.6);
+    border-radius: 8px;
+    cursor: pointer;
+    overflow: hidden;
+    transition: all 0.3s ease;
+    text-transform: uppercase;
+    box-shadow:
+      0 0 30px rgba(0, 255, 255, 0.3),
+      inset 0 0 30px rgba(0, 255, 255, 0.1);
+  }
+
+  .submit-button:hover:not(:disabled) {
+    border-color: rgba(255, 0, 255, 0.8);
+    box-shadow:
+      0 0 40px rgba(255, 0, 255, 0.5),
+      inset 0 0 30px rgba(255, 0, 255, 0.2);
+    transform: translateY(-2px);
+  }
+
+  .submit-button:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+
+  .submit-button span {
+    position: relative;
+    z-index: 2;
+  }
+
+  .button-glow {
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(
+      90deg,
+      transparent,
+      rgba(255, 0, 255, 0.4),
+      rgba(0, 255, 255, 0.4),
+      transparent
+    );
+    transition: left 0.5s ease;
+  }
+
+  .submit-button:hover:not(:disabled) .button-glow {
+    left: 100%;
+  }
+
+  /* Success Container */
+  .success-header {
+    text-align: center;
+    margin-bottom: 2rem;
+  }
+
+  .success-icon {
+    font-size: 4rem;
+    margin-bottom: 1rem;
+    filter: drop-shadow(0 0 20px rgba(0, 255, 128, 0.5));
+  }
+
+  .success-title {
+    font-size: 1.75rem;
+    font-weight: 700;
+    color: rgba(0, 255, 128, 0.95);
+    margin-bottom: 1rem;
+    text-shadow: 0 0 20px rgba(0, 255, 128, 0.5);
+  }
+
+  .success-message {
+    color: rgba(255, 255, 255, 0.85);
+    font-size: 1rem;
+    line-height: 1.6;
+    margin-bottom: 0.75rem;
+  }
+
+  .success-email {
+    color: rgba(0, 255, 255, 0.95);
+    text-shadow: 0 0 10px rgba(0, 255, 255, 0.5);
+  }
+
+  .success-info {
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 0.9rem;
+    line-height: 1.5;
+  }
+
+  /* Info Boxes */
+  .info-box {
+    margin-bottom: 1.5rem;
+    padding: 1.25rem;
+    border-radius: 8px;
+    border: 1px solid;
+  }
+
+  .next-steps-box {
+    background: rgba(0, 100, 255, 0.1);
+    border-color: rgba(0, 150, 255, 0.4);
+    box-shadow: 0 0 20px rgba(0, 150, 255, 0.2);
+  }
+
+  .info-box-title {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: rgba(0, 200, 255, 0.95);
+    margin-bottom: 1rem;
+    text-shadow: 0 0 10px rgba(0, 200, 255, 0.5);
+  }
+
+  .info-box-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  .info-box-list li {
+    display: flex;
+    gap: 0.75rem;
+    margin-bottom: 0.75rem;
+    color: rgba(255, 255, 255, 0.85);
+    line-height: 1.6;
+  }
+
+  .step-number {
+    color: rgba(0, 255, 255, 0.95);
+    font-weight: 700;
+    text-shadow: 0 0 10px rgba(0, 255, 255, 0.5);
+  }
+
+  .warning-box {
+    background: rgba(255, 200, 0, 0.1);
+    border-color: rgba(255, 200, 0, 0.4);
+    box-shadow: 0 0 20px rgba(255, 200, 0, 0.2);
+  }
+
+  .warning-title {
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: rgba(255, 220, 0, 0.95);
+    margin-bottom: 0.5rem;
+    text-shadow: 0 0 10px rgba(255, 220, 0, 0.5);
+  }
+
+  .warning-message {
+    font-size: 0.9rem;
+    color: rgba(255, 255, 255, 0.8);
+    line-height: 1.5;
+  }
+
+  /* Error Message */
+  .message-box {
+    margin-bottom: 1.5rem;
+    padding: 1rem 1.25rem;
+    border-radius: 8px;
+    border: 1px solid;
+  }
+
+  .error-message {
+    background: rgba(255, 0, 128, 0.1);
+    border-color: rgba(255, 0, 128, 0.4);
+    box-shadow: 0 0 20px rgba(255, 0, 128, 0.2);
+  }
+
+  .error-message .message-title {
+    color: rgba(255, 0, 128, 0.95);
+    font-weight: 600;
+    margin-bottom: 0.25rem;
+    text-shadow: 0 0 10px rgba(255, 0, 128, 0.5);
+  }
+
+  .error-message .message-subtitle {
+    color: rgba(255, 0, 128, 0.8);
+    font-size: 0.9rem;
+  }
+
+  /* Help Section */
+  .help-section {
+    margin-bottom: 2rem;
+    padding: 1.5rem;
+    background: rgba(0, 0, 0, 0.4);
+    border: 1px solid rgba(255, 0, 255, 0.2);
+    border-radius: 8px;
+  }
+
+  .help-title {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: rgba(255, 255, 255, 0.9);
+    margin-bottom: 1rem;
+    text-shadow: 0 0 10px rgba(255, 0, 255, 0.3);
+  }
+
+  .help-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  .help-list li {
+    display: flex;
+    gap: 0.75rem;
+    margin-bottom: 0.75rem;
+    color: rgba(255, 255, 255, 0.8);
+    line-height: 1.6;
+  }
+
+  .help-bullet {
+    color: rgba(0, 255, 255, 0.8);
+    font-weight: 700;
+  }
+
+  .help-link {
+    color: rgba(0, 255, 255, 0.9);
+    text-decoration: underline;
+    transition: all 0.3s ease;
+  }
+
+  .help-link:hover {
+    color: rgba(255, 0, 255, 0.9);
+    text-shadow: 0 0 10px rgba(0, 255, 255, 0.5);
+  }
+
+  /* Back Link */
+  .back-link-container {
+    text-align: center;
+    padding-top: 1.5rem;
+    border-top: 1px solid rgba(255, 0, 255, 0.2);
+  }
+
+  .back-link {
+    color: rgba(0, 255, 255, 0.9);
+    text-decoration: none;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    display: inline-block;
+  }
+
+  .back-link:hover {
+    color: rgba(255, 0, 255, 0.9);
+    text-shadow: 0 0 10px rgba(0, 255, 255, 0.5);
+  }
+
+  /* Utility Classes */
+  .hidden {
+    display: none;
+  }
+
+  /* Mobile Responsive */
+  @media (max-width: 768px) {
+    .main-container {
+      padding: 2rem 1rem;
+    }
+
+    .content-wrapper {
+      padding: 2rem 1.5rem;
+    }
+
+    .page-title {
+      font-size: 2rem;
+    }
+
+    .page-subtitle {
+      font-size: 1rem;
+    }
+
+    .success-icon {
+      font-size: 3rem;
+    }
+
+    .success-title {
+      font-size: 1.5rem;
+    }
+
+    .submit-button {
+      padding: 0.875rem 1.5rem;
+      font-size: 0.95rem;
+    }
+  }
+</style>
+
+<script>
+  import { getAuth } from "@/lib/auth";
+  import { useTranslations } from "@/i18n/translations";
+  import type { Language } from "@/i18n/translations";
+
+  // Detect language
+  const lang: Language = window.location.pathname.startsWith("/fr")
+    ? "fr"
+    : "en";
+  const t = useTranslations(lang);
+
+  // Check if user is already logged in - using cookie-based auth
+  const auth = getAuth();
+  if (auth && auth.user) {
+    window.location.href = "/home/app";
+    // Don't execute the rest of the script
+    throw new Error("Redirecting to account");
+  }
+
+  const authBtn = document.getElementById(
+    "auth-btn"
+  ) as HTMLButtonElement | null;
+  const authBtnText = document.getElementById("auth-btn-text");
+  const emailInput = document.getElementById(
+    "email"
+  ) as HTMLInputElement | null;
+  const formContainer = document.getElementById("form-container");
+  const successContainer = document.getElementById("success-container");
+  const errorContainer = document.getElementById("error-container");
+  const errorMessage = document.getElementById("error-message");
+
+  // Get redirect parameters from URL
+  const urlParams = new URLSearchParams(window.location.search);
+  const redirectUrl = urlParams.get("redirect");
+  const openStripe = urlParams.get("openStripe");
+
+  if (authBtn && emailInput) {
+    authBtn.addEventListener("click", async () => {
+      const email = emailInput.value.trim();
+
+      // Validate input
+      if (!email || !email.includes("@")) {
+        showError("Please enter a valid email address");
+        return;
+      }
+
+      try {
+        // Disable button
+        authBtn.disabled = true;
+        if (authBtnText) authBtnText.textContent = t.auth.form.submitting;
+
+        // Hide previous errors
+        if (errorContainer) errorContainer.classList.add("hidden");
+
+        // Prepare request body
+        const requestBody: {
+          email: string;
+          language: Language;
+          redirectUrl?: string;
+          openStripe?: boolean;
+        } = {
+          email,
+          language: lang,
+        };
+        if (redirectUrl) {
+          requestBody.redirectUrl = redirectUrl;
+        }
+        if (openStripe === "true") {
+          requestBody.openStripe = true;
+        }
+
+        // Call auth API
+        const response = await fetch("/api/auth/send-magic-link", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(requestBody),
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+          throw new Error(data.error || "Failed to send authentication link");
+        }
+
+        console.log("✓ Magic link email sent successfully");
+
+        // Show success message
+        if (formContainer) formContainer.classList.add("hidden");
+        if (successContainer) successContainer.classList.remove("hidden");
+
+        // Fill in email
+        const authEmailEl = document.getElementById("auth-email");
+        if (authEmailEl) {
+          authEmailEl.textContent = email;
+        }
+      } catch (error) {
+        console.error("Authentication error:", error);
+        const errorMsg =
+          error instanceof Error
+            ? error.message
+            : "Failed to send authentication link";
+        showError(errorMsg);
+
+        // Re-enable button
+        authBtn.disabled = false;
+        if (authBtnText) authBtnText.textContent = t.auth.form.submitButton;
+      }
+    });
+
+    // Allow Enter key to submit
+    emailInput.addEventListener("keypress", (e) => {
+      if (e.key === "Enter") {
+        authBtn.click();
+      }
+    });
+  }
+
+  // @ts-ignore
+  function showError(message) {
+    if (errorContainer && errorMessage) {
+      errorMessage.textContent = String(message || "An error occurred");
+      errorContainer.classList.remove("hidden");
+    }
+  }
+</script>
