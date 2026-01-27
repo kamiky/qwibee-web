@@ -255,8 +255,8 @@ export function initAccountPage() {
           .map((m) => {
             // Get profile data for display name
             const profile = profiles[m.profileId];
-            const displayName = profile
-              ? profile.displayName[lang]
+            const displayName = m.type === "apps" ? 'Apps & tutorials' :profile
+              ? profile?.displayName[lang]
               : m.profileId;
 
             const dateOptions: Intl.DateTimeFormatOptions = {

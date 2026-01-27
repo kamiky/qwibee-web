@@ -528,17 +528,17 @@ const t = useTranslations(lang);
   // Check if user is already logged in - using cookie-based auth
   const auth = getAuth();
   if (auth && auth.user) {
-    window.location.href = "/home/app";
+    window.location.href = lang === "fr" ? "/fr" : "/";
     // Don't execute the rest of the script
     throw new Error("Redirecting to account");
   }
 
   const authBtn = document.getElementById(
-    "auth-btn"
+    "auth-btn",
   ) as HTMLButtonElement | null;
   const authBtnText = document.getElementById("auth-btn-text");
   const emailInput = document.getElementById(
-    "email"
+    "email",
   ) as HTMLInputElement | null;
   const formContainer = document.getElementById("form-container");
   const successContainer = document.getElementById("success-container");

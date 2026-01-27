@@ -953,7 +953,7 @@ if (accessToken) {
                 videoId: null, // null for app lifetime access
                 contentPrice: priceGroup.lifetime.price * 100, // Convert to cents
                 priceId: priceGroup.id, // Pass price group ID for A/B testing tracking
-                successUrl: `${window.location.origin}/?purchase=success&type=apps`,
+                successUrl: `${window.location.origin}/?purchase=success`,
                 cancelUrl: `${window.location.origin}/?purchase=canceled`,
                 customerEmail,
                 language: "en", // TODO: Get from page language

@@ -217,8 +217,7 @@ const t = useTranslations(lang);
         }
         if (continueLink) {
           continueLink.setAttribute("href", redirectTo);
-          continueLink.textContent =
-            translations.auth.loginSuccess.continueToCreator;
+          continueLink.textContent = translations.auth.loginSuccess.continue;
         }
 
         // Store flag if we need to open Stripe

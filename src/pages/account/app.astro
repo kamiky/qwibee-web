@@ -1,6 +1,5 @@
 ---
 import LayoutApp from "@/layouts/LayoutApp.astro";
-import AccountApp from "@/components/AccountApp/Page.astro";
 import { useTranslations, type Language } from "@/i18n/translations";
 
 // Detect language from URL path
@@ -97,7 +96,7 @@ const t = useTranslations(lang);
             </div>
             <div class="ml-7">
               <a
-                href="/apps/app"
+                href="/apps"
                 class="w-full neon-btn text-white font-semibold py-3.5 px-6 rounded-full transition-all flex items-center justify-center gap-2"
               >
                 <svg
