@@ -1,0 +1,85 @@
+---
+export const prerender = false;
+
+const key = Astro.url.searchParams.get("key");
+const backendUrl = import.meta.env.PUBLIC_API_URL || "http://localhost:5002";
+const baseUrl = import.meta.env.PUBLIC_APP_URL || Astro.url.origin;
+
+// If no key provided, redirect to home
+if (!key) {
+  return Astro.redirect("/");
+}
+
+try {
+  // Call backend to resolve redirect token
+  const response = await fetch(`${backendUrl}/stripe/resolve-redirect-token`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ token: key }),
+  });
+
+  if (!response.ok) {
+    console.error("Failed to resolve redirect token:", response.statusText);
+    return Astro.redirect("/");
+  }
+
+  const data = await response.json();
+
+  // Check if token is valid
+  if (!data.success || !data.data.valid || !data.data.destinationUrl) {
+    console.warn("Invalid or expired redirect token");
+    return Astro.redirect("/");
+  }
+
+  // Redirect to destination URL
+  return Astro.redirect(data.data.destinationUrl);
+} catch (error) {
+  console.error("Error resolving redirect token:", error);
+  return Astro.redirect("/");
+}
+---
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Redirecting...</title>
+    <style>
+      body {
+        font-family: system-ui, -apple-system, sans-serif;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 100vh;
+        margin: 0;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+      }
+      .loader {
+        text-align: center;
+      }
+      .spinner {
+        border: 4px solid rgba(255, 255, 255, 0.3);
+        border-radius: 50%;
+        border-top: 4px solid white;
+        width: 40px;
+        height: 40px;
+        animation: spin 1s linear infinite;
+        margin: 0 auto 20px;
+      }
+      @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="loader">
+      <div class="spinner"></div>
+      <p>Redirecting...</p>
+    </div>
+  </body>
+</html>

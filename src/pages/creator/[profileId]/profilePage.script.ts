@@ -885,8 +885,6 @@ export function initProfilePage(data: ProfilePageData) {
           console.error("Error decoding token:", e);
         }
 
-        const currentUrl = window.location.origin + window.location.pathname;
-
         // Calculate the promotional price to send to Stripe
         const finalPrice = calculatePromotionalPrice(videoData.price);
 
@@ -901,8 +899,7 @@ export function initProfilePage(data: ProfilePageData) {
               profileId: currentProfileId,
               videoId: videoId,
               contentPrice: finalPrice,
-              successUrl: `${currentUrl}?content_purchase=success&video_id=${videoId}`,
-              cancelUrl: `${currentUrl}?content_purchase=canceled`,
+              // Don't pass successUrl/cancelUrl - let backend use defaults with redirect tokens
               customerEmail,
               language: lang,
               videoTitle: videoData.title[lang],

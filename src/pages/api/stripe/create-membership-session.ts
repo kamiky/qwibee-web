@@ -52,9 +52,34 @@ export const POST: APIRoute = async ({ request, url }) => {
     const backendUrl =
       import.meta.env.PUBLIC_API_URL || "http://localhost:5002";
 
-    // Use provided success/cancel URLs, or fall back to default behavior
-    const finalSuccessUrl = successUrl || `${baseUrl}/creator/${profileId}?membership=success&session_id={CHECKOUT_SESSION_ID}`;
-    const finalCancelUrl = cancelUrl || `${baseUrl}/creator/${profileId}?membership=canceled`;
+    // Determine final destination URLs
+    const destinationSuccessUrl = successUrl || `${baseUrl}/creator/${profileId}?membership=success&session_id={CHECKOUT_SESSION_ID}`;
+    const destinationCancelUrl = cancelUrl || `${baseUrl}/creator/${profileId}?membership=canceled`;
+
+    // Create redirect tokens for success and cancel URLs
+    const [successTokenResponse, cancelTokenResponse] = await Promise.all([
+      fetch(`${backendUrl}/stripe/create-redirect-token`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ destinationUrl: destinationSuccessUrl }),
+      }),
+      fetch(`${backendUrl}/stripe/create-redirect-token`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ destinationUrl: destinationCancelUrl }),
+      }),
+    ]);
+
+    if (!successTokenResponse.ok || !cancelTokenResponse.ok) {
+      throw new Error("Failed to create redirect tokens");
+    }
+
+    const successTokenData = await successTokenResponse.json();
+    const cancelTokenData = await cancelTokenResponse.json();
+
+    // Use redirect URLs with tokens
+    const finalSuccessUrl = `${baseUrl}/redirect?key=${successTokenData.data.token}`;
+    const finalCancelUrl = `${baseUrl}/redirect?key=${cancelTokenData.data.token}`;
 
     // Call backend API to create checkout session
     const response = await fetch(
