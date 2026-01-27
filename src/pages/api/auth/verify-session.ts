@@ -7,10 +7,23 @@ export const POST: APIRoute = async ({ request }) => {
     const body = await request.json();
     const { sessionId, profileId } = body;
 
-    if (!sessionId || !profileId) {
-      console.log("[400] Missing sessionId or profileId:", { sessionId, profileId });
+    // Validate required fields
+    // Note: profileId can be null for app memberships (not tied to a specific creator)
+    if (!sessionId) {
+      console.log("[400] Missing sessionId:", { sessionId });
       return new Response(
-        JSON.stringify({ error: "Missing sessionId or profileId" }),
+        JSON.stringify({ error: "Missing sessionId" }),
+        {
+          status: 400,
+          headers: { "Content-Type": "application/json" },
+        }
+      );
+    }
+
+    if (profileId === undefined) {
+      console.log("[400] Missing profileId:", { profileId });
+      return new Response(
+        JSON.stringify({ error: "Missing profileId" }),
         {
           status: 400,
           headers: { "Content-Type": "application/json" },
