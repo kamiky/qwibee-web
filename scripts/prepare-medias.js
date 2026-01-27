@@ -26,23 +26,23 @@ function generateRandomString(length) {
 }
 
 /**
- * Check if a folder name matches the format u[20-length-hash]
+ * Check if a folder name matches the format u[7-length-hash]
  */
 function isValidUserIdFormat(folderName) {
-  // Match: u followed by exactly 20 alphanumeric characters
-  const pattern = /^u[a-z0-9]{20}$/;
+  // Match: u followed by exactly 7 alphanumeric characters
+  const pattern = /^u[a-z0-9]{7}$/;
   return pattern.test(folderName);
 }
 
 /**
- * Generate a new user ID in the format u[20-length-hash]
+ * Generate a new user ID in the format u[7-length-hash]
  */
 function generateUserId() {
-  return "u" + generateRandomString(20);
+  return "u" + generateRandomString(7);
 }
 
 /**
- * Rename folders that don't respect the format u[20-length-hash]
+ * Rename folders that don't respect the format u[7-length-hash]
  * Returns a mapping of old names to new names
  */
 async function renameFoldersToUserIdFormat(uploadsDir) {
