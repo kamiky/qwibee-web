@@ -52,34 +52,31 @@ export const POST: APIRoute = async ({ request, url }) => {
     const backendUrl =
       import.meta.env.PUBLIC_API_URL || "http://localhost:5002";
 
-    // Determine final destination URLs
-    const destinationSuccessUrl = successUrl || `${baseUrl}/creator/${profileId}?membership=success&session_id={CHECKOUT_SESSION_ID}`;
+    // Determine final destination URLs (these get stored in DB)
+    const destinationSuccessUrl = successUrl || `${baseUrl}/creator/${profileId}?membership=success`;
     const destinationCancelUrl = cancelUrl || `${baseUrl}/creator/${profileId}?membership=canceled`;
 
-    // Create redirect tokens for success and cancel URLs
-    const [successTokenResponse, cancelTokenResponse] = await Promise.all([
-      fetch(`${backendUrl}/stripe/create-redirect-token`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ destinationUrl: destinationSuccessUrl }),
+    // Create a single redirect token for both success and cancel URLs
+    const tokenResponse = await fetch(`${backendUrl}/stripe/create-redirect-token`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ 
+        successUrl: destinationSuccessUrl,
+        cancelUrl: destinationCancelUrl
       }),
-      fetch(`${backendUrl}/stripe/create-redirect-token`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ destinationUrl: destinationCancelUrl }),
-      }),
-    ]);
+    });
 
-    if (!successTokenResponse.ok || !cancelTokenResponse.ok) {
-      throw new Error("Failed to create redirect tokens");
+    if (!tokenResponse.ok) {
+      throw new Error("Failed to create redirect token");
     }
 
-    const successTokenData = await successTokenResponse.json();
-    const cancelTokenData = await cancelTokenResponse.json();
+    const tokenData = await tokenResponse.json();
+    const token = tokenData.data.token;
 
-    // Use redirect URLs with tokens
-    const finalSuccessUrl = `${baseUrl}/redirect?key=${successTokenData.data.token}`;
-    const finalCancelUrl = `${baseUrl}/redirect?key=${cancelTokenData.data.token}`;
+    // Use redirect URLs with token and preserve Stripe placeholders
+    // Stripe will replace {CHECKOUT_SESSION_ID} with the actual session ID
+    const finalSuccessUrl = `${baseUrl}/redirect?key=${token}&type=success&session_id={CHECKOUT_SESSION_ID}`;
+    const finalCancelUrl = `${baseUrl}/redirect?key=${token}&type=cancel`;
 
     // Call backend API to create checkout session
     const response = await fetch(

@@ -51,34 +51,31 @@ export const POST: APIRoute = async ({ request, url }) => {
     const baseUrl = import.meta.env.PUBLIC_APP_URL || url.origin;
     const backendUrl = import.meta.env.PUBLIC_API_URL || "http://localhost:5002";
 
-    // Determine final destination URLs
+    // Determine final destination URLs (these get stored in DB)
     const destinationSuccessUrl = successUrl || `${baseUrl}/creator/${profileId}?content_purchase=success&video_id=${videoId}`;
     const destinationCancelUrl = cancelUrl || `${baseUrl}/creator/${profileId}?content_purchase=canceled`;
 
-    // Create redirect tokens for success and cancel URLs
-    const [successTokenResponse, cancelTokenResponse] = await Promise.all([
-      fetch(`${backendUrl}/stripe/create-redirect-token`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ destinationUrl: destinationSuccessUrl }),
+    // Create a single redirect token for both success and cancel URLs
+    const tokenResponse = await fetch(`${backendUrl}/stripe/create-redirect-token`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ 
+        successUrl: destinationSuccessUrl,
+        cancelUrl: destinationCancelUrl
       }),
-      fetch(`${backendUrl}/stripe/create-redirect-token`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ destinationUrl: destinationCancelUrl }),
-      }),
-    ]);
+    });
 
-    if (!successTokenResponse.ok || !cancelTokenResponse.ok) {
-      throw new Error("Failed to create redirect tokens");
+    if (!tokenResponse.ok) {
+      throw new Error("Failed to create redirect token");
     }
 
-    const successTokenData = await successTokenResponse.json();
-    const cancelTokenData = await cancelTokenResponse.json();
+    const tokenData = await tokenResponse.json();
+    const token = tokenData.data.token;
 
-    // Use redirect URLs with tokens
-    const finalSuccessUrl = `${baseUrl}/redirect?key=${successTokenData.data.token}`;
-    const finalCancelUrl = `${baseUrl}/redirect?key=${cancelTokenData.data.token}`;
+    // Use redirect URLs with token and preserve Stripe placeholders
+    // For content purchases, we don't need session_id as we already have video_id
+    const finalSuccessUrl = `${baseUrl}/redirect?key=${token}&type=success`;
+    const finalCancelUrl = `${baseUrl}/redirect?key=${token}&type=cancel`;
 
     // Call backend API to create content checkout session
     const response = await fetch(

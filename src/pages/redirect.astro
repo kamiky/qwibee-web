@@ -2,11 +2,17 @@
 export const prerender = false;
 
 const key = Astro.url.searchParams.get("key");
+const type = Astro.url.searchParams.get("type");
 const backendUrl = import.meta.env.PUBLIC_API_URL || "http://localhost:5002";
 const baseUrl = import.meta.env.PUBLIC_APP_URL || Astro.url.origin;
 
-// If no key provided, redirect to home
-if (!key) {
+// If no key or type provided, redirect to home
+if (!key || !type) {
+  return Astro.redirect("/");
+}
+
+// Validate type
+if (type !== "success" && type !== "cancel") {
   return Astro.redirect("/");
 }
 
@@ -17,7 +23,7 @@ try {
     headers: {
       "Content-Type": "application/json",
     },
-    body: JSON.stringify({ token: key }),
+    body: JSON.stringify({ token: key, type }),
   });
 
   if (!response.ok) {
@@ -33,15 +39,36 @@ try {
     return Astro.redirect("/");
   }
 
-  // Redirect to destination URL
-  return Astro.redirect(data.data.destinationUrl);
+  // Get the destination URL from backend
+  let destinationUrl = data.data.destinationUrl;
+
+  // Extract any additional query params from the current URL (added by Stripe)
+  // e.g., session_id that Stripe adds to success URLs
+  const currentParams = new URLSearchParams(Astro.url.search);
+  const additionalParams = new URLSearchParams();
+
+  // Skip our own params (key and type)
+  for (const [paramKey, paramValue] of currentParams.entries()) {
+    if (paramKey !== "key" && paramKey !== "type") {
+      additionalParams.set(paramKey, paramValue);
+    }
+  }
+
+  // Append additional params to destination URL if any exist
+  if (additionalParams.toString()) {
+    const separator = destinationUrl.includes("?") ? "&" : "?";
+    destinationUrl = `${destinationUrl}${separator}${additionalParams.toString()}`;
+  }
+
+  // Redirect to final destination URL
+  return Astro.redirect(destinationUrl);
 } catch (error) {
   console.error("Error resolving redirect token:", error);
   return Astro.redirect("/");
 }
 ---
 
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
@@ -49,7 +76,10 @@ try {
     <title>Redirecting...</title>
     <style>
       body {
-        font-family: system-ui, -apple-system, sans-serif;
+        font-family:
+          system-ui,
+          -apple-system,
+          sans-serif;
         display: flex;
         align-items: center;
         justify-content: center;
@@ -71,8 +101,12 @@ try {
         margin: 0 auto 20px;
       }
       @keyframes spin {
-        0% { transform: rotate(0deg); }
-        100% { transform: rotate(360deg); }
+        0% {
+          transform: rotate(0deg);
+        }
+        100% {
+          transform: rotate(360deg);
+        }
       }
     </style>
   </head>
