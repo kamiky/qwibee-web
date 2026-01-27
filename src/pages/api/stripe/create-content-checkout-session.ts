@@ -52,8 +52,18 @@ export const POST: APIRoute = async ({ request, url }) => {
     const backendUrl = import.meta.env.PUBLIC_API_URL || "http://localhost:5002";
 
     // Determine final destination URLs (these get stored in DB)
-    const destinationSuccessUrl = successUrl || `${baseUrl}/creator/${profileId}?content_purchase=success&video_id=${videoId}`;
-    const destinationCancelUrl = cancelUrl || `${baseUrl}/creator/${profileId}?content_purchase=canceled`;
+    // For app lifetime access (profileId is null), redirect to home page
+    // For creator content (profileId is set), redirect to creator page
+    const destinationSuccessUrl = successUrl || (
+      profileId 
+        ? `${baseUrl}/creator/${profileId}?content_purchase=success&video_id=${videoId}`
+        : `${baseUrl}/?purchase=success`
+    );
+    const destinationCancelUrl = cancelUrl || (
+      profileId 
+        ? `${baseUrl}/creator/${profileId}?content_purchase=canceled`
+        : `${baseUrl}/?purchase=canceled`
+    );
 
     // Create a single redirect token for both success and cancel URLs
     const tokenResponse = await fetch(`${backendUrl}/stripe/create-redirect-token`, {

@@ -53,8 +53,18 @@ export const POST: APIRoute = async ({ request, url }) => {
       import.meta.env.PUBLIC_API_URL || "http://localhost:5002";
 
     // Determine final destination URLs (these get stored in DB)
-    const destinationSuccessUrl = successUrl || `${baseUrl}/creator/${profileId}?membership=success`;
-    const destinationCancelUrl = cancelUrl || `${baseUrl}/creator/${profileId}?membership=canceled`;
+    // For app memberships (profileId is null), redirect to home page
+    // For creator memberships (profileId is set), redirect to creator page
+    const destinationSuccessUrl = successUrl || (
+      profileId 
+        ? `${baseUrl}/creator/${profileId}?membership=success`
+        : `${baseUrl}/?membership=success`
+    );
+    const destinationCancelUrl = cancelUrl || (
+      profileId 
+        ? `${baseUrl}/creator/${profileId}?membership=canceled`
+        : `${baseUrl}/?membership=canceled`
+    );
 
     // Create a single redirect token for both success and cancel URLs
     const tokenResponse = await fetch(`${backendUrl}/stripe/create-redirect-token`, {

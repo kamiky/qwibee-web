@@ -834,8 +834,8 @@ if (accessToken) {
               profileId: null, // null for app memberships
               membershipPrice: priceGroup.membership.monthly * 100, // Convert to cents
               priceId: priceGroup.id, // Pass price group ID for A/B testing tracking
-              successUrl: `${window.location.origin}/?membership=success&session_id={CHECKOUT_SESSION_ID}`,
-              cancelUrl: `${window.location.origin}/?membership=canceled`,
+              // Don't pass successUrl/cancelUrl - let backend use defaults with redirect tokens
+              // Will redirect to home page (/) with membership=success/canceled params
               customerEmail,
               language: "en", // TODO: Get from page language
               displayName: "Premium Access",
@@ -953,8 +953,8 @@ if (accessToken) {
                 videoId: null, // null for app lifetime access
                 contentPrice: priceGroup.lifetime.price * 100, // Convert to cents
                 priceId: priceGroup.id, // Pass price group ID for A/B testing tracking
-                successUrl: `${window.location.origin}/?purchase=success`,
-                cancelUrl: `${window.location.origin}/?purchase=canceled`,
+                // Don't pass successUrl/cancelUrl - let backend use defaults with redirect tokens
+                // Will redirect to home page (/) with purchase=success/canceled params
                 customerEmail,
                 language: "en", // TODO: Get from page language
                 videoTitle: "Lifetime Access",
