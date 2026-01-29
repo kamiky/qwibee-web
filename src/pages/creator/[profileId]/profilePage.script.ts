@@ -332,9 +332,8 @@ export function initProfilePage(data: ProfilePageData) {
     }
   );
 
-  // Check for Stripe session success
+  // Check for Stripe redirect success
   const urlParams = new URLSearchParams(window.location.search);
-  const sessionId = urlParams.get("session_id");
   const membershipStatus = urlParams.get("membership");
   const contentPurchaseStatus = urlParams.get("content_purchase");
   const purchasedVideoId = urlParams.get("video_id");
@@ -429,95 +428,47 @@ export function initProfilePage(data: ProfilePageData) {
     }
   }
 
-  // Handle successful Stripe checkout (membership)
-  if (sessionId && membershipStatus === "success") {
+  // Handle successful membership checkout
+  if (membershipStatus === "success") {
     (async () => {
       try {
-        // Call backend to verify session and get access token
-        const response = await fetch("/api/auth/verify-session", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            sessionId,
-            profileId: currentProfileId,
-          }),
-        });
-
-        if (!response.ok) {
-          const errorData = await response
-            .json()
-            .catch(() => ({ error: "Unknown error" }));
-          const errorMessage =
-            errorData.error || errorData.message || "Failed to verify session";
-          console.error("Backend error:", errorData);
-          throw new Error(errorMessage);
-        }
-
-        const data = await response.json();
-
-        // Store auth data in cookies
-        storeAuth({
-          accessToken: data.data.accessToken,
-          refreshToken: data.data.refreshToken,
-          user: data.data.user,
-        });
-
-        // Remove query params from URL BEFORE reloading
-        // This prevents infinite loop when unlockMembershipVideos() reloads the page
-        window.history.replaceState(
-          {},
-          document.title,
-          window.location.pathname
-        );
-
-        // Unlock membership videos immediately (this will reload the page)
-        unlockMembershipVideos(true); // forceReload = true for fresh activation
-
-        // Show paid content pricing for subscribed users
-        showPaidContentPricing();
-
-        // Show content type badges for subscribed users
-        showContentTypeBadges();
-
-        // Show success message
-        const statusContainer = document.getElementById(
-          "membership-status-message"
-        );
-        const successMsg = document.getElementById("success-message");
-        if (statusContainer && successMsg) {
-          statusContainer.classList.remove("hidden");
-          successMsg.classList.remove("hidden");
-          statusContainer.scrollIntoView({
-            behavior: "smooth",
-            block: "start",
+        console.log("Processing membership checkout success...");
+        
+        // Refresh token to get updated membership data
+        const token = getAccessToken();
+        if (token) {
+          const response = await fetch("/api/auth/verify-token", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ token }),
           });
+
+          if (response.ok) {
+            const data = await response.json();
+            console.log("✅ Membership verified in database!");
+
+            // Remove query params from URL
+            window.history.replaceState(
+              {},
+              document.title,
+              window.location.pathname
+            );
+
+            // Reload to show updated membership status
+            console.log("Reloading page to show membership access...");
+            window.location.reload();
+          }
         }
-
-        // Update membership UI
-        updateMembershipUI({
-          isSubscribed: true,
-          isCanceled: false,
-          renewalEnabled: true,
-          renewalDate: "Feb. 15, 2026", // TODO: Get from API response
-          endDate: null,
-        });
       } catch (error) {
-        console.error("Error verifying session:", error);
+        console.error("Error processing membership:", error);
 
-        // Remove query params even on error to prevent repeated alerts
+        // Remove query params even on error
         window.history.replaceState(
           {},
           document.title,
           window.location.pathname
-        );
-
-        // Show detailed error message
-        const errorMessage =
-          error instanceof Error ? error.message : "Unknown error";
-        alert(
-          `Payment successful, but failed to activate membership.\n\nError: ${errorMessage}\n\nPlease contact support with session ID: ${sessionId}`
         );
       }
     })();

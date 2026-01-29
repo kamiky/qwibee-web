@@ -83,9 +83,8 @@ export const POST: APIRoute = async ({ request, url }) => {
     const tokenData = await tokenResponse.json();
     const token = tokenData.data.token;
 
-    // Use redirect URLs with token and preserve Stripe placeholders
-    // Stripe will replace {CHECKOUT_SESSION_ID} with the actual session ID
-    const finalSuccessUrl = `${baseUrl}/redirect?key=${token}&type=success&session_id={CHECKOUT_SESSION_ID}`;
+    // Use redirect URLs with token
+    const finalSuccessUrl = `${baseUrl}/redirect?key=${token}&type=success`;
     const finalCancelUrl = `${baseUrl}/redirect?key=${token}&type=cancel`;
 
     // Call backend API to create checkout session
