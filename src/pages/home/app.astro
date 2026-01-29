@@ -6,6 +6,9 @@ import { PRICING_GROUPS, type PriceGroup } from "@/data/pricing-groups";
 const lang = "en";
 const t = useTranslations(lang);
 
+// Stripe debug secret: capture from URL params (?debugSecret=XXX) for testing on production
+const stripeDebugSecret = Astro.url.searchParams.get('debugSecret');
+
 // Get or assign price group from cookie
 const PRICE_GROUP_COOKIE = "qwb_price_group";
 function getPriceGroupFromCookie(): PriceGroup {
@@ -721,8 +724,9 @@ if (accessToken) {
     </style>
 
     <!-- Pass price group data to client-side script -->
-    <script define:vars={{ priceGroup: selectedPriceGroup }}>
+    <script define:vars={{ priceGroup: selectedPriceGroup, stripeDebugSecret: stripeDebugSecret || null }}>
       window.__homePriceGroup = priceGroup;
+      window.__stripeDebugSecret = stripeDebugSecret;
     </script>
 
     <script>
@@ -737,11 +741,13 @@ if (accessToken) {
             membership: { monthly: number; currency: string };
             lifetime: { price: number; currency: string };
           };
+          __stripeDebugSecret: string | null;
         }
       }
 
-      // Get price group from page
+      // Get price group and debug secret from page
       const priceGroup = window.__homePriceGroup;
+      const debugSecret = window.__stripeDebugSecret;
 
       // Button click effect
       function handleButtonClick(btn: HTMLElement) {
@@ -839,6 +845,7 @@ if (accessToken) {
               customerEmail,
               language: "en", // TODO: Get from page language
               displayName: "Premium Access",
+              debugSecret: debugSecret || undefined,
             }),
           });
 
@@ -959,6 +966,7 @@ if (accessToken) {
                 language: "en", // TODO: Get from page language
                 videoTitle: "Lifetime Access",
                 creatorDisplayName: "Premium Access",
+                debugSecret: debugSecret || undefined,
               }),
             }
           );
