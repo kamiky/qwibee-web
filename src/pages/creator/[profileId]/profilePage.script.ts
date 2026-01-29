@@ -339,8 +339,36 @@ export function initProfilePage(data: ProfilePageData) {
   const contentPurchaseStatus = urlParams.get("content_purchase");
   const purchasedVideoId = urlParams.get("video_id");
 
+  // Helper function to show/hide loading overlay
+  function showLoadingOverlay(title: string, message: string) {
+    const overlay = document.getElementById("payment-verification-overlay");
+    const titleEl = document.getElementById("verification-title");
+    const messageEl = document.getElementById("verification-message");
+    
+    if (overlay) {
+      if (titleEl) titleEl.textContent = title;
+      if (messageEl) messageEl.textContent = message;
+      overlay.classList.remove("hidden");
+      overlay.classList.add("flex");
+    }
+  }
+
+  function hideLoadingOverlay() {
+    const overlay = document.getElementById("payment-verification-overlay");
+    if (overlay) {
+      overlay.classList.add("hidden");
+      overlay.classList.remove("flex");
+    }
+  }
+
   // Handle successful content purchase
   if (sessionId && contentPurchaseStatus === "success") {
+    // Show loading overlay immediately
+    showLoadingOverlay(
+      "Unlocking your content...",
+      "Please wait while we verify your purchase. This usually takes just a few seconds."
+    );
+
     (async () => {
       try {
         console.log("Processing content purchase success...");
@@ -385,11 +413,15 @@ export function initProfilePage(data: ProfilePageData) {
           window.location.pathname
         );
 
+        // Keep loading overlay visible while page reloads
         // Reload the page to show unlocked content
         console.log("Reloading page to show unlocked content...");
         window.location.reload();
       } catch (error) {
         console.error("Error verifying purchase:", error);
+
+        // Hide loading overlay
+        hideLoadingOverlay();
 
         // Remove query params even on error to prevent repeated processing
         window.history.replaceState(
@@ -429,6 +461,12 @@ export function initProfilePage(data: ProfilePageData) {
 
   // Handle successful membership checkout
   if (sessionId && membershipStatus === "success") {
+    // Show loading overlay immediately
+    showLoadingOverlay(
+      "Activating your membership...",
+      "Please wait while we verify your subscription. This usually takes just a few seconds."
+    );
+
     (async () => {
       try {
         console.log("Processing membership checkout success...");
@@ -473,11 +511,15 @@ export function initProfilePage(data: ProfilePageData) {
           window.location.pathname
         );
 
+        // Keep loading overlay visible while page reloads
         // Reload to show updated membership status
         console.log("Reloading page to show membership access...");
         window.location.reload();
       } catch (error) {
         console.error("Error processing membership:", error);
+
+        // Hide loading overlay
+        hideLoadingOverlay();
 
         // Remove query params even on error
         window.history.replaceState(

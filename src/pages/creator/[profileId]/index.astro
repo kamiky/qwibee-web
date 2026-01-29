@@ -134,6 +134,27 @@ const sortedVideos = [...profile.videos];
   description={profile.bio[lang]}
   lang={lang}
 >
+  <!-- Payment Verification Loading Overlay -->
+  <div id="payment-verification-overlay" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/50 backdrop-blur-sm">
+    <div class="bg-white rounded-lg shadow-xl p-8 max-w-md mx-4">
+        <div class="flex flex-col items-center text-center">
+          <!-- Spinner -->
+          <div class="w-16 h-16 border-4 border-brand-blue-200 border-t-brand-blue-500 rounded-full animate-spin mb-4"></div>
+          
+          <!-- Title -->
+          <h3 id="verification-title" class="text-xl font-semibold text-gray-900 mb-2">
+            Processing your payment...
+          </h3>
+          
+          <!-- Message -->
+          <p id="verification-message" class="text-gray-600 text-sm">
+            Please wait while we verify your purchase. This usually takes just a few seconds.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <main class="pt-24 pb-12 min-h-screen bg-white">
     <div class="max-w-6xl mx-auto px-6">
       <!-- Success/Cancel Messages -->

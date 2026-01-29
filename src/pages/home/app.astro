@@ -82,6 +82,27 @@ if (accessToken) {
   description={t.seo.home.description}
   lang={lang}
 >
+  <!-- Payment Verification Loading Overlay -->
+  <div id="payment-verification-overlay" class="fixed inset-0 z-[10000] hidden items-center justify-center bg-black/50 backdrop-blur-sm">
+    <div class="bg-white rounded-lg shadow-xl p-8 max-w-md mx-4">
+        <div class="flex flex-col items-center text-center">
+          <!-- Spinner -->
+          <div class="w-16 h-16 border-4 border-purple-200 border-t-purple-600 rounded-full animate-spin mb-4"></div>
+          
+          <!-- Title -->
+          <h3 id="verification-title" class="text-xl font-semibold text-gray-900 mb-2">
+            Processing your payment...
+          </h3>
+          
+          <!-- Message -->
+          <p id="verification-message" class="text-gray-600 text-sm">
+            Please wait while we verify your purchase. This usually takes just a few seconds.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <div class="home-wrapper">
     <!-- Video Background -->
     <div class="video-container">
@@ -1060,6 +1081,28 @@ if (accessToken) {
         }, 500);
       }
 
+      // Helper function to show/hide loading overlay
+      function showLoadingOverlay(title: string, message: string) {
+        const overlay = document.getElementById("payment-verification-overlay");
+        const titleEl = document.getElementById("verification-title");
+        const messageEl = document.getElementById("verification-message");
+        
+        if (overlay) {
+          if (titleEl) titleEl.textContent = title;
+          if (messageEl) messageEl.textContent = message;
+          overlay.classList.remove("hidden");
+          overlay.classList.add("flex");
+        }
+      }
+
+      function hideLoadingOverlay() {
+        const overlay = document.getElementById("payment-verification-overlay");
+        if (overlay) {
+          overlay.classList.add("hidden");
+          overlay.classList.remove("flex");
+        }
+      }
+
       // Handle successful Stripe checkout (membership)
       const urlParams = new URLSearchParams(window.location.search);
       const sessionId = urlParams.get("session_id");
@@ -1067,6 +1110,11 @@ if (accessToken) {
       const purchaseStatus = urlParams.get("purchase");
 
       if (sessionId && membershipStatus === "success") {
+        // Show loading overlay immediately
+        showLoadingOverlay(
+          "Activating your membership...",
+          "Please wait while we verify your subscription. This usually takes just a few seconds."
+        );
         (async () => {
           try {
             console.log("Processing membership checkout success...");
@@ -1111,11 +1159,15 @@ if (accessToken) {
               window.location.pathname
             );
 
+            // Keep loading overlay visible while page reloads
             // Reload the page to show access granted
             console.log("Reloading page to show access granted...");
             window.location.reload();
           } catch (error) {
             console.error("Error processing membership:", error);
+
+            // Hide loading overlay
+            hideLoadingOverlay();
 
             // Remove query params even on error
             window.history.replaceState(
@@ -1140,6 +1192,12 @@ if (accessToken) {
 
       // Handle successful content purchase (lifetime)
       if (sessionId && purchaseStatus === "success") {
+        // Show loading overlay immediately
+        showLoadingOverlay(
+          "Unlocking lifetime access...",
+          "Please wait while we verify your purchase. This usually takes just a few seconds."
+        );
+
         (async () => {
           try {
             console.log("Processing lifetime purchase success...");
@@ -1184,11 +1242,15 @@ if (accessToken) {
               window.location.pathname
             );
 
+            // Keep loading overlay visible while page reloads
             // Reload to show access granted
             console.log("Reloading page to show access granted...");
             window.location.reload();
           } catch (error) {
             console.error("Error processing purchase:", error);
+
+            // Hide loading overlay
+            hideLoadingOverlay();
 
             // Remove query params even on error
             window.history.replaceState(
