@@ -363,60 +363,6 @@ export function initProfilePage(data: ProfilePageData) {
               .filter((pc: any) => pc.profileId === currentProfileId)
               .map((pc: any) => pc.videoId);
 
-            // Find the purchase record for this video to get the payment intent ID
-            const purchase = purchasedContent.find(
-              (pc: any) =>
-                pc.profileId === currentProfileId &&
-                pc.videoId === purchasedVideoId
-            );
-
-            // Generate invoice if we have a payment intent ID
-            if (purchase?.stripePaymentIntentId) {
-              try {
-                console.log(
-                  `🧾 Generating invoice for payment: ${purchase.stripePaymentIntentId}`
-                );
-                const invoiceResponse = await fetch(
-                  "/api/stripe/generate-invoice",
-                  {
-                    method: "POST",
-                    headers: {
-                      "Content-Type": "application/json",
-                    },
-                    body: JSON.stringify({
-                      paymentIntentId: purchase.stripePaymentIntentId,
-                    }),
-                  }
-                );
-
-                if (invoiceResponse.ok) {
-                  const invoiceData = await invoiceResponse.json();
-                  if (invoiceData.data.alreadyExists) {
-                    console.log(
-                      `✓ Invoice already exists: ${invoiceData.data.invoiceId}`
-                    );
-                  } else {
-                    console.log(
-                      `✓ Invoice generated: ${invoiceData.data.invoiceId}`
-                    );
-                    if (invoiceData.data.invoiceUrl) {
-                      console.log(
-                        `  View invoice: ${invoiceData.data.invoiceUrl}`
-                      );
-                    }
-                  }
-                } else {
-                  console.error(
-                    "Failed to generate invoice:",
-                    await invoiceResponse.text()
-                  );
-                }
-              } catch (invoiceError) {
-                console.error("Error generating invoice:", invoiceError);
-                // Don't block the main flow if invoice generation fails
-              }
-            }
-
             // Show success message
             const statusContainer = document.getElementById(
               "membership-status-message"
