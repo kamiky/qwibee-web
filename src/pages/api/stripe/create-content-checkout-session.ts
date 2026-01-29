@@ -83,8 +83,8 @@ export const POST: APIRoute = async ({ request, url }) => {
     const token = tokenData.data.token;
 
     // Use redirect URLs with token and preserve Stripe placeholders
-    // For content purchases, we don't need session_id as we already have video_id
-    const finalSuccessUrl = `${baseUrl}/redirect?key=${token}&type=success`;
+    // Include session_id for synchronous purchase verification
+    const finalSuccessUrl = `${baseUrl}/redirect?key=${token}&type=success&session_id={CHECKOUT_SESSION_ID}`;
     const finalCancelUrl = `${baseUrl}/redirect?key=${token}&type=cancel`;
 
     // Call backend API to create content checkout session

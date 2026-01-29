@@ -334,76 +334,75 @@ export function initProfilePage(data: ProfilePageData) {
 
   // Check for Stripe redirect success
   const urlParams = new URLSearchParams(window.location.search);
+  const sessionId = urlParams.get("session_id");
   const membershipStatus = urlParams.get("membership");
   const contentPurchaseStatus = urlParams.get("content_purchase");
   const purchasedVideoId = urlParams.get("video_id");
 
   // Handle successful content purchase
-  if (contentPurchaseStatus === "success" && purchasedVideoId) {
+  if (sessionId && contentPurchaseStatus === "success") {
     (async () => {
-      let purchasedForProfile: string[] = [];
-      
       try {
-        // Refresh token to get updated purchased content list
-        const token = getAccessToken();
-        if (token) {
-          const response = await fetch("/api/auth/verify-token", {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({ token }),
-          });
+        console.log("Processing content purchase success...");
+        
+        // Call backend to verify session and wait for webhook to complete
+        const response = await fetch("/api/auth/verify-session", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            sessionId,
+            profileId: currentProfileId,
+          }),
+        });
 
-          if (response.ok) {
-            const data = await response.json();
-            const purchasedContent = data.data.purchasedContent || [];
-            purchasedForProfile = purchasedContent
-              .filter((pc: any) => pc.profileId === currentProfileId)
-              .map((pc: any) => pc.videoId);
-
-            // Show success message
-            const statusContainer = document.getElementById(
-              "membership-status-message"
-            );
-            const successMsg = document.getElementById("success-message");
-            if (statusContainer && successMsg) {
-              // Update message for content purchase
-              const title = successMsg.querySelector("h3");
-              const message = successMsg.querySelector("p");
-              if (title) title.textContent = "Content Purchased!";
-              if (message)
-                message.textContent =
-                  "Your content is now unlocked and ready to watch.";
-
-              statusContainer.classList.remove("hidden");
-              successMsg.classList.remove("hidden");
-              statusContainer.scrollIntoView({
-                behavior: "smooth",
-                block: "start",
-              });
-            }
-          }
+        if (!response.ok) {
+          const errorData = await response
+            .json()
+            .catch(() => ({ error: "Unknown error" }));
+          const errorMessage =
+            errorData.error || errorData.message || "Failed to verify purchase";
+          console.error("Backend error:", errorData);
+          throw new Error(errorMessage);
         }
 
-        // Remove query params from URL BEFORE reloading
-        // This prevents infinite loop when unlockPaidContentVideos() reloads the page
+        const data = await response.json();
+
+        // Store auth data in cookies
+        storeAuth({
+          accessToken: data.data.accessToken,
+          refreshToken: data.data.refreshToken,
+          user: data.data.user,
+        });
+
+        console.log("✅ Purchase verified and saved to database!");
+
+        // Remove query params from URL
         window.history.replaceState(
           {},
           document.title,
           window.location.pathname
         );
 
-        // Unlock the purchased video (this will reload the page if forceReload=true)
-        unlockPaidContentVideos(purchasedForProfile, true);
+        // Reload the page to show unlocked content
+        console.log("Reloading page to show unlocked content...");
+        window.location.reload();
       } catch (error) {
-        console.error("Error processing content purchase:", error);
+        console.error("Error verifying purchase:", error);
 
         // Remove query params even on error to prevent repeated processing
         window.history.replaceState(
           {},
           document.title,
           window.location.pathname
+        );
+
+        // Show detailed error message
+        const errorMessage =
+          error instanceof Error ? error.message : "Unknown error";
+        alert(
+          `Payment successful, but failed to unlock content.\n\nError: ${errorMessage}\n\nPlease refresh the page in a few moments or contact support.`
         );
       }
     })();
@@ -429,38 +428,54 @@ export function initProfilePage(data: ProfilePageData) {
   }
 
   // Handle successful membership checkout
-  if (membershipStatus === "success") {
+  if (sessionId && membershipStatus === "success") {
     (async () => {
       try {
         console.log("Processing membership checkout success...");
         
-        // Refresh token to get updated membership data
-        const token = getAccessToken();
-        if (token) {
-          const response = await fetch("/api/auth/verify-token", {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({ token }),
-          });
+        // Call backend to verify session and wait for webhook to complete
+        const response = await fetch("/api/auth/verify-session", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            sessionId,
+            profileId: currentProfileId,
+          }),
+        });
 
-          if (response.ok) {
-            const data = await response.json();
-            console.log("✅ Membership verified in database!");
-
-            // Remove query params from URL
-            window.history.replaceState(
-              {},
-              document.title,
-              window.location.pathname
-            );
-
-            // Reload to show updated membership status
-            console.log("Reloading page to show membership access...");
-            window.location.reload();
-          }
+        if (!response.ok) {
+          const errorData = await response
+            .json()
+            .catch(() => ({ error: "Unknown error" }));
+          const errorMessage =
+            errorData.error || errorData.message || "Failed to verify session";
+          console.error("Backend error:", errorData);
+          throw new Error(errorMessage);
         }
+
+        const data = await response.json();
+
+        // Store auth data in cookies
+        storeAuth({
+          accessToken: data.data.accessToken,
+          refreshToken: data.data.refreshToken,
+          user: data.data.user,
+        });
+
+        console.log("✅ Membership verified and saved to database!");
+
+        // Remove query params from URL
+        window.history.replaceState(
+          {},
+          document.title,
+          window.location.pathname
+        );
+
+        // Reload to show updated membership status
+        console.log("Reloading page to show membership access...");
+        window.location.reload();
       } catch (error) {
         console.error("Error processing membership:", error);
 
@@ -469,6 +484,13 @@ export function initProfilePage(data: ProfilePageData) {
           {},
           document.title,
           window.location.pathname
+        );
+
+        // Show detailed error message
+        const errorMessage =
+          error instanceof Error ? error.message : "Unknown error";
+        alert(
+          `Payment successful, but failed to activate membership.\n\nError: ${errorMessage}\n\nPlease refresh the page in a few moments or contact support.`
         );
       }
     })();
