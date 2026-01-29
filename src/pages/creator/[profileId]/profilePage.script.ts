@@ -169,6 +169,8 @@ export function initProfilePage(data: ProfilePageData) {
 
     const { isSubscribed, isCanceled, renewalEnabled, renewalDate, endDate } =
       subscriptionData;
+    
+    const isFree = ctaBtn.getAttribute("data-is-free") === "true";
 
     // Remove loading state and enable button
     ctaBtn.removeAttribute("disabled");
@@ -206,8 +208,12 @@ export function initProfilePage(data: ProfilePageData) {
       // Show status info
       statusInfo.classList.remove("hidden");
     } else {
-      // Not subscribed - show "Subscribe" button
-      ctaText.innerHTML = translations.profile.subscribeCta;
+      // Not subscribed - show appropriate button text based on whether it's free
+      if (isFree) {
+        ctaText.innerHTML = translations.profile.followCta || "Follow";
+      } else {
+        ctaText.innerHTML = translations.profile.subscribeCta;
+      }
       ctaBtn.classList.remove(
         "bg-orange-500",
         "hover:bg-orange-600",
@@ -576,8 +582,9 @@ export function initProfilePage(data: ProfilePageData) {
       const membershipPrice = membershipCtaBtn.getAttribute(
         "data-membership-price"
       );
+      const isFree = membershipCtaBtn.getAttribute("data-is-free") === "true";
 
-      if (!profileId || !membershipPrice) {
+      if (!profileId || membershipPrice === null) {
         console.error("Missing profile data");
         return;
       }
@@ -587,11 +594,65 @@ export function initProfilePage(data: ProfilePageData) {
       if (!token) {
         // User not logged in - redirect to login with redirect URL in query params
         const redirectUrl = encodeURIComponent(window.location.pathname);
-        window.location.href = `/login?redirect=${redirectUrl}&openStripe=true`;
+        window.location.href = `/login?redirect=${redirectUrl}${isFree ? "" : "&openStripe=true"}`;
         return;
       }
 
-      // Open new tab immediately to avoid popup blockers
+      // Handle free membership
+      if (isFree && !isSubscribed) {
+        // Show loading state
+        const ctaText = document.getElementById("membership-cta-text");
+        const originalText =
+          ctaText?.innerHTML || translations.profile.followCta || "Follow";
+        if (ctaText) {
+          ctaText.innerHTML = `
+            <svg class="animate-spin h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+              <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+              <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+            </svg>
+            ${translations.profile.loading}
+          `;
+          ctaText.classList.add("flex", "items-center", "gap-2");
+        }
+
+        try {
+          const response = await fetch("/api/auth/create-free-membership", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              profileId,
+              token,
+            }),
+          });
+
+          if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(
+              errorData.error || "Failed to create free membership"
+            );
+          }
+
+          const data = await response.json();
+          console.log("✅ Free membership created:", data);
+
+          // Reload page to show membership content
+          window.location.reload();
+        } catch (error) {
+          console.error("Error creating free membership:", error);
+          alert("Failed to follow creator. Please try again.");
+
+          // Restore original text
+          if (ctaText) {
+            ctaText.innerHTML = originalText;
+            ctaText.classList.remove("flex", "items-center", "gap-2");
+          }
+        }
+        return;
+      }
+
+      // Open new tab immediately to avoid popup blockers (for paid memberships)
       const stripeWindow = window.open("about:blank", "_blank");
 
       // Show loading state

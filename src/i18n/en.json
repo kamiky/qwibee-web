@@ -70,8 +70,10 @@
   },
   "profile": {
     "membership": "Membership",
+    "follow": "Follow",
     "perMonth": "/month",
     "subscribeCta": "Subscribe",
+    "followCta": "Follow",
     "subscribed": "Subscribed",
     "renew": "Renew",
     "loading": "Loading...",

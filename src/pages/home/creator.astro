@@ -322,10 +322,12 @@ const getProfileUrl = (profileId: string) => {
                     <span class="text-sm text-gray-500">
                       {profile.videos.length} {t.profile.videos}
                     </span>
-                    {profile.membershipPrice && (
+                    {profile.membershipPrice !== undefined && (
                       <span class="text-brand-blue-500 font-semibold">
-                        ${(profile.membershipPrice / 100).toFixed(2)}
-                        {t.profile.perMonth}
+                        {profile.membershipPrice === 0 
+                          ? "Free" 
+                          : `$${(profile.membershipPrice / 100).toFixed(2)}${t.profile.perMonth}`
+                        }
                       </span>
                     )}
                   </div>

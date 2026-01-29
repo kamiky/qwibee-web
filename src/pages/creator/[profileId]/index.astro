@@ -241,14 +241,14 @@ const sortedVideos = [...profile.videos];
 
             <!-- Membership Option -->
             {
-              profile.membershipPrice && (
+              profile.membershipPrice !== undefined && (
                 <div class="mb-4">
                   <div class="flex items-center justify-center gap-2 mb-3">
                     <svg class="w-5 h-5 text-brand-blue-500" fill="currentColor" viewBox="0 0 20 20">
                       <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
                     </svg>
                     <span class="text-sm text-gray-600 uppercase tracking-wider font-medium">
-                      {t.profile.membership}
+                      {profile.membershipPrice === 0 ? t.profile.follow || "Follow" : t.profile.membership}
                     </span>
                   </div>
                   
@@ -258,6 +258,7 @@ const sortedVideos = [...profile.videos];
                     data-profile-id={profile.id}
                     data-membership-price={profile.membershipPrice}
                     data-is-subscribed="false"
+                    data-is-free={profile.membershipPrice === 0 ? "true" : "false"}
                     class="bg-gray-400 text-white font-semibold py-3.5 px-6 rounded-full transition-all flex items-center justify-between cursor-wait min-w-[280px] mx-auto"
                     disabled
                   >
@@ -268,7 +269,9 @@ const sortedVideos = [...profile.videos];
                       </svg>
                       {t.profile.loading}
                     </span>
-                    <span id="membership-price-display" class="font-bold text-lg">{formatPrice(profile.membershipPrice)}{t.profile.perMonth}</span>
+                    <span id="membership-price-display" class="font-bold text-lg">
+                      {profile.membershipPrice === 0 ? t.profile.free || "Free" : `${formatPrice(profile.membershipPrice)}${t.profile.perMonth}`}
+                    </span>
                   </button>
 
                   <!-- Membership Status Info -->
