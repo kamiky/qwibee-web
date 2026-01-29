@@ -2,9 +2,12 @@
 // Check for qwb-creator-mode cookie and serve appropriate page
 const creatorMode = Astro.cookies.get("qwb-creator-mode")?.value === "true";
 
+// Preserve query parameters in rewrite
+const queryString = Astro.url.search;
+
 if (creatorMode) {
-  return Astro.rewrite("/home/creator");
+  return Astro.rewrite(`/home/creator${queryString}`);
 } else {
-  return Astro.rewrite("/home/app");
+  return Astro.rewrite(`/home/app${queryString}`);
 }
 ---

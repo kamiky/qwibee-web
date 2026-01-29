@@ -6,8 +6,8 @@ import { PRICING_GROUPS, type PriceGroup } from "@/data/pricing-groups";
 const lang = "en";
 const t = useTranslations(lang);
 
-// Stripe debug secret: capture from URL params (?debugSecret=XXX) for testing on production
-const stripeDebugSecret = Astro.url.searchParams.get('debugSecret');
+// Stripe debug secret: capture from URL params (?secret=XXX) for testing on production
+const stripeDebugSecret = Astro.url.searchParams.get('secret');
 
 // Get or assign price group from cookie
 const PRICE_GROUP_COOKIE = "qwb_price_group";
