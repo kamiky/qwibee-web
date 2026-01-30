@@ -139,7 +139,71 @@ const getProfileUrl = (profileId: string) => {
       </div>
     </section>
 
-    <!-- Creator Contact Form Section -->
+    
+
+    {isDevelopment && (
+    <!-- Featured Creators Section -->
+    <section id="creators" class="py-20 px-6 bg-gray-50">
+      <div class="max-w-7xl mx-auto">
+        <div class="text-center mb-16">
+          <h2
+            class="text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-900 mb-4"
+          >
+            {t.sections.creators.title}
+          </h2>
+          <p class="text-lg sm:text-xl text-gray-600 max-w-2xl mx-auto">
+            {t.sections.creators.subtitle}
+          </p>
+        </div>
+
+        <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+          {
+            allProfiles.map((profile) => (
+              <a
+                href={getProfileUrl(profile.id)}
+                class="group bg-white border border-gray-200 rounded-2xl overflow-hidden hover:border-brand-blue-500 hover:shadow-xl transition-all duration-300 hover:transform hover:-translate-y-1"
+              >
+                <div class="aspect-square bg-gradient-to-br from-blue-50 to-purple-50 flex items-center justify-center overflow-hidden">
+                  {profile.avatar ? (
+                    <img
+                      src={profile.avatar}
+                      alt={profile.displayName[lang]}
+                      class="w-full h-full object-cover object-top group-hover:scale-110 transition-transform duration-300"
+                    />
+                  ) : (
+                    <div class="text-6xl">👤</div>
+                  )}
+                </div>
+                <div class="p-6">
+                  <h3 class="text-xl font-bold mb-2 text-gray-900 group-hover:text-brand-blue-500 transition-colors">
+                    {profile.displayName[lang]}
+                  </h3>
+                  {/* <p class="text-gray-600 mb-4 line-clamp-2">
+                    {profile.bio[lang]}
+                  </p> */}
+                  <div class="flex items-center justify-between">
+                    <span class="text-sm text-gray-500">
+                      {profile.videos.length} {t.profile.videos}
+                    </span>
+                    {profile.membershipPrice !== undefined && (
+                      <span class="text-brand-blue-500 font-semibold">
+                        {profile.membershipPrice === 0 
+                          ? "Free" 
+                          : `$${(profile.membershipPrice / 100).toFixed(2)}${t.profile.perMonth}`
+                        }
+                      </span>
+                    )}
+                  </div>
+                </div>
+              </a>
+            ))
+          }
+        </div>
+      </div>
+    </section>
+    )}
+
+<!-- Creator Contact Form Section -->
     <section id="creator-contact" class="py-20 px-6 bg-white">
       <div class="max-w-3xl mx-auto">
         <div class="text-center mb-12">
@@ -277,68 +341,6 @@ const getProfileUrl = (profileId: string) => {
         </div>
       </div>
     </section>
-
-    {isDevelopment && (
-    <!-- Featured Creators Section -->
-    <section id="creators" class="py-20 px-6 bg-gray-50">
-      <div class="max-w-7xl mx-auto">
-        <div class="text-center mb-16">
-          <h2
-            class="text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-900 mb-4"
-          >
-            {t.sections.creators.title}
-          </h2>
-          <p class="text-lg sm:text-xl text-gray-600 max-w-2xl mx-auto">
-            {t.sections.creators.subtitle}
-          </p>
-        </div>
-
-        <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {
-            allProfiles.map((profile) => (
-              <a
-                href={getProfileUrl(profile.id)}
-                class="group bg-white border border-gray-200 rounded-2xl overflow-hidden hover:border-brand-blue-500 hover:shadow-xl transition-all duration-300 hover:transform hover:-translate-y-1"
-              >
-                <div class="aspect-square bg-gradient-to-br from-blue-50 to-purple-50 flex items-center justify-center overflow-hidden">
-                  {profile.avatar ? (
-                    <img
-                      src={profile.avatar}
-                      alt={profile.displayName[lang]}
-                      class="w-full h-full object-cover object-top group-hover:scale-110 transition-transform duration-300"
-                    />
-                  ) : (
-                    <div class="text-6xl">👤</div>
-                  )}
-                </div>
-                <div class="p-6">
-                  <h3 class="text-xl font-bold mb-2 text-gray-900 group-hover:text-brand-blue-500 transition-colors">
-                    {profile.displayName[lang]}
-                  </h3>
-                  {/* <p class="text-gray-600 mb-4 line-clamp-2">
-                    {profile.bio[lang]}
-                  </p> */}
-                  <div class="flex items-center justify-between">
-                    <span class="text-sm text-gray-500">
-                      {profile.videos.length} {t.profile.videos}
-                    </span>
-                    {profile.membershipPrice !== undefined && (
-                      <span class="text-brand-blue-500 font-semibold">
-                        {profile.membershipPrice === 0 
-                          ? "Free" 
-                          : `$${(profile.membershipPrice / 100).toFixed(2)}${t.profile.perMonth}`
-                        }
-                      </span>
-                    )}
-                  </div>
-                </div>
-              </a>
-            ))
-          }
-        </div>
-      </div>
-    </section>
-    )}
       </main>
 
       <script is:inline>
