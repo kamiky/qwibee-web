@@ -1,0 +1,1584 @@
+---
+import LayoutApp from "@/layouts/LayoutApp.astro";
+import { useTranslations, type Language } from "@/i18n/translations";
+
+// Redirect to / if in creator mode
+const creatorMode = Astro.cookies.get("qwb-creator-mode");
+if (creatorMode) {
+  return Astro.redirect("/");
+}
+
+// Detect language from URL path
+const pathname = Astro.url.pathname;
+const lang: Language =
+  pathname.startsWith("/fr/") || pathname === "/fr" ? "fr" : "en";
+const t = useTranslations(lang);
+---
+
+<LayoutApp
+  title="Complete DigitalOcean Ubuntu Server Setup - Node.js, PostgreSQL, Nginx, SSL (2026) - Qwibee"
+  description="Step-by-step guide to setting up a production-ready DigitalOcean Ubuntu server with Node.js (nvm), PostgreSQL, DNS, Nginx, PM2, Certbot SSL, and deployment system for frontend and backend applications."
+  lang={lang}
+>
+  <main class="pt-24 pb-12 min-h-screen tutorial-main">
+    <div class="max-w-4xl mx-auto px-6">
+      <!-- Back Button -->
+      <a
+        href="/apps"
+        class="back-link inline-flex items-center gap-2 mb-8 text-cyan-400 hover:text-cyan-300 transition-colors"
+      >
+        <svg
+          class="w-5 h-5"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M15 19l-7-7 7-7"></path>
+        </svg>
+        Back to Apps & Tutorials
+      </a>
+
+      <!-- Header -->
+      <div class="tutorial-header mb-12">
+        <div class="flex items-center gap-4 mb-4">
+          <div class="tutorial-icon">🚀</div>
+          <div>
+            <h1 class="text-4xl font-bold text-white glitch-text mb-2">
+              Complete DigitalOcean Server Setup
+            </h1>
+            <div class="flex gap-2 flex-wrap">
+              <span class="badge-tutorial">Tutorial</span>
+              <span class="badge-platform">DigitalOcean</span>
+              <span class="badge-platform">Ubuntu</span>
+            </div>
+          </div>
+        </div>
+        <p class="text-gray-300 text-lg leading-relaxed">
+          Complete production-ready server setup guide for DigitalOcean Ubuntu. Learn how to deploy a Node.js backend (api.domain.com) and React frontend (domain.com) with PostgreSQL, Nginx reverse proxy, SSL certificates, PM2 process manager, and automated Git deployment. Updated for 2026.
+        </p>
+      </div>
+
+      <!-- Section 1: Initial Server Setup -->
+      <div class="tutorial-section mb-8">
+        <h2 class="section-title">
+          <span class="step-number">1</span>
+          Initial Server Setup
+        </h2>
+
+        <div class="step-card">
+          <div class="step-header">
+            <span class="step-badge">DigitalOcean</span>
+            <h3 class="step-title">Create Droplet</h3>
+          </div>
+          <p class="step-content mb-3">
+            Create a new Ubuntu droplet on DigitalOcean:
+          </p>
+          <ul class="tip-list mb-3">
+            <li>Choose Ubuntu 24.04 LTS (latest stable version)</li>
+            <li>Select Basic plan (minimum $6/month for production)</li>
+            <li>Choose a datacenter region close to your users</li>
+            <li>Add SSH key for secure access (recommended)</li>
+            <li>Enable backups for production environments</li>
+          </ul>
+        </div>
+
+        <div class="step-card">
+          <div class="step-header">
+            <span class="step-badge">SSH</span>
+            <h3 class="step-title">Connect to Your Server</h3>
+          </div>
+          <p class="step-content mb-3">
+            SSH into your server as root:
+          </p>
+          <div class="code-block">
+            <div class="code-header">
+              <span class="code-language">bash</span>
+              <button class="copy-button" data-copy-target="ssh-connect-code">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"></path>
+                </svg>
+                Copy
+              </button>
+            </div>
+            <pre id="ssh-connect-code"><code>{`ssh root@your_server_ip`}</code></pre>
+          </div>
+        </div>
+
+        <div class="step-card">
+          <div class="step-header">
+            <span class="step-badge">Update System</span>
+            <h3 class="step-title">Update Ubuntu Packages</h3>
+          </div>
+          <p class="step-content mb-3">
+            First, update all system packages:
+          </p>
+          <div class="code-block">
+            <div class="code-header">
+              <span class="code-language">bash</span>
+              <button class="copy-button" data-copy-target="update-system-code">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"></path>
+                </svg>
+                Copy
+              </button>
+            </div>
+            <pre id="update-system-code"><code>{`# Update package list
+apt update
+
+# Upgrade all packages
+apt upgrade -y
+
+# Install essential tools
+apt install -y curl wget git build-essential`}</code></pre>
+          </div>
+        </div>
+
+        <div class="step-card">
+          <div class="step-header">
+            <span class="step-badge">Security</span>
+            <h3 class="step-title">Create Non-Root User</h3>
+          </div>
+          <p class="step-content mb-3">
+            Create a user for deployment (recommended for security):
+          </p>
+          <div class="code-block">
+            <div class="code-header">
+              <span class="code-language">bash</span>
+              <button class="copy-button" data-copy-target="create-user-code">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"></path>
+                </svg>
+                Copy
+              </button>
+            </div>
+            <pre id="create-user-code"><code>{`# Create new user
+adduser deploy
+
+# Add user to sudo group
+usermod -aG sudo deploy
+
+# Switch to new user
+su - deploy`}</code></pre>
+          </div>
+          <p class="step-note">
+            💡 Use this user for all deployment tasks. For the rest of this tutorial, we'll use the deploy user.
+          </p>
+        </div>
+      </div>
+
+      <!-- Section 2: Install Node.js with NVM -->
+      <div class="tutorial-section mb-8">
+        <h2 class="section-title">
+          <span class="step-number">2</span>
+          Install Node.js with NVM
+        </h2>
+
+        <div class="step-card">
+          <div class="step-header">
+            <span class="step-badge">NVM</span>
+            <h3 class="step-title">Install NVM</h3>
+          </div>
+          <p class="step-content mb-3">
+            NVM (Node Version Manager) allows you to install and switch between multiple Node.js versions:
+          </p>
+          <div class="code-block">
+            <div class="code-header">
+              <span class="code-language">bash</span>
+              <button class="copy-button" data-copy-target="install-nvm-code">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"></path>
+                </svg>
+                Copy
+              </button>
+            </div>
+            <pre id="install-nvm-code"><code>{`# Download and install NVM
+curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.1/install.sh | bash
+
+# Load NVM
+export NVM_DIR="$HOME/.nvm"
+[ -s "$NVM_DIR/nvm.sh" ] && \\. "$NVM_DIR/nvm.sh"
+
+# Verify installation
+nvm --version`}</code></pre>
+          </div>
+          <p class="step-note">
+            💡 The install script automatically adds NVM to your <code class="inline-code">~/.bashrc</code>. Restart your terminal or run <code class="inline-code">source ~/.bashrc</code> to load it.
+          </p>
+        </div>
+
+        <div class="step-card">
+          <div class="step-header">
+            <span class="step-badge">Node.js</span>
+            <h3 class="step-title">Install Node.js</h3>
+          </div>
+          <p class="step-content mb-3">
+            Install Node.js LTS version (recommended for production):
+          </p>
+          <div class="code-block">
+            <div class="code-header">
+              <span class="code-language">bash</span>
+              <button class="copy-button" data-copy-target="install-node-code">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"></path>
+                </svg>
+                Copy
+              </button>
+            </div>
+            <pre id="install-node-code"><code>{`# Install LTS version (recommended)
+nvm install --lts
+
+# Or install specific version
+nvm install 22
+
+# Set default version
+nvm alias default 22
+
+# Verify installation
+node --version
+npm --version`}</code></pre>
+          </div>
+        </div>
+      </div>
+
+      <!-- Section 3: Install PostgreSQL -->
+      <div class="tutorial-section mb-8">
+        <h2 class="section-title">
+          <span class="step-number">3</span>
+          Install PostgreSQL
+        </h2>
+
+        <div class="step-card">
+          <div class="step-header">
+            <span class="step-badge">PostgreSQL</span>
+            <h3 class="step-title">Install PostgreSQL 17</h3>
+          </div>
+          <p class="step-content mb-3">
+            Install the latest PostgreSQL version:
+          </p>
+          <div class="code-block">
+            <div class="code-header">
+              <span class="code-language">bash</span>
+              <button class="copy-button" data-copy-target="install-postgres-code">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"></path>
+                </svg>
+                Copy
+              </button>
+            </div>
+            <pre id="install-postgres-code"><code>{`# Install PostgreSQL common tools
+sudo apt install -y postgresql-common
+
+# Run automated repository setup
+sudo /usr/share/postgresql-common/pgdg/apt.postgresql.org.sh
+
+# Install PostgreSQL 17
+sudo apt install -y postgresql-17
+
+# Enable and start service
+sudo systemctl enable postgresql
+sudo systemctl start postgresql`}</code></pre>
+          </div>
+        </div>
+
+        <div class="step-card">
+          <div class="step-header">
+            <span class="step-badge">Database</span>
+            <h3 class="step-title">Create Database and User</h3>
+          </div>
+          <p class="step-content mb-3">
+            Create a database for your application:
+          </p>
+          <div class="code-block">
+            <div class="code-header">
+              <span class="code-language">bash</span>
+              <button class="copy-button" data-copy-target="create-db-code">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"></path>
+                </svg>
+                Copy
+              </button>
+            </div>
+            <pre id="create-db-code"><code>{`# Connect to PostgreSQL
+sudo -u postgres psql
+
+# Inside PostgreSQL console:
+# Create database
+CREATE DATABASE myapp_db;
+
+# Create user with password
+CREATE USER myapp_user WITH PASSWORD 'your_secure_password';
+
+# Grant privileges
+GRANT ALL PRIVILEGES ON DATABASE myapp_db TO myapp_user;
+
+# Exit
+\\q`}</code></pre>
+          </div>
+          <p class="step-note">
+            💡 Save your database credentials securely. You'll need them for your application configuration.
+          </p>
+        </div>
+      </div>
+
+      <!-- Section 4: DNS Configuration -->
+      <div class="tutorial-section mb-8">
+        <h2 class="section-title">
+          <span class="step-number">4</span>
+          DNS Configuration
+        </h2>
+
+        <div class="step-card">
+          <div class="step-header">
+            <span class="step-badge">DNS Records</span>
+            <h3 class="step-title">Configure Domain DNS</h3>
+          </div>
+          <p class="step-content mb-3">
+            Add DNS records at your domain registrar (e.g., GoDaddy, Namecheap, Cloudflare):
+          </p>
+          <div class="code-block">
+            <div class="code-header">
+              <span class="code-language">text</span>
+              <button class="copy-button" data-copy-target="dns-records-code">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"></path>
+                </svg>
+                Copy
+              </button>
+            </div>
+            <pre id="dns-records-code"><code>{`Type    Name    Value               TTL
+A       @       your_server_ip      3600
+A       api     your_server_ip      3600
+A       www     your_server_ip      3600`}</code></pre>
+          </div>
+          <p class="step-note">
+            💡 DNS propagation can take up to 48 hours, but usually completes within a few hours. Use <code class="inline-code">nslookup domain.com</code> to check if DNS has propagated.
+          </p>
+        </div>
+
+        <div class="step-card">
+          <div class="step-header">
+            <span class="step-badge">Verify</span>
+            <h3 class="step-title">Test DNS Resolution</h3>
+          </div>
+          <p class="step-content mb-3">
+            Verify DNS is working correctly:
+          </p>
+          <div class="code-block">
+            <div class="code-header">
+              <span class="code-language">bash</span>
+              <button class="copy-button" data-copy-target="test-dns-code">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"></path>
+                </svg>
+                Copy
+              </button>
+            </div>
+            <pre id="test-dns-code"><code>{`# Test domain resolution
+ping domain.com
+
+# Test subdomain resolution
+ping api.domain.com
+
+# Or use dig
+dig domain.com
+dig api.domain.com`}</code></pre>
+          </div>
+        </div>
+      </div>
+
+      <!-- Section 5: Install and Configure Nginx -->
+      <div class="tutorial-section mb-8">
+        <h2 class="section-title">
+          <span class="step-number">5</span>
+          Install and Configure Nginx
+        </h2>
+
+        <div class="step-card">
+          <div class="step-header">
+            <span class="step-badge">Install</span>
+            <h3 class="step-title">Install Nginx</h3>
+          </div>
+          <p class="step-content mb-3">
+            Install and start Nginx:
+          </p>
+          <div class="code-block">
+            <div class="code-header">
+              <span class="code-language">bash</span>
+              <button class="copy-button" data-copy-target="install-nginx-code">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"></path>
+                </svg>
+                Copy
+              </button>
+            </div>
+            <pre id="install-nginx-code"><code>{`# Install Nginx
+sudo apt install -y nginx
+
+# Start and enable Nginx
+sudo systemctl start nginx
+sudo systemctl enable nginx
+
+# Check status
+sudo systemctl status nginx`}</code></pre>
+          </div>
+        </div>
+
+        <div class="step-card">
+          <div class="step-header">
+            <span class="step-badge">Backend</span>
+            <h3 class="step-title">Configure Nginx for API (api.domain.com)</h3>
+          </div>
+          <p class="step-content mb-3">
+            Create Nginx configuration for your backend API:
+          </p>
+          <div class="code-block">
+            <div class="code-header">
+              <span class="code-language">bash</span>
+              <button class="copy-button" data-copy-target="nginx-api-config-code">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"></path>
+                </svg>
+                Copy
+              </button>
+            </div>
+            <pre id="nginx-api-config-code"><code>{`# Create config file
+sudo nano /etc/nginx/sites-available/api.domain.com
+
+# Add this configuration:
+server {
+    listen 80;
+    server_name api.domain.com;
+
+    location / {
+        proxy_pass http://localhost:3000;
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection 'upgrade';
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+        proxy_cache_bypass $http_upgrade;
+    }
+}
+
+# Enable the site
+sudo ln -s /etc/nginx/sites-available/api.domain.com /etc/nginx/sites-enabled/
+
+# Test configuration
+sudo nginx -t
+
+# Reload Nginx
+sudo systemctl reload nginx`}</code></pre>
+          </div>
+          <p class="step-note">
+            💡 This assumes your Node.js backend runs on port 3000. Adjust the port if needed.
+          </p>
+        </div>
+
+        <div class="step-card">
+          <div class="step-header">
+            <span class="step-badge">Frontend</span>
+            <h3 class="step-title">Configure Nginx for Frontend (domain.com)</h3>
+          </div>
+          <p class="step-content mb-3">
+            Create Nginx configuration for your React frontend:
+          </p>
+          <div class="code-block">
+            <div class="code-header">
+              <span class="code-language">bash</span>
+              <button class="copy-button" data-copy-target="nginx-frontend-config-code">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"></path>
+                </svg>
+                Copy
+              </button>
+            </div>
+            <pre id="nginx-frontend-config-code"><code>{`# Create config file
+sudo nano /etc/nginx/sites-available/domain.com
+
+# Add this configuration:
+server {
+    listen 80;
+    server_name domain.com www.domain.com;
+
+    root /home/deploy/frontend/build;
+    index index.html;
+
+    location / {
+        try_files $uri $uri/ /index.html;
+    }
+
+    # Cache static assets
+    location ~* \\.(js|css|png|jpg|jpeg|gif|ico|svg|woff|woff2|ttf|eot)$ {
+        expires 1y;
+        add_header Cache-Control "public, immutable";
+    }
+
+    # Gzip compression
+    gzip on;
+    gzip_vary on;
+    gzip_types text/plain text/css text/xml text/javascript application/javascript application/xml+rss application/json;
+}
+
+# Enable the site
+sudo ln -s /etc/nginx/sites-available/domain.com /etc/nginx/sites-enabled/
+
+# Remove default site (optional)
+sudo rm /etc/nginx/sites-enabled/default
+
+# Test configuration
+sudo nginx -t
+
+# Reload Nginx
+sudo systemctl reload nginx`}</code></pre>
+          </div>
+          <p class="step-note">
+            💡 This serves your React build from <code class="inline-code">/home/deploy/frontend/build</code>. We'll create this directory in the deployment section.
+          </p>
+        </div>
+      </div>
+
+      <!-- Section 6: Install PM2 -->
+      <div class="tutorial-section mb-8">
+        <h2 class="section-title">
+          <span class="step-number">6</span>
+          Install PM2 Process Manager
+        </h2>
+
+        <div class="step-card">
+          <div class="step-header">
+            <span class="step-badge">PM2</span>
+            <h3 class="step-title">Install PM2 Globally</h3>
+          </div>
+          <p class="step-content mb-3">
+            PM2 keeps your Node.js application running and auto-restarts it on crashes:
+          </p>
+          <div class="code-block">
+            <div class="code-header">
+              <span class="code-language">bash</span>
+              <button class="copy-button" data-copy-target="install-pm2-code">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"></path>
+                </svg>
+                Copy
+              </button>
+            </div>
+            <pre id="install-pm2-code"><code>{`# Install PM2 globally
+npm install -g pm2
+
+# Set PM2 to start on system boot
+pm2 startup
+
+# Run the command shown in output (similar to below)
+# sudo env PATH=$PATH:/home/deploy/.nvm/versions/node/v22.0.0/bin pm2 startup systemd -u deploy --hp /home/deploy
+
+# Save PM2 process list
+pm2 save`}</code></pre>
+          </div>
+        </div>
+
+        <div class="step-card">
+          <div class="step-header">
+            <span class="step-badge">Usage</span>
+            <h3 class="step-title">PM2 Essential Commands</h3>
+          </div>
+          <p class="step-content mb-3">
+            Common PM2 commands for managing your application:
+          </p>
+          <div class="code-block">
+            <div class="code-header">
+              <span class="code-language">bash</span>
+              <button class="copy-button" data-copy-target="pm2-commands-code">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"></path>
+                </svg>
+                Copy
+              </button>
+            </div>
+            <pre id="pm2-commands-code"><code>{`# Start app
+pm2 start app.js --name api
+
+# List all processes
+pm2 list
+
+# Monitor processes
+pm2 monit
+
+# View logs
+pm2 logs api
+
+# Restart app
+pm2 restart api
+
+# Stop app
+pm2 stop api
+
+# Delete app from PM2
+pm2 delete api
+
+# Save current process list
+pm2 save`}</code></pre>
+          </div>
+        </div>
+      </div>
+
+      <!-- Section 7: SSL with Certbot -->
+      <div class="tutorial-section mb-8">
+        <h2 class="section-title">
+          <span class="step-number">7</span>
+          SSL Certificates with Certbot
+        </h2>
+
+        <div class="step-card">
+          <div class="step-header">
+            <span class="step-badge">Certbot</span>
+            <h3 class="step-title">Install Certbot</h3>
+          </div>
+          <p class="step-content mb-3">
+            Install Certbot to get free SSL certificates from Let's Encrypt:
+          </p>
+          <div class="code-block">
+            <div class="code-header">
+              <span class="code-language">bash</span>
+              <button class="copy-button" data-copy-target="install-certbot-code">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"></path>
+                </svg>
+                Copy
+              </button>
+            </div>
+            <pre id="install-certbot-code"><code>{`# Install Certbot and Nginx plugin
+sudo apt install -y certbot python3-certbot-nginx`}</code></pre>
+          </div>
+        </div>
+
+        <div class="step-card">
+          <div class="step-header">
+            <span class="step-badge">SSL</span>
+            <h3 class="step-title">Obtain SSL Certificates</h3>
+          </div>
+          <p class="step-content mb-3">
+            Get SSL certificates for both domain and subdomain:
+          </p>
+          <div class="code-block">
+            <div class="code-header">
+              <span class="code-language">bash</span>
+              <button class="copy-button" data-copy-target="certbot-ssl-code">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"></path>
+                </svg>
+                Copy
+              </button>
+            </div>
+            <pre id="certbot-ssl-code"><code>{`# Get certificate for frontend (domain.com)
+sudo certbot --nginx -d domain.com -d www.domain.com
+
+# Get certificate for backend (api.domain.com)
+sudo certbot --nginx -d api.domain.com
+
+# Follow the prompts:
+# - Enter email address
+# - Agree to Terms of Service
+# - Choose whether to redirect HTTP to HTTPS (recommended: Yes)`}</code></pre>
+          </div>
+          <p class="step-note">
+            💡 Certbot automatically configures Nginx for HTTPS and sets up auto-renewal. Certificates expire every 90 days but renew automatically.
+          </p>
+        </div>
+
+        <div class="step-card">
+          <div class="step-header">
+            <span class="step-badge">Test</span>
+            <h3 class="step-title">Test Auto-Renewal</h3>
+          </div>
+          <p class="step-content mb-3">
+            Verify that certificate auto-renewal works:
+          </p>
+          <div class="code-block">
+            <div class="code-header">
+              <span class="code-language">bash</span>
+              <button class="copy-button" data-copy-target="test-renewal-code">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"></path>
+                </svg>
+                Copy
+              </button>
+            </div>
+            <pre id="test-renewal-code"><code>{`# Test renewal process (dry run)
+sudo certbot renew --dry-run
+
+# Check renewal timer
+sudo systemctl status certbot.timer`}</code></pre>
+          </div>
+        </div>
+      </div>
+
+      <!-- Section 8: Git Setup -->
+      <div class="tutorial-section mb-8">
+        <h2 class="section-title">
+          <span class="step-number">8</span>
+          Git Setup for Deployment
+        </h2>
+
+        <div class="step-card">
+          <div class="step-header">
+            <span class="step-badge">SSH Key</span>
+            <h3 class="step-title">Generate SSH Key for Git</h3>
+          </div>
+          <p class="step-content mb-3">
+            Create SSH key to pull from private repositories:
+          </p>
+          <div class="code-block">
+            <div class="code-header">
+              <span class="code-language">bash</span>
+              <button class="copy-button" data-copy-target="git-ssh-key-code">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"></path>
+                </svg>
+                Copy
+              </button>
+            </div>
+            <pre id="git-ssh-key-code"><code>{`# Generate SSH key
+ssh-keygen -t ed25519 -C "deploy@your-server"
+
+# Display public key
+cat ~/.ssh/id_ed25519.pub
+
+# Copy this key and add it to GitHub/GitLab:
+# GitHub: Settings -> SSH and GPG keys -> New SSH key
+# GitLab: Settings -> SSH Keys -> Add new key`}</code></pre>
+          </div>
+        </div>
+
+        <div class="step-card">
+          <div class="step-header">
+            <span class="step-badge">Clone</span>
+            <h3 class="step-title">Clone Repositories</h3>
+          </div>
+          <p class="step-content mb-3">
+            Clone your backend and frontend repositories:
+          </p>
+          <div class="code-block">
+            <div class="code-header">
+              <span class="code-language">bash</span>
+              <button class="copy-button" data-copy-target="clone-repos-code">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"></path>
+                </svg>
+                Copy
+              </button>
+            </div>
+            <pre id="clone-repos-code"><code>{`# Navigate to home directory
+cd ~
+
+# Clone backend
+git clone git@github.com:username/backend.git
+
+# Clone frontend
+git clone git@github.com:username/frontend.git`}</code></pre>
+          </div>
+        </div>
+      </div>
+
+      <!-- Section 9: Backend Deployment -->
+      <div class="tutorial-section mb-8">
+        <h2 class="section-title">
+          <span class="step-number">9</span>
+          Backend Deployment
+        </h2>
+
+        <div class="step-card">
+          <div class="step-header">
+            <span class="step-badge">Setup</span>
+            <h3 class="step-title">Configure Backend</h3>
+          </div>
+          <p class="step-content mb-3">
+            Set up and configure your Node.js backend:
+          </p>
+          <div class="code-block">
+            <div class="code-header">
+              <span class="code-language">bash</span>
+              <button class="copy-button" data-copy-target="backend-setup-code">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"></path>
+                </svg>
+                Copy
+              </button>
+            </div>
+            <pre id="backend-setup-code"><code>{`# Navigate to backend
+cd ~/backend
+
+# Install dependencies
+npm install
+
+# Create .env file
+nano .env
+
+# Add your environment variables:
+NODE_ENV=production
+PORT=3000
+DATABASE_URL=postgresql://myapp_user:your_secure_password@localhost:5432/myapp_db
+# ... other variables
+
+# Build (if using TypeScript)
+npm run build`}</code></pre>
+          </div>
+        </div>
+
+        <div class="step-card">
+          <div class="step-header">
+            <span class="step-badge">Start</span>
+            <h3 class="step-title">Start Backend with PM2</h3>
+          </div>
+          <p class="step-content mb-3">
+            Start your backend application with PM2:
+          </p>
+          <div class="code-block">
+            <div class="code-header">
+              <span class="code-language">bash</span>
+              <button class="copy-button" data-copy-target="start-backend-code">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"></path>
+                </svg>
+                Copy
+              </button>
+            </div>
+            <pre id="start-backend-code"><code>{`# Start app with PM2
+pm2 start npm --name "api" -- start
+
+# Or if using a specific file:
+pm2 start dist/index.js --name "api"
+
+# Or if you have a PM2 ecosystem file:
+pm2 start ecosystem.config.js
+
+# Save PM2 configuration
+pm2 save
+
+# Check status
+pm2 status
+
+# View logs
+pm2 logs api`}</code></pre>
+          </div>
+        </div>
+
+        <div class="step-card">
+          <div class="step-header">
+            <span class="step-badge">PM2 Config</span>
+            <h3 class="step-title">PM2 Ecosystem File (Optional)</h3>
+          </div>
+          <p class="step-content mb-3">
+            Create a PM2 ecosystem file for advanced configuration:
+          </p>
+          <div class="code-block">
+            <div class="code-header">
+              <span class="code-language">javascript</span>
+              <button class="copy-button" data-copy-target="ecosystem-file-code">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"></path>
+                </svg>
+                Copy
+              </button>
+            </div>
+            <pre id="ecosystem-file-code"><code>{`// ecosystem.config.js
+module.exports = {
+  apps: [{
+    name: 'api',
+    script: 'dist/index.js',
+    instances: 1,
+    autorestart: true,
+    watch: false,
+    max_memory_restart: '1G',
+    env: {
+      NODE_ENV: 'production',
+      PORT: 3000
+    }
+  }]
+};`}</code></pre>
+          </div>
+        </div>
+      </div>
+
+      <!-- Section 10: Frontend Deployment -->
+      <div class="tutorial-section mb-8">
+        <h2 class="section-title">
+          <span class="step-number">10</span>
+          Frontend Deployment
+        </h2>
+
+        <div class="step-card">
+          <div class="step-header">
+            <span class="step-badge">Build</span>
+            <h3 class="step-title">Build React Application</h3>
+          </div>
+          <p class="step-content mb-3">
+            Build your React application for production:
+          </p>
+          <div class="code-block">
+            <div class="code-header">
+              <span class="code-language">bash</span>
+              <button class="copy-button" data-copy-target="build-frontend-code">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"></path>
+                </svg>
+                Copy
+              </button>
+            </div>
+            <pre id="build-frontend-code"><code>{`# Navigate to frontend
+cd ~/frontend
+
+# Install dependencies
+npm install
+
+# Create .env file (if needed)
+nano .env
+
+# Add environment variables:
+REACT_APP_API_URL=https://api.domain.com
+# ... other variables
+
+# Build for production
+npm run build`}</code></pre>
+          </div>
+          <p class="step-note">
+            💡 The build creates optimized static files in the <code class="inline-code">build</code> directory (or <code class="inline-code">dist</code> for Vite projects).
+          </p>
+        </div>
+
+        <div class="step-card">
+          <div class="step-header">
+            <span class="step-badge">Verify</span>
+            <h3 class="step-title">Verify Deployment</h3>
+          </div>
+          <p class="step-content mb-3">
+            Check that everything is working:
+          </p>
+          <div class="code-block">
+            <div class="code-header">
+              <span class="code-language">bash</span>
+              <button class="copy-button" data-copy-target="verify-deployment-code">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"></path>
+                </svg>
+                Copy
+              </button>
+            </div>
+            <pre id="verify-deployment-code"><code>{`# Check Nginx status
+sudo systemctl status nginx
+
+# Check PM2 status
+pm2 status
+
+# Check Nginx logs
+sudo tail -f /var/log/nginx/error.log
+
+# Check PM2 logs
+pm2 logs api
+
+# Test frontend
+curl https://domain.com
+
+# Test backend
+curl https://api.domain.com`}</code></pre>
+          </div>
+        </div>
+      </div>
+
+      <!-- Section 11: Deployment Scripts -->
+      <div class="tutorial-section mb-8">
+        <h2 class="section-title">
+          <span class="step-number">11</span>
+          Create Deployment Scripts
+        </h2>
+
+        <div class="step-card">
+          <div class="step-header">
+            <span class="step-badge">Backend</span>
+            <h3 class="step-title">Backend Deployment Script</h3>
+          </div>
+          <p class="step-content mb-3">
+            Create a script to automate backend deployments:
+          </p>
+          <div class="code-block">
+            <div class="code-header">
+              <span class="code-language">bash</span>
+              <button class="copy-button" data-copy-target="deploy-backend-script-code">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"></path>
+                </svg>
+                Copy
+              </button>
+            </div>
+            <pre id="deploy-backend-script-code"><code>{`# Create deploy script
+nano ~/backend/deploy.sh
+
+# Add this content:
+#!/bin/bash
+echo "🚀 Deploying Backend..."
+
+# Navigate to backend directory
+cd ~/backend
+
+# Pull latest changes
+echo "📥 Pulling latest changes..."
+git pull origin main
+
+# Install dependencies
+echo "📦 Installing dependencies..."
+npm install
+
+# Build (if using TypeScript)
+echo "🔨 Building..."
+npm run build
+
+# Restart PM2
+echo "🔄 Restarting application..."
+pm2 restart api
+
+# Show status
+pm2 status
+
+echo "✅ Backend deployment complete!"
+
+# Make script executable
+chmod +x ~/backend/deploy.sh`}</code></pre>
+          </div>
+        </div>
+
+        <div class="step-card">
+          <div class="step-header">
+            <span class="step-badge">Frontend</span>
+            <h3 class="step-title">Frontend Deployment Script</h3>
+          </div>
+          <p class="step-content mb-3">
+            Create a script to automate frontend deployments:
+          </p>
+          <div class="code-block">
+            <div class="code-header">
+              <span class="code-language">bash</span>
+              <button class="copy-button" data-copy-target="deploy-frontend-script-code">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"></path>
+                </svg>
+                Copy
+              </button>
+            </div>
+            <pre id="deploy-frontend-script-code"><code>{`# Create deploy script
+nano ~/frontend/deploy.sh
+
+# Add this content:
+#!/bin/bash
+echo "🚀 Deploying Frontend..."
+
+# Navigate to frontend directory
+cd ~/frontend
+
+# Pull latest changes
+echo "📥 Pulling latest changes..."
+git pull origin main
+
+# Install dependencies
+echo "📦 Installing dependencies..."
+npm install
+
+# Build for production
+echo "🔨 Building..."
+npm run build
+
+# Clear Nginx cache (if any)
+echo "🧹 Clearing cache..."
+sudo rm -rf /var/cache/nginx/*
+
+# Reload Nginx
+echo "🔄 Reloading Nginx..."
+sudo systemctl reload nginx
+
+echo "✅ Frontend deployment complete!"
+
+# Make script executable
+chmod +x ~/frontend/deploy.sh`}</code></pre>
+          </div>
+        </div>
+
+        <div class="step-card">
+          <div class="step-header">
+            <span class="step-badge">Usage</span>
+            <h3 class="step-title">Deploy Your Applications</h3>
+          </div>
+          <p class="step-content mb-3">
+            Use these commands to deploy:
+          </p>
+          <div class="code-block">
+            <div class="code-header">
+              <span class="code-language">bash</span>
+              <button class="copy-button" data-copy-target="deploy-usage-code">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"></path>
+                </svg>
+                Copy
+              </button>
+            </div>
+            <pre id="deploy-usage-code"><code>{`# Deploy backend
+~/backend/deploy.sh
+
+# Deploy frontend
+~/frontend/deploy.sh
+
+# Deploy both
+~/backend/deploy.sh && ~/frontend/deploy.sh`}</code></pre>
+          </div>
+          <p class="step-note">
+            💡 You can run these scripts via SSH or set up webhooks for automatic deployment on git push.
+          </p>
+        </div>
+      </div>
+
+      <!-- Section 12: Firewall Configuration -->
+      <div class="tutorial-section mb-8">
+        <h2 class="section-title">
+          <span class="step-number">12</span>
+          Firewall Configuration (Optional but Recommended)
+        </h2>
+
+        <div class="step-card">
+          <div class="step-header">
+            <span class="step-badge">UFW</span>
+            <h3 class="step-title">Configure UFW Firewall</h3>
+          </div>
+          <p class="step-content mb-3">
+            Set up a firewall to enhance security:
+          </p>
+          <div class="code-block">
+            <div class="code-header">
+              <span class="code-language">bash</span>
+              <button class="copy-button" data-copy-target="firewall-config-code">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"></path>
+                </svg>
+                Copy
+              </button>
+            </div>
+            <pre id="firewall-config-code"><code>{`# Allow SSH (important - do this first!)
+sudo ufw allow OpenSSH
+
+# Allow HTTP and HTTPS
+sudo ufw allow 'Nginx Full'
+
+# Enable firewall
+sudo ufw enable
+
+# Check status
+sudo ufw status
+
+# If needed, allow specific ports:
+# sudo ufw allow 22/tcp    # SSH
+# sudo ufw allow 80/tcp    # HTTP
+# sudo ufw allow 443/tcp   # HTTPS`}</code></pre>
+          </div>
+          <p class="step-note">
+            ⚠️ Make sure to allow SSH before enabling the firewall, or you'll lock yourself out!
+          </p>
+        </div>
+      </div>
+
+      <!-- Important Notes -->
+      <div class="warning-box mb-8">
+        <div class="warning-icon">⚠️</div>
+        <div>
+          <h3 class="warning-title">Important Production Notes</h3>
+          <ul class="warning-list">
+            <li>Never commit <code class="inline-code">.env</code> files to Git. Use <code class="inline-code">.gitignore</code> to exclude them</li>
+            <li>Always use strong passwords for database and server access</li>
+            <li>Keep your server and packages updated regularly with <code class="inline-code">apt update && apt upgrade</code></li>
+            <li>Set up regular database backups using cron jobs or DigitalOcean automated backups</li>
+            <li>Monitor your application with PM2 logs and consider using monitoring services like Datadog or New Relic</li>
+            <li>Configure CORS properly in your backend to allow only your frontend domain</li>
+            <li>Use environment-specific configurations (development, staging, production)</li>
+            <li>Consider setting up a CI/CD pipeline with GitHub Actions or GitLab CI for automated deployments</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Tip Box -->
+      <div class="tip-box">
+        <div class="tip-icon">💡</div>
+        <div>
+          <h3 class="tip-title">Pro Tips & Best Practices</h3>
+          <ul class="tip-list">
+            <li>
+              Use <code class="inline-code">pm2 logs --lines 100</code> to view more log lines when debugging
+            </li>
+            <li>
+              Set up log rotation with PM2: <code class="inline-code">pm2 install pm2-logrotate</code>
+            </li>
+            <li>
+              Use <code class="inline-code">pm2 monit</code> for real-time monitoring of CPU and memory usage
+            </li>
+            <li>
+              Consider using a staging environment to test deployments before production
+            </li>
+            <li>
+              Add health check endpoints to your API (e.g., <code class="inline-code">/health</code>) and monitor them
+            </li>
+            <li>
+              Use Git tags or releases for versioning your deployments
+            </li>
+            <li>
+              Set up GitHub/GitLab webhooks for automatic deployments on push to main branch
+            </li>
+            <li>
+              Configure Nginx to return custom error pages for better user experience
+            </li>
+            <li>
+              Use <code class="inline-code">nginx -t</code> to test configuration before reloading
+            </li>
+            <li>
+              Consider using Docker for consistent deployment environments
+            </li>
+            <li>
+              Set up database migrations as part of your deployment script
+            </li>
+            <li>
+              Use connection pooling for PostgreSQL (e.g., with <code class="inline-code">pg-pool</code>)
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <style>
+    /* Main Content */
+    .tutorial-main {
+      position: relative;
+      z-index: 10;
+      background: transparent;
+    }
+
+    /* Back Link */
+    .back-link {
+      font-size: 0.95rem;
+      font-weight: 500;
+    }
+
+    /* Tutorial Header */
+    .tutorial-header {
+      padding: 2rem;
+      background: rgba(0, 0, 0, 0.6);
+      backdrop-filter: blur(20px);
+      border: 1px solid rgba(255, 0, 255, 0.3);
+      border-radius: 1rem;
+      box-shadow:
+        0 0 30px rgba(255, 0, 255, 0.2),
+        0 0 60px rgba(0, 255, 255, 0.1);
+    }
+
+    .tutorial-icon {
+      font-size: 4rem;
+      line-height: 1;
+    }
+
+    /* Badges */
+    .badge-tutorial {
+      display: inline-block;
+      padding: 0.25rem 0.75rem;
+      font-size: 0.75rem;
+      font-weight: 600;
+      background: rgba(0, 255, 255, 0.15);
+      border: 1px solid rgba(0, 255, 255, 0.4);
+      color: rgba(0, 255, 255, 0.9);
+      text-shadow: 0 0 10px rgba(0, 255, 255, 0.5);
+      border-radius: 9999px;
+    }
+
+    .badge-platform {
+      display: inline-block;
+      padding: 0.25rem 0.75rem;
+      font-size: 0.75rem;
+      font-weight: 600;
+      background: rgba(255, 0, 255, 0.15);
+      border: 1px solid rgba(255, 0, 255, 0.4);
+      color: rgba(255, 0, 255, 0.9);
+      text-shadow: 0 0 10px rgba(255, 0, 255, 0.5);
+      border-radius: 9999px;
+    }
+
+    /* Section Title */
+    .section-title {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      font-size: 1.75rem;
+      font-weight: 700;
+      color: white;
+      margin-bottom: 1.5rem;
+    }
+
+    .step-number {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 3rem;
+      height: 3rem;
+      background: rgba(255, 0, 255, 0.2);
+      border: 2px solid rgba(255, 0, 255, 0.5);
+      border-radius: 0.75rem;
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: rgba(255, 0, 255, 1);
+      text-shadow: 0 0 15px rgba(255, 0, 255, 0.8);
+    }
+
+    /* Step Card */
+    .step-card {
+      background: rgba(0, 0, 0, 0.5);
+      backdrop-filter: blur(15px);
+      border: 1px solid rgba(0, 255, 255, 0.3);
+      border-radius: 0.75rem;
+      padding: 1.5rem;
+      margin-bottom: 1rem;
+      transition: all 0.3s ease;
+    }
+
+    .step-card:hover {
+      border-color: rgba(0, 255, 255, 0.5);
+      box-shadow: 0 0 30px rgba(0, 255, 255, 0.2);
+    }
+
+    .step-header {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      margin-bottom: 0.75rem;
+    }
+
+    .step-badge {
+      padding: 0.25rem 0.625rem;
+      font-size: 0.75rem;
+      font-weight: 600;
+      background: rgba(0, 255, 255, 0.2);
+      border: 1px solid rgba(0, 255, 255, 0.5);
+      color: rgba(0, 255, 255, 1);
+      border-radius: 0.375rem;
+      text-shadow: 0 0 10px rgba(0, 255, 255, 0.6);
+      white-space: nowrap;
+    }
+
+    .step-title {
+      font-size: 1.125rem;
+      font-weight: 600;
+      color: white;
+    }
+
+    .step-content {
+      color: #d1d5db;
+      line-height: 1.6;
+    }
+
+    .step-note {
+      margin-top: 0.75rem;
+      padding: 0.75rem;
+      background: rgba(0, 255, 255, 0.1);
+      border-left: 3px solid rgba(0, 255, 255, 0.5);
+      border-radius: 0.375rem;
+      color: #d1d5db;
+      font-size: 0.9rem;
+    }
+
+    .step-note a {
+      text-decoration: underline;
+    }
+
+    /* Inline Code */
+    .inline-code {
+      padding: 0.125rem 0.5rem;
+      font-size: 0.875rem;
+      font-family: ui-monospace, monospace;
+      background: rgba(255, 0, 255, 0.15);
+      border: 1px solid rgba(255, 0, 255, 0.3);
+      border-radius: 0.25rem;
+      color: rgba(255, 0, 255, 0.9);
+    }
+
+    /* Code Block */
+    .code-block {
+      background: rgba(0, 0, 0, 0.7);
+      border: 1px solid rgba(0, 255, 255, 0.4);
+      border-radius: 0.75rem;
+      overflow: hidden;
+      margin-top: 0.75rem;
+    }
+
+    .code-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0.75rem 1rem;
+      background: rgba(0, 0, 0, 0.5);
+      border-bottom: 1px solid rgba(0, 255, 255, 0.3);
+    }
+
+    .code-language {
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: rgba(0, 255, 255, 0.8);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .copy-button {
+      display: flex;
+      align-items: center;
+      gap: 0.375rem;
+      padding: 0.375rem 0.75rem;
+      font-size: 0.75rem;
+      font-weight: 500;
+      background: rgba(255, 0, 255, 0.2);
+      border: 1px solid rgba(255, 0, 255, 0.4);
+      border-radius: 0.375rem;
+      color: rgba(255, 0, 255, 0.9);
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .copy-button:hover {
+      background: rgba(255, 0, 255, 0.3);
+      border-color: rgba(255, 0, 255, 0.6);
+    }
+
+    .code-block pre {
+      margin: 0;
+      padding: 1.25rem;
+      overflow-x: auto;
+    }
+
+    .code-block code {
+      font-family: ui-monospace, monospace;
+      font-size: 0.875rem;
+      line-height: 1.6;
+      color: #e5e7eb;
+    }
+
+    /* Warning Box */
+    .warning-box {
+      display: flex;
+      gap: 1rem;
+      padding: 1.5rem;
+      background: rgba(255, 165, 0, 0.1);
+      backdrop-filter: blur(15px);
+      border: 1px solid rgba(255, 165, 0, 0.4);
+      border-radius: 0.75rem;
+      box-shadow: 0 0 20px rgba(255, 165, 0, 0.15);
+    }
+
+    .warning-icon {
+      font-size: 2rem;
+      line-height: 1;
+    }
+
+    .warning-title {
+      font-size: 1.125rem;
+      font-weight: 600;
+      color: rgba(255, 165, 0, 1);
+      text-shadow: 0 0 10px rgba(255, 165, 0, 0.5);
+      margin-bottom: 0.75rem;
+    }
+
+    .warning-list {
+      list-style: disc;
+      padding-left: 1.25rem;
+      color: #d1d5db;
+      line-height: 1.8;
+    }
+
+    .warning-list li {
+      margin-bottom: 0.5rem;
+    }
+
+    /* Tip Box */
+    .tip-box {
+      display: flex;
+      gap: 1rem;
+      padding: 1.5rem;
+      background: rgba(0, 255, 255, 0.1);
+      backdrop-filter: blur(15px);
+      border: 1px solid rgba(0, 255, 255, 0.4);
+      border-radius: 0.75rem;
+      box-shadow: 0 0 20px rgba(0, 255, 255, 0.15);
+    }
+
+    .tip-icon {
+      font-size: 2rem;
+      line-height: 1;
+    }
+
+    .tip-title {
+      font-size: 1.125rem;
+      font-weight: 600;
+      color: rgba(0, 255, 255, 1);
+      text-shadow: 0 0 10px rgba(0, 255, 255, 0.5);
+      margin-bottom: 0.75rem;
+    }
+
+    .tip-list {
+      list-style: disc;
+      padding-left: 1.25rem;
+      color: #d1d5db;
+      line-height: 1.8;
+    }
+
+    .tip-list li {
+      margin-bottom: 0.5rem;
+    }
+
+    /* Glitch Text Effect */
+    .glitch-text {
+      text-shadow:
+        0 0 20px rgba(255, 0, 255, 0.8),
+        0 0 40px rgba(0, 255, 255, 0.6);
+    }
+  </style>
+
+  <script>
+    // Copy to clipboard functionality
+    document.addEventListener("DOMContentLoaded", () => {
+      const copyButtons = document.querySelectorAll(".copy-button");
+
+      copyButtons.forEach((button) => {
+        button.addEventListener("click", async () => {
+          const targetId = button.getAttribute("data-copy-target");
+          const codeElement = document.getElementById(targetId!);
+
+          if (codeElement) {
+            const text = codeElement.textContent || "";
+
+            try {
+              await navigator.clipboard.writeText(text);
+
+              // Visual feedback
+              const originalText = button.innerHTML;
+              button.innerHTML = `
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                </svg>
+                Copied!
+              `;
+
+              setTimeout(() => {
+                button.innerHTML = originalText;
+              }, 2000);
+            } catch (err) {
+              console.error("Failed to copy:", err);
+            }
+          }
+        });
+      });
+    });
+  </script>
+</LayoutApp>

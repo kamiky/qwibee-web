@@ -50,6 +50,15 @@ export const APPS_TUTORIALS: AppTutorial[] = [
     platform: "Multi",
     link: "/apps/postgresql-guide",
   },
+  {
+    id: "digitalocean-server-setup",
+    title: "DigitalOcean Server Setup",
+    description: "Complete production-ready server setup guide. Deploy Node.js backend (api.domain.com) and React frontend (domain.com) with PostgreSQL, Nginx, SSL, PM2, and automated Git deployment.",
+    logo: "🚀",
+    category: "tutorial",
+    platform: "Multi",
+    link: "/apps/digitalocean-server-setup",
+  },
 ];
 
 /**
