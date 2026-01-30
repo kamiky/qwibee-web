@@ -32,6 +32,15 @@ export const APPS_TUTORIALS: AppTutorial[] = [
     platform: "Web",
     link: "/apps/youtube-4k",
   },
+  {
+    id: "macbook-sleep",
+    title: "MacBook Sleep & Shutdown",
+    description: "Master macOS power management with terminal commands. Schedule shutdowns, put your Mac to sleep instantly, and create custom shortcuts.",
+    logo: "💤",
+    category: "tutorial",
+    platform: "macOS",
+    link: "/apps/macbook-sleep",
+  },
 ];
 
 /**
