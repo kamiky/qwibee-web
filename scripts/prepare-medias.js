@@ -497,7 +497,7 @@ async function main() {
 
     // If a specific profile ID is provided, verify it exists
     if (specificProfileId) {
-      const specificPath = join(UPLOADS_DIR, specificProfileId);
+      let specificPath = join(UPLOADS_DIR, specificProfileId);
       const specificExists = await fileExists(specificPath);
       if (!specificExists) {
         console.error(`✗ Profile folder does not exist: ${specificProfileId}`);
@@ -510,9 +510,45 @@ async function main() {
         process.exit(1);
       }
 
+      // Check if folder needs to be renamed to user ID format
+      let finalFolderName = specificProfileId;
+      if (!isValidUserIdFormat(specificProfileId)) {
+        console.log("🔄 Renaming folder to user ID format...\n");
+        
+        // Generate a new user ID
+        let newUserId = generateUserId();
+        let newPath = join(UPLOADS_DIR, newUserId);
+        
+        // Ensure the new ID doesn't already exist
+        while (await fileExists(newPath)) {
+          newUserId = generateUserId();
+          newPath = join(UPLOADS_DIR, newUserId);
+        }
+
+        // Rename the folder
+        console.log(`  📝 Renaming: "${specificProfileId}" → "${newUserId}"`);
+        await rename(specificPath, newPath);
+        
+        specificPath = newPath;
+        finalFolderName = newUserId;
+        
+        console.log(
+          "\n⚠️  IMPORTANT: Update this folder name in src/data/profiles.ts"
+        );
+        console.log("   This ID will be used for Stripe payment references.\n");
+      } else {
+        console.log(`✓ Folder already follows the correct format: ${specificProfileId}\n`);
+      }
+
       // Process only the specific folder
       await processFolder(specificPath);
       console.log("\n\n✅ Media preparation completed successfully!");
+      
+      if (finalFolderName !== specificProfileId) {
+        console.log(`\n📋 Renamed: "${specificProfileId}" → "${finalFolderName}"`);
+        console.log("\n⚠️  REMINDER: Don't forget to update the folder name in src/data/profiles.ts!");
+      }
+      
       return;
     }
 
