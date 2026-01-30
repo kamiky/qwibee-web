@@ -41,6 +41,15 @@ export const APPS_TUTORIALS: AppTutorial[] = [
     platform: "macOS",
     link: "/apps/macbook-sleep",
   },
+  {
+    id: "postgresql-guide",
+    title: "PostgreSQL 17 Complete Guide",
+    description: "Up-to-date guide to PostgreSQL 17 installation and operations. Learn user management, database creation, remote connections, and backup/restore procedures for Ubuntu and macOS.",
+    logo: "🐘",
+    category: "tutorial",
+    platform: "Multi",
+    link: "/apps/postgresql-guide",
+  },
 ];
 
 /**

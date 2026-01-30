@@ -1,0 +1,1224 @@
+---
+import LayoutApp from "@/layouts/LayoutApp.astro";
+import { useTranslations, type Language } from "@/i18n/translations";
+
+// Redirect to / if in creator mode
+const creatorMode = Astro.cookies.get("qwb-creator-mode");
+if (creatorMode) {
+  return Astro.redirect("/");
+}
+
+// Detect language from URL path
+const pathname = Astro.url.pathname;
+const lang: Language =
+  pathname.startsWith("/fr/") || pathname === "/fr" ? "fr" : "en";
+const t = useTranslations(lang);
+---
+
+<LayoutApp
+  title="PostgreSQL 17 Complete Guide - Installation & Commands (2026) - Qwibee"
+  description="Complete guide to installing and using PostgreSQL 17 on Ubuntu and macOS in 2026. Learn user management, database operations, remote connections, and backup/restore procedures."
+  lang={lang}
+>
+  <main class="pt-24 pb-12 min-h-screen tutorial-main">
+    <div class="max-w-4xl mx-auto px-6">
+      <!-- Back Button -->
+      <a
+        href="/apps"
+        class="back-link inline-flex items-center gap-2 mb-8 text-cyan-400 hover:text-cyan-300 transition-colors"
+      >
+        <svg
+          class="w-5 h-5"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M15 19l-7-7 7-7"></path>
+        </svg>
+        Back to Apps & Tutorials
+      </a>
+
+      <!-- Header -->
+      <div class="tutorial-header mb-12">
+        <div class="flex items-center gap-4 mb-4">
+          <div class="tutorial-icon">🐘</div>
+          <div>
+            <h1 class="text-4xl font-bold text-white glitch-text mb-2">
+              PostgreSQL Complete Guide
+            </h1>
+            <div class="flex gap-2 flex-wrap">
+              <span class="badge-tutorial">Tutorial</span>
+              <span class="badge-platform">Ubuntu</span>
+              <span class="badge-platform">macOS</span>
+            </div>
+          </div>
+        </div>
+        <p class="text-gray-300 text-lg leading-relaxed">
+          Master PostgreSQL 17 from installation to advanced operations. Learn
+          how to install the latest PostgreSQL version, manage users and
+          databases, execute remote operations, and perform backup/restore
+          procedures on Ubuntu and macOS. Updated for 2026.
+        </p>
+      </div>
+
+      <!-- Section 1: Ubuntu Installation -->
+      <div class="tutorial-section mb-8">
+        <h2 class="section-title">
+          <span class="step-number">1</span>
+          Installation on Ubuntu
+        </h2>
+
+        <div class="step-card">
+          <div class="step-header">
+            <span class="step-badge">Recommended</span>
+            <h3 class="step-title">Quick Install (Automated Method)</h3>
+          </div>
+          <p class="step-content mb-3">
+            The easiest way to install PostgreSQL 17 using the official
+            PostgreSQL repository automated setup:
+          </p>
+          <div class="code-block">
+            <div class="code-header">
+              <span class="code-language">bash</span>
+              <button class="copy-button" data-copy-target="ubuntu-quick-install">
+                <svg
+                  class="w-4 h-4"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"
+                  ></path>
+                </svg>
+                Copy
+              </button>
+            </div>
+            <pre id="ubuntu-quick-install"><code>{`# Install PostgreSQL common tools and repository configuration
+sudo apt install -y postgresql-common
+
+# Run the automated repository setup script
+sudo /usr/share/postgresql-common/pgdg/apt.postgresql.org.sh
+
+# Install PostgreSQL 17 (latest stable version)
+sudo apt install -y postgresql-17`}</code></pre>
+          </div>
+          <p class="step-note">
+            💡 This is the recommended method by PostgreSQL. The script
+            automatically configures the official PostgreSQL repository and
+            imports the signing key. Supports Ubuntu 22.04 LTS (Jammy), 24.04 LTS
+            (Noble), and newer versions.
+          </p>
+        </div>
+
+        <div class="step-card">
+          <div class="step-header">
+            <span class="step-badge">Alternative</span>
+            <h3 class="step-title">Manual Repository Setup</h3>
+          </div>
+          <p class="step-content mb-3">
+            If you prefer manual configuration, follow these steps:
+          </p>
+          <div class="code-block">
+            <div class="code-header">
+              <span class="code-language">bash</span>
+              <button class="copy-button" data-copy-target="ubuntu-manual-install">
+                <svg
+                  class="w-4 h-4"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"
+                  ></path>
+                </svg>
+                Copy
+              </button>
+            </div>
+            <pre id="ubuntu-manual-install"><code>{`# Install prerequisites
+sudo apt install -y curl ca-certificates
+
+# Create directory for PostgreSQL keys
+sudo install -d /usr/share/postgresql-common/pgdg
+
+# Download and install the repository signing key
+sudo curl -o /usr/share/postgresql-common/pgdg/apt.postgresql.org.asc \
+  --fail https://www.postgresql.org/media/keys/ACCC4CF8.asc
+
+# Add PostgreSQL repository
+. /etc/os-release
+sudo sh -c "echo 'deb [signed-by=/usr/share/postgresql-common/pgdg/apt.postgresql.org.asc] https://apt.postgresql.org/pub/repos/apt $VERSION_CODENAME-pgdg main' > /etc/apt/sources.list.d/pgdg.list"
+
+# Update package list and install PostgreSQL
+sudo apt update
+sudo apt install -y postgresql-17`}</code></pre>
+          </div>
+        </div>
+
+        <div class="step-card">
+          <div class="step-header">
+            <span class="step-badge">Verify</span>
+            <h3 class="step-title">Verify Installation</h3>
+          </div>
+          <p class="step-content mb-3">
+            Test that PostgreSQL is installed and running correctly:
+          </p>
+          <div class="code-block">
+            <div class="code-header">
+              <span class="code-language">bash</span>
+              <button class="copy-button" data-copy-target="ubuntu-verify-code">
+                <svg
+                  class="w-4 h-4"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"
+                  ></path>
+                </svg>
+                Copy
+              </button>
+            </div>
+            <pre id="ubuntu-verify-code"><code>{`# Check PostgreSQL service status
+sudo systemctl status postgresql
+
+# Check PostgreSQL version
+sudo -u postgres psql -c "SELECT version();"
+
+# Connect to PostgreSQL (as postgres user)
+sudo -u postgres psql`}</code></pre>
+          </div>
+          <p class="step-note">
+            💡 PostgreSQL automatically starts after installation. The default
+            superuser is <code class="inline-code">postgres</code>.
+          </p>
+        </div>
+
+        <div class="step-card">
+          <div class="step-header">
+            <span class="step-badge">Post-Install</span>
+            <h3 class="step-title">Enable PostgreSQL on Boot</h3>
+          </div>
+          <p class="step-content mb-3">
+            Ensure PostgreSQL starts automatically when the system boots:
+          </p>
+          <div class="code-block">
+            <div class="code-header">
+              <span class="code-language">bash</span>
+              <button class="copy-button" data-copy-target="ubuntu-enable-code">
+                <svg
+                  class="w-4 h-4"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"
+                  ></path>
+                </svg>
+                Copy
+              </button>
+            </div>
+            <pre id="ubuntu-enable-code"><code>{`# Enable PostgreSQL to start on boot
+sudo systemctl enable postgresql
+
+# Start PostgreSQL service (if not already running)
+sudo systemctl start postgresql
+
+# Check status
+sudo systemctl status postgresql`}</code></pre>
+          </div>
+        </div>
+      </div>
+
+      <!-- Section 2: macOS Installation -->
+      <div class="tutorial-section mb-8">
+        <h2 class="section-title">
+          <span class="step-number">2</span>
+          Installation on macOS
+        </h2>
+
+        <div class="step-card">
+          <div class="step-header">
+            <span class="step-badge">Homebrew</span>
+            <h3 class="step-title">Install with Homebrew</h3>
+          </div>
+          <p class="step-content mb-3">
+            Install PostgreSQL using Homebrew package manager:
+          </p>
+          <div class="code-block">
+            <div class="code-header">
+              <span class="code-language">bash</span>
+              <button class="copy-button" data-copy-target="macos-install-code">
+                <svg
+                  class="w-4 h-4"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"
+                  ></path>
+                </svg>
+                Copy
+              </button>
+            </div>
+            <pre id="macos-install-code"><code>{`# Install PostgreSQL (installs latest version)
+brew install postgresql@17
+
+# Start PostgreSQL service (runs in background)
+brew services start postgresql@17
+
+# Verify installation
+psql --version`}</code></pre>
+          </div>
+          <p class="step-note">
+            💡 Homebrew installs the latest stable version. Use <code
+              class="inline-code">brew install postgresql@17</code
+            > for a specific version or <code class="inline-code"
+              >brew install postgresql</code
+            > for the latest.
+          </p>
+        </div>
+
+        <div class="step-card">
+          <div class="step-header">
+            <span class="step-badge">Manage Service</span>
+            <h3 class="step-title">Start, Stop, and Restart</h3>
+          </div>
+          <p class="step-content mb-3">
+            Manage the PostgreSQL service on macOS:
+          </p>
+          <div class="code-block">
+            <div class="code-header">
+              <span class="code-language">bash</span>
+              <button class="copy-button" data-copy-target="macos-service-code">
+                <svg
+                  class="w-4 h-4"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"
+                  ></path>
+                </svg>
+                Copy
+              </button>
+            </div>
+            <pre id="macos-service-code"><code>{`# Start PostgreSQL
+brew services start postgresql@17
+
+# Stop PostgreSQL
+brew services stop postgresql@17
+
+# Restart PostgreSQL
+brew services restart postgresql@17
+
+# List all Homebrew services
+brew services list`}</code></pre>
+          </div>
+        </div>
+
+        <div class="step-card">
+          <div class="step-header">
+            <span class="step-badge">Connect</span>
+            <h3 class="step-title">Connect to PostgreSQL</h3>
+          </div>
+          <p class="step-content mb-3">
+            After installation, connect to PostgreSQL:
+          </p>
+          <div class="code-block">
+            <div class="code-header">
+              <span class="code-language">bash</span>
+              <button class="copy-button" data-copy-target="macos-connect-code">
+                <svg
+                  class="w-4 h-4"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"
+                  ></path>
+                </svg>
+                Copy
+              </button>
+            </div>
+            <pre id="macos-connect-code"><code>{`# Connect to the default database
+psql postgres
+
+# Or connect to a specific database
+psql -d database_name`}</code></pre>
+          </div>
+          <p class="step-note">
+            💡 On macOS, Homebrew creates a superuser with your current username
+            by default, so you don't need to switch users.
+          </p>
+        </div>
+      </div>
+
+      <!-- Section 3: User & Database Management -->
+      <div class="tutorial-section mb-8">
+        <h2 class="section-title">
+          <span class="step-number">3</span>
+          User & Database Management
+        </h2>
+
+        <div class="step-card">
+          <div class="step-header">
+            <span class="step-badge">Connection</span>
+            <h3 class="step-title">Connect to PostgreSQL</h3>
+          </div>
+          <p class="step-content mb-3">
+            Connect to PostgreSQL as root or as a specific user:
+          </p>
+          <div class="code-block">
+            <div class="code-header">
+              <span class="code-language">bash</span>
+              <button class="copy-button" data-copy-target="connect-code">
+                <svg
+                  class="w-4 h-4"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"
+                  ></path>
+                </svg>
+                Copy
+              </button>
+            </div>
+            <pre id="connect-code"><code>{`# Connect as root
+psql postgres
+
+# Connect as a specific user
+psql postgres -U user1
+
+# List all users
+\\du`}</code></pre>
+          </div>
+        </div>
+
+        <div class="step-card">
+          <div class="step-header">
+            <span class="step-badge">Users</span>
+            <h3 class="step-title">Create and Manage Users</h3>
+          </div>
+          <p class="step-content mb-3">
+            Create users, set passwords, and assign roles:
+          </p>
+          <div class="code-block">
+            <div class="code-header">
+              <span class="code-language">sql</span>
+              <button class="copy-button" data-copy-target="users-code">
+                <svg
+                  class="w-4 h-4"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"
+                  ></path>
+                </svg>
+                Copy
+              </button>
+            </div>
+            <pre id="users-code"><code>{`-- Create a user without password
+CREATE USER user1 WITH PASSWORD '';
+
+-- Create a role with login (equivalent to CREATE USER)
+CREATE ROLE user1 WITH LOGIN PASSWORD '';
+
+-- Update user password
+ALTER USER user1 WITH PASSWORD 'your_password';
+
+-- Add roles to user
+ALTER ROLE user1 CREATEDB;`}</code></pre>
+          </div>
+        </div>
+
+        <div class="step-card">
+          <div class="step-header">
+            <span class="step-badge">Database</span>
+            <h3 class="step-title">Create and Configure Database</h3>
+          </div>
+          <p class="step-content mb-3">
+            Create databases and assign privileges:
+          </p>
+          <div class="code-block">
+            <div class="code-header">
+              <span class="code-language">sql</span>
+              <button class="copy-button" data-copy-target="database-code">
+                <svg
+                  class="w-4 h-4"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"
+                  ></path>
+                </svg>
+                Copy
+              </button>
+            </div>
+            <pre id="database-code"><code>{`-- Create database
+CREATE DATABASE dbname;
+
+-- Grant all privileges to user
+GRANT ALL PRIVILEGES ON DATABASE "dbname" TO user1;
+
+-- Change database owner
+ALTER DATABASE dbname OWNER TO user1;`}</code></pre>
+          </div>
+        </div>
+      </div>
+
+      <!-- Section 4: Useful Commands -->
+      <div class="tutorial-section mb-8">
+        <h2 class="section-title">
+          <span class="step-number">4</span>
+          Useful Commands
+        </h2>
+
+        <div class="step-card">
+          <div class="step-header">
+            <span class="step-badge">Commands</span>
+            <h3 class="step-title">Essential PostgreSQL Commands</h3>
+          </div>
+          <p class="step-content mb-3">
+            Common commands for database navigation and inspection:
+          </p>
+          <div class="code-block">
+            <div class="code-header">
+              <span class="code-language">sql</span>
+              <button class="copy-button" data-copy-target="commands-code">
+                <svg
+                  class="w-4 h-4"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"
+                  ></path>
+                </svg>
+                Copy
+              </button>
+            </div>
+            <pre id="commands-code"><code>{`-- Connect to a database
+\\connect dbname
+\\c dbname user1
+
+-- List all databases
+\\l
+
+-- List all tables
+\\dt
+
+-- See table structure (columns)
+\\d+ tablename
+
+-- Select all records from table
+SELECT * FROM tablename;`}</code></pre>
+          </div>
+        </div>
+      </div>
+
+      <!-- Section 5: Remote Connection -->
+      <div class="tutorial-section mb-8">
+        <h2 class="section-title">
+          <span class="step-number">5</span>
+          Remote Connection
+        </h2>
+
+        <div class="step-card">
+          <div class="step-header">
+            <span class="step-badge">Remote</span>
+            <h3 class="step-title">Connect to Remote Database</h3>
+          </div>
+          <p class="step-content mb-3">
+            Connect to PostgreSQL on a remote server:
+          </p>
+          <div class="code-block">
+            <div class="code-header">
+              <span class="code-language">bash</span>
+              <button class="copy-button" data-copy-target="remote-connect-code">
+                <svg
+                  class="w-4 h-4"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"
+                  ></path>
+                </svg>
+                Copy
+              </button>
+            </div>
+            <pre
+              id="remote-connect-code"><code>{`PGPASSWORD=[password] psql -U [user] -h [host] -p [port] -d [dbname]`}</code></pre>
+          </div>
+          <p class="step-note">
+            💡 Replace <code class="inline-code">[password]</code>, <code
+              class="inline-code">[user]</code
+            >, <code class="inline-code">[host]</code>, <code
+              class="inline-code">[port]</code
+            >, and <code class="inline-code">[dbname]</code> with your actual connection
+            details.
+          </p>
+        </div>
+      </div>
+
+      <!-- Section 6: Database Operations -->
+      <div class="tutorial-section mb-8">
+        <h2 class="section-title">
+          <span class="step-number">6</span>
+          Database Operations
+        </h2>
+
+        <div class="step-card">
+          <div class="step-header">
+            <span class="step-badge">Delete</span>
+            <h3 class="step-title">Delete Table Data</h3>
+          </div>
+          <p class="step-content mb-3">
+            Remove all data from a table (keeps the table structure):
+          </p>
+          <div class="code-block">
+            <div class="code-header">
+              <span class="code-language">sql</span>
+              <button class="copy-button" data-copy-target="delete-table-code">
+                <svg
+                  class="w-4 h-4"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"
+                  ></path>
+                </svg>
+                Copy
+              </button>
+            </div>
+            <pre id="delete-table-code"><code>{`DELETE FROM tablename;`}</code></pre>
+          </div>
+        </div>
+
+        <div class="step-card">
+          <div class="step-header">
+            <span class="step-badge">Drop</span>
+            <h3 class="step-title">Drop Database</h3>
+          </div>
+          <p class="step-content mb-3">
+            Permanently delete a database and all its data:
+          </p>
+          <div class="code-block">
+            <div class="code-header">
+              <span class="code-language">sql</span>
+              <button class="copy-button" data-copy-target="drop-db-code">
+                <svg
+                  class="w-4 h-4"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"
+                  ></path>
+                </svg>
+                Copy
+              </button>
+            </div>
+            <pre id="drop-db-code"><code>{`DROP DATABASE dbname;`}</code></pre>
+          </div>
+          <p class="step-note">
+            ⚠️ This operation is irreversible. Make sure you have a backup
+            before dropping a database.
+          </p>
+        </div>
+      </div>
+
+      <!-- Section 7: Backup & Restore -->
+      <div class="tutorial-section mb-8">
+        <h2 class="section-title">
+          <span class="step-number">7</span>
+          Backup & Restore
+        </h2>
+
+        <div class="step-card">
+          <div class="step-header">
+            <span class="step-badge">Restore</span>
+            <h3 class="step-title">Restore from Local Dump</h3>
+          </div>
+          <p class="step-content mb-3">
+            Restore a database from a local SQL dump file:
+          </p>
+          <div class="code-block">
+            <div class="code-header">
+              <span class="code-language">bash</span>
+              <button class="copy-button" data-copy-target="restore-local-code">
+                <svg
+                  class="w-4 h-4"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"
+                  ></path>
+                </svg>
+                Copy
+              </button>
+            </div>
+            <pre
+              id="restore-local-code"><code>{`psql dbname < /path/to/dump.sql`}</code></pre>
+          </div>
+        </div>
+
+        <div class="step-card">
+          <div class="step-header">
+            <span class="step-badge">Backup</span>
+            <h3 class="step-title">Dump Remote Database</h3>
+          </div>
+          <p class="step-content mb-3">
+            Create a backup of a remote database in tar format:
+          </p>
+          <div class="code-block">
+            <div class="code-header">
+              <span class="code-language">bash</span>
+              <button class="copy-button" data-copy-target="dump-remote-code">
+                <svg
+                  class="w-4 h-4"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"
+                  ></path>
+                </svg>
+                Copy
+              </button>
+            </div>
+            <pre
+              id="dump-remote-code"><code>{`PGPASSWORD=[password] pg_dump -h [host] -p 5432 -Ft -d [dbname] -U [user] > ./last_dump.tar`}</code></pre>
+          </div>
+          <p class="step-note">
+            💡 The <code class="inline-code">-Ft</code> flag creates a tar archive
+            format, which is useful for large databases and allows selective restoration.
+          </p>
+        </div>
+
+        <div class="step-card">
+          <div class="step-header">
+            <span class="step-badge">Reset</span>
+            <h3 class="step-title">Drop & Restore Remote Database</h3>
+          </div>
+          <p class="step-content mb-3">
+            Recreate a remote database and restore from a local dump:
+          </p>
+          <div class="code-block">
+            <div class="code-header">
+              <span class="code-language">bash</span>
+              <button
+                class="copy-button"
+                data-copy-target="drop-restore-remote-code"
+              >
+                <svg
+                  class="w-4 h-4"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"
+                  ></path>
+                </svg>
+                Copy
+              </button>
+            </div>
+            <pre id="drop-restore-remote-code"><code>{`# Recreate database
+echo "RECREATING DATABASE ..."
+printf '\\set AUTOCOMMIT on\\ndrop database [dbname]; create database [dbname];' | PGPASSWORD=[password] psql -h [host] -p [port] -d postgres -U [user]
+
+# Restore from dump
+echo "RESTORING DATABASE ..."
+PGPASSWORD=[password] pg_restore -h [host] -p [port] -Ft -d [dbname] -U [user] ./last_dump.tar`}</code></pre>
+          </div>
+          <p class="step-note">
+            ⚠️ This will completely delete and recreate the database. Ensure you
+            have a valid backup before running this command.
+          </p>
+        </div>
+      </div>
+
+      <!-- Important Notes -->
+      <div class="warning-box mb-8">
+        <div class="warning-icon">⚠️</div>
+        <div>
+          <h3 class="warning-title">Important Security Notes</h3>
+          <ul class="warning-list">
+            <li>
+              Always use strong passwords for PostgreSQL users in production
+              environments
+            </li>
+            <li>
+              Never store passwords in plain text or commit them to version
+              control
+            </li>
+            <li>
+              Configure <code class="inline-code">pg_hba.conf</code> properly to
+              restrict remote connections
+            </li>
+            <li>
+              Use SSL/TLS for remote connections to protect data in transit
+            </li>
+            <li>
+              Regular backups are essential - test your restore process
+              periodically
+            </li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Tip Box -->
+      <div class="tip-box">
+        <div class="tip-icon">💡</div>
+        <div>
+          <h3 class="tip-title">Pro Tips</h3>
+          <ul class="tip-list">
+            <li>
+              Use <code class="inline-code">.pgpass</code> file (<code
+                class="inline-code">~/.pgpass</code
+              >) to store credentials securely instead of using PGPASSWORD in
+              commands. Format: <code class="inline-code"
+                >hostname:port:database:username:password</code
+              >
+            </li>
+            <li>
+              PostgreSQL 17 includes improved performance features. Use <code
+                class="inline-code">EXPLAIN ANALYZE</code
+              > to profile slow queries
+            </li>
+            <li>
+              Use <code class="inline-code">pg_dump</code> with <code
+                class="inline-code">--schema-only</code
+              > or <code class="inline-code">--data-only</code> for selective backups.
+              Add <code class="inline-code">-Fc</code> (custom format) for best
+              compression
+            </li>
+            <li>
+              Configure automatic backups using cron jobs or systemd timers for
+              production databases. Test restore procedures regularly
+            </li>
+            <li>
+              PostgreSQL 17 has improved autovacuum, but you can still manually
+              run <code class="inline-code">VACUUM ANALYZE</code> for immediate
+              optimization
+            </li>
+            <li>
+              Enable connection pooling with pgBouncer for applications with many
+              connections
+            </li>
+            <li>
+              Use <code class="inline-code">psql -U username -d dbname -c "QUERY"</code>
+              for running one-off queries from scripts
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <style>
+    /* Main Content */
+    .tutorial-main {
+      position: relative;
+      z-index: 10;
+      background: transparent;
+    }
+
+    /* Back Link */
+    .back-link {
+      font-size: 0.95rem;
+      font-weight: 500;
+    }
+
+    /* Tutorial Header */
+    .tutorial-header {
+      padding: 2rem;
+      background: rgba(0, 0, 0, 0.6);
+      backdrop-filter: blur(20px);
+      border: 1px solid rgba(255, 0, 255, 0.3);
+      border-radius: 1rem;
+      box-shadow:
+        0 0 30px rgba(255, 0, 255, 0.2),
+        0 0 60px rgba(0, 255, 255, 0.1);
+    }
+
+    .tutorial-icon {
+      font-size: 4rem;
+      line-height: 1;
+    }
+
+    /* Badges */
+    .badge-tutorial {
+      display: inline-block;
+      padding: 0.25rem 0.75rem;
+      font-size: 0.75rem;
+      font-weight: 600;
+      background: rgba(0, 255, 255, 0.15);
+      border: 1px solid rgba(0, 255, 255, 0.4);
+      color: rgba(0, 255, 255, 0.9);
+      text-shadow: 0 0 10px rgba(0, 255, 255, 0.5);
+      border-radius: 9999px;
+    }
+
+    .badge-platform {
+      display: inline-block;
+      padding: 0.25rem 0.75rem;
+      font-size: 0.75rem;
+      font-weight: 600;
+      background: rgba(255, 0, 255, 0.15);
+      border: 1px solid rgba(255, 0, 255, 0.4);
+      color: rgba(255, 0, 255, 0.9);
+      text-shadow: 0 0 10px rgba(255, 0, 255, 0.5);
+      border-radius: 9999px;
+    }
+
+    /* Section Title */
+    .section-title {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      font-size: 1.75rem;
+      font-weight: 700;
+      color: white;
+      margin-bottom: 1.5rem;
+    }
+
+    .step-number {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 3rem;
+      height: 3rem;
+      background: rgba(255, 0, 255, 0.2);
+      border: 2px solid rgba(255, 0, 255, 0.5);
+      border-radius: 0.75rem;
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: rgba(255, 0, 255, 1);
+      text-shadow: 0 0 15px rgba(255, 0, 255, 0.8);
+    }
+
+    /* Step Card */
+    .step-card {
+      background: rgba(0, 0, 0, 0.5);
+      backdrop-filter: blur(15px);
+      border: 1px solid rgba(0, 255, 255, 0.3);
+      border-radius: 0.75rem;
+      padding: 1.5rem;
+      margin-bottom: 1rem;
+      transition: all 0.3s ease;
+    }
+
+    .step-card:hover {
+      border-color: rgba(0, 255, 255, 0.5);
+      box-shadow: 0 0 30px rgba(0, 255, 255, 0.2);
+    }
+
+    .step-header {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      margin-bottom: 0.75rem;
+    }
+
+    .step-badge {
+      padding: 0.25rem 0.625rem;
+      font-size: 0.75rem;
+      font-weight: 600;
+      background: rgba(0, 255, 255, 0.2);
+      border: 1px solid rgba(0, 255, 255, 0.5);
+      color: rgba(0, 255, 255, 1);
+      border-radius: 0.375rem;
+      text-shadow: 0 0 10px rgba(0, 255, 255, 0.6);
+      white-space: nowrap;
+    }
+
+    .step-title {
+      font-size: 1.125rem;
+      font-weight: 600;
+      color: white;
+    }
+
+    .step-content {
+      color: #d1d5db;
+      line-height: 1.6;
+    }
+
+    .step-note {
+      margin-top: 0.75rem;
+      padding: 0.75rem;
+      background: rgba(0, 255, 255, 0.1);
+      border-left: 3px solid rgba(0, 255, 255, 0.5);
+      border-radius: 0.375rem;
+      color: #d1d5db;
+      font-size: 0.9rem;
+    }
+
+    .step-note a {
+      text-decoration: underline;
+    }
+
+    /* Inline Code */
+    .inline-code {
+      padding: 0.125rem 0.5rem;
+      font-size: 0.875rem;
+      font-family: ui-monospace, monospace;
+      background: rgba(255, 0, 255, 0.15);
+      border: 1px solid rgba(255, 0, 255, 0.3);
+      border-radius: 0.25rem;
+      color: rgba(255, 0, 255, 0.9);
+    }
+
+    /* Code Block */
+    .code-block {
+      background: rgba(0, 0, 0, 0.7);
+      border: 1px solid rgba(0, 255, 255, 0.4);
+      border-radius: 0.75rem;
+      overflow: hidden;
+      margin-top: 0.75rem;
+    }
+
+    .code-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0.75rem 1rem;
+      background: rgba(0, 0, 0, 0.5);
+      border-bottom: 1px solid rgba(0, 255, 255, 0.3);
+    }
+
+    .code-language {
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: rgba(0, 255, 255, 0.8);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .copy-button {
+      display: flex;
+      align-items: center;
+      gap: 0.375rem;
+      padding: 0.375rem 0.75rem;
+      font-size: 0.75rem;
+      font-weight: 500;
+      background: rgba(255, 0, 255, 0.2);
+      border: 1px solid rgba(255, 0, 255, 0.4);
+      border-radius: 0.375rem;
+      color: rgba(255, 0, 255, 0.9);
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .copy-button:hover {
+      background: rgba(255, 0, 255, 0.3);
+      border-color: rgba(255, 0, 255, 0.6);
+    }
+
+    .code-block pre {
+      margin: 0;
+      padding: 1.25rem;
+      overflow-x: auto;
+    }
+
+    .code-block code {
+      font-family: ui-monospace, monospace;
+      font-size: 0.875rem;
+      line-height: 1.6;
+      color: #e5e7eb;
+    }
+
+    /* Warning Box */
+    .warning-box {
+      display: flex;
+      gap: 1rem;
+      padding: 1.5rem;
+      background: rgba(255, 165, 0, 0.1);
+      backdrop-filter: blur(15px);
+      border: 1px solid rgba(255, 165, 0, 0.4);
+      border-radius: 0.75rem;
+      box-shadow: 0 0 20px rgba(255, 165, 0, 0.15);
+    }
+
+    .warning-icon {
+      font-size: 2rem;
+      line-height: 1;
+    }
+
+    .warning-title {
+      font-size: 1.125rem;
+      font-weight: 600;
+      color: rgba(255, 165, 0, 1);
+      text-shadow: 0 0 10px rgba(255, 165, 0, 0.5);
+      margin-bottom: 0.75rem;
+    }
+
+    .warning-list {
+      list-style: disc;
+      padding-left: 1.25rem;
+      color: #d1d5db;
+      line-height: 1.8;
+    }
+
+    .warning-list li {
+      margin-bottom: 0.5rem;
+    }
+
+    /* Tip Box */
+    .tip-box {
+      display: flex;
+      gap: 1rem;
+      padding: 1.5rem;
+      background: rgba(0, 255, 255, 0.1);
+      backdrop-filter: blur(15px);
+      border: 1px solid rgba(0, 255, 255, 0.4);
+      border-radius: 0.75rem;
+      box-shadow: 0 0 20px rgba(0, 255, 255, 0.15);
+    }
+
+    .tip-icon {
+      font-size: 2rem;
+      line-height: 1;
+    }
+
+    .tip-title {
+      font-size: 1.125rem;
+      font-weight: 600;
+      color: rgba(0, 255, 255, 1);
+      text-shadow: 0 0 10px rgba(0, 255, 255, 0.5);
+      margin-bottom: 0.75rem;
+    }
+
+    .tip-list {
+      list-style: disc;
+      padding-left: 1.25rem;
+      color: #d1d5db;
+      line-height: 1.8;
+    }
+
+    .tip-list li {
+      margin-bottom: 0.5rem;
+    }
+
+    /* Glitch Text Effect */
+    .glitch-text {
+      text-shadow:
+        0 0 20px rgba(255, 0, 255, 0.8),
+        0 0 40px rgba(0, 255, 255, 0.6);
+    }
+  </style>
+
+  <script>
+    // Copy to clipboard functionality
+    document.addEventListener("DOMContentLoaded", () => {
+      const copyButtons = document.querySelectorAll(".copy-button");
+
+      copyButtons.forEach((button) => {
+        button.addEventListener("click", async () => {
+          const targetId = button.getAttribute("data-copy-target");
+          const codeElement = document.getElementById(targetId!);
+
+          if (codeElement) {
+            const text = codeElement.textContent || "";
+
+            try {
+              await navigator.clipboard.writeText(text);
+
+              // Visual feedback
+              const originalText = button.innerHTML;
+              button.innerHTML = `
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                </svg>
+                Copied!
+              `;
+
+              setTimeout(() => {
+                button.innerHTML = originalText;
+              }, 2000);
+            } catch (err) {
+              console.error("Failed to copy:", err);
+            }
+          }
+        });
+      });
+    });
+  </script>
+</LayoutApp>
