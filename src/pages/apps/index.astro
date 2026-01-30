@@ -3,6 +3,12 @@ import LayoutApp from "@/layouts/LayoutApp.astro";
 import { APPS_TUTORIALS } from "@/data/apps-tutorials";
 import { useTranslations, type Language } from "@/i18n/translations";
 
+// Redirect to / if in creator mode
+const creatorMode = Astro.cookies.get("qwb-creator-mode");
+if (creatorMode) {
+  return Astro.redirect("/");
+}
+
 // Detect language from URL path
 const pathname = Astro.url.pathname;
 const lang: Language =
