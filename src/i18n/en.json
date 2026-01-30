@@ -120,7 +120,7 @@
       },
       "section3": {
         "title": "3. Pricing and Payment",
-        "content": "Prices are displayed in euros including all taxes. Payment is processed securely through Stripe. We accept credit cards and other payment methods offered by Stripe."
+        "content": "Prices are displayed in dollars including all taxes. Payment is processed securely through Stripe. We accept credit cards and other payment methods offered by Stripe."
       },
       "section4": {
         "title": "4. Right of Withdrawal",
@@ -185,6 +185,96 @@
       "section8": {
         "title": "8. Contact",
         "content": "For any questions regarding your personal data or to exercise your rights, contact us via our contact form."
+      }
+    },
+    "creatorTermsOfSale": {
+      "title": "Terms of Sale",
+      "description": "Terms of Sale for qwibee.com creator platform",
+      "lastUpdated": "Last updated: January 2026",
+      "section1": {
+        "title": "1. Purpose",
+        "content": "These terms and conditions govern the purchase of digital content (images, videos, and other media) and subscriptions on the qwibee.com creator platform. By making a purchase, you unconditionally accept these terms."
+      },
+      "section2": {
+        "title": "2. Services Offered",
+        "intro": "Our platform offers access to exclusive digital content from creators through:",
+        "item1": "Creator Subscriptions: monthly or recurring subscriptions providing access to exclusive content from your favorite creators",
+        "item2": "Individual Content Purchases: permanent access to specific images, videos, or other digital media"
+      },
+      "section3": {
+        "title": "3. Pricing and Payment",
+        "content": "Prices are set by individual creators and displayed in dollars including all taxes. Payment is processed securely through Stripe. We accept credit cards and other payment methods offered by Stripe. Subscription prices may be adjusted by creators with advance notice."
+      },
+      "section4": {
+        "title": "4. Right of Withdrawal",
+        "content": "In accordance with current legislation regarding digital content, the right of withdrawal is forfeited once you have begun accessing or downloading the content, with your prior express consent. For subscriptions, you may cancel at any time, and your access will continue until the end of your current billing period."
+      },
+      "section5": {
+        "title": "5. Content Access and License",
+        "content": "After payment, you receive immediate access to the purchased or subscribed content. For subscriptions, access is granted for the duration of your active subscription. Individual purchases grant permanent personal access. All content remains the property of the creator. You receive a non-exclusive, non-transferable license for personal use only. Sharing, redistribution, or commercial use is strictly prohibited."
+      },
+      "section6": {
+        "title": "6. Intellectual Property",
+        "content": "All digital content (images, videos, media) on the platform is protected by copyright and belongs to the respective creators. Any reproduction, distribution, modification, or commercial use without explicit written permission from the creator is strictly prohibited and may result in legal action."
+      },
+      "section7": {
+        "title": "7. Creator Responsibility",
+        "content": "While we strive to provide a quality platform, individual creators are responsible for their content. Disputes regarding content quality or appropriateness should be addressed through our support system. Creators set their own prices and terms within our platform guidelines."
+      },
+      "section8": {
+        "title": "8. Contact",
+        "content": "For any questions regarding these terms of sale, please contact us via our contact form."
+      }
+    },
+    "creatorPrivacyPolicy": {
+      "title": "Privacy Policy",
+      "description": "Privacy Policy for qwibee.com creator platform",
+      "lastUpdated": "Last updated: January 2026",
+      "section1": {
+        "title": "1. Introduction",
+        "content": "qwibee.com is committed to protecting your privacy and personal data. This privacy policy describes how we collect, use, and protect your information when you access creator content, make purchases, or subscribe to creator profiles on our platform."
+      },
+      "section2": {
+        "title": "2. Data Collected",
+        "intro": "We collect the following data:",
+        "item1": "Email address for account management, authentication, and communication",
+        "item2": "Payment information (processed securely by Stripe, our payment provider)",
+        "item3": "Browsing data (cookies, IP address) to improve our services and platform experience",
+        "item4": "Purchase history, subscription details, and content access records",
+        "item5": "Preferences and interactions with creator content to personalize your experience"
+      },
+      "section3": {
+        "title": "3. Use of Data",
+        "intro": "Your data is used to:",
+        "item1": "Manage your access to purchased digital content and active subscriptions",
+        "item2": "Process your payments and manage your account and memberships",
+        "item3": "Facilitate communication between you, creators, and our support team",
+        "item4": "Send you notifications about subscriptions, new content, and account updates",
+        "item5": "Improve our platform, user experience, and content recommendations"
+      },
+      "section4": {
+        "title": "4. Data Sharing",
+        "content": "We never sell your personal data. Your payment information is processed exclusively by Stripe in accordance with their privacy policies. We share minimal necessary information with creators (such as subscription status) to enable content access. Creators do not receive your payment details."
+      },
+      "section5": {
+        "title": "5. Security",
+        "content": "We implement robust technical and organizational security measures to protect your data, payment information, and content access credentials against unauthorized access, loss, or alteration. All sensitive data is encrypted in transit and at rest."
+      },
+      "section6": {
+        "title": "6. Your Rights",
+        "intro": "In accordance with GDPR, you have the following rights:",
+        "item1": "Right to access, rectify, and delete your personal data",
+        "item2": "Right to data portability and to receive your data in a structured format",
+        "item3": "Right to object to processing and to restrict certain uses of your data",
+        "item4": "Right to withdraw consent for subscriptions and cancel at any time"
+      },
+      "section7": {
+        "title": "7. Cookies",
+        "content": "Our platform uses essential cookies for authentication, content access management, and platform functionality. We also use analytics cookies to understand how you use our platform and improve your experience. You can manage cookie preferences in your browser, though some features may be limited."
+      },
+      "section8": {
+        "title": "8. Contact",
+        "content": "For any questions regarding your personal data, to exercise your rights, or for privacy concerns, please contact us via our contact form."
       }
     }
   },

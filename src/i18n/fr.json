@@ -120,7 +120,7 @@
       },
       "section3": {
         "title": "3. Prix et paiement",
-        "content": "Les prix sont affichés en euros toutes taxes comprises. Le paiement s'effectue de manière sécurisée via Stripe. Nous acceptons les cartes bancaires et autres moyens de paiement proposés par Stripe."
+        "content": "Les prix sont affichés en dollars toutes taxes comprises. Le paiement s'effectue de manière sécurisée via Stripe. Nous acceptons les cartes bancaires et autres moyens de paiement proposés par Stripe."
       },
       "section4": {
         "title": "4. Droit de rétractation",
@@ -185,6 +185,96 @@
       "section8": {
         "title": "8. Contact",
         "content": "Pour toute question relative à vos données personnelles ou pour exercer vos droits, contactez-nous via notre formulaire de contact."
+      }
+    },
+    "creatorTermsOfSale": {
+      "title": "Conditions Générales de Vente",
+      "description": "Conditions générales de vente de la plateforme créateurs qwibee.com",
+      "lastUpdated": "Dernière mise à jour : Janvier 2026",
+      "section1": {
+        "title": "1. Objet",
+        "content": "Les présentes conditions générales régissent l'achat de contenus numériques (images, vidéos et autres médias) et d'abonnements sur la plateforme créateurs qwibee.com. En effectuant un achat, vous acceptez sans réserve les présentes conditions."
+      },
+      "section2": {
+        "title": "2. Services proposés",
+        "intro": "Notre plateforme offre l'accès à du contenu numérique exclusif de créateurs via :",
+        "item1": "Abonnements aux créateurs : abonnements mensuels ou récurrents donnant accès au contenu exclusif de vos créateurs préférés",
+        "item2": "Achats de contenu individuel : accès permanent à des images, vidéos ou autres médias numériques spécifiques"
+      },
+      "section3": {
+        "title": "3. Prix et paiement",
+        "content": "Les prix sont fixés par les créateurs individuels et affichés en dollars toutes taxes comprises. Le paiement s'effectue de manière sécurisée via Stripe. Nous acceptons les cartes bancaires et autres moyens de paiement proposés par Stripe. Les prix des abonnements peuvent être ajustés par les créateurs avec préavis."
+      },
+      "section4": {
+        "title": "4. Droit de rétractation",
+        "content": "Conformément à la législation en vigueur concernant les contenus numériques, le droit de rétractation est perdu dès lors que vous avez commencé à accéder ou télécharger le contenu, avec votre accord préalable exprès. Pour les abonnements, vous pouvez annuler à tout moment, et votre accès se poursuivra jusqu'à la fin de votre période de facturation en cours."
+      },
+      "section5": {
+        "title": "5. Accès au contenu et licence",
+        "content": "Après paiement, vous recevez un accès immédiat au contenu acheté ou souscrit. Pour les abonnements, l'accès est accordé pendant la durée de votre abonnement actif. Les achats individuels accordent un accès personnel permanent. Tous les contenus restent la propriété du créateur. Vous recevez une licence non exclusive et non transférable pour usage personnel uniquement. Le partage, la redistribution ou l'utilisation commerciale sont strictement interdits."
+      },
+      "section6": {
+        "title": "6. Propriété intellectuelle",
+        "content": "Tous les contenus numériques (images, vidéos, médias) de la plateforme sont protégés par le droit d'auteur et appartiennent aux créateurs respectifs. Toute reproduction, distribution, modification ou utilisation commerciale sans autorisation écrite explicite du créateur est strictement interdite et peut entraîner des poursuites judiciaires."
+      },
+      "section7": {
+        "title": "7. Responsabilité des créateurs",
+        "content": "Bien que nous nous efforcions de fournir une plateforme de qualité, les créateurs individuels sont responsables de leur contenu. Les litiges concernant la qualité ou la pertinence du contenu doivent être traités via notre système de support. Les créateurs fixent leurs propres prix et conditions dans le cadre de nos directives de plateforme."
+      },
+      "section8": {
+        "title": "8. Contact",
+        "content": "Pour toute question concernant ces conditions de vente, veuillez nous contacter via notre formulaire de contact."
+      }
+    },
+    "creatorPrivacyPolicy": {
+      "title": "Politique de Confidentialité",
+      "description": "Politique de confidentialité de la plateforme créateurs qwibee.com",
+      "lastUpdated": "Dernière mise à jour : Janvier 2026",
+      "section1": {
+        "title": "1. Introduction",
+        "content": "qwibee.com s'engage à protéger votre vie privée et vos données personnelles. Cette politique de confidentialité décrit comment nous collectons, utilisons et protégeons vos informations lorsque vous accédez au contenu des créateurs, effectuez des achats ou vous abonnez aux profils de créateurs sur notre plateforme."
+      },
+      "section2": {
+        "title": "2. Données collectées",
+        "intro": "Nous collectons les données suivantes :",
+        "item1": "Adresse email pour la gestion de compte, l'authentification et la communication",
+        "item2": "Informations de paiement (traitées de manière sécurisée par Stripe, notre prestataire de paiement)",
+        "item3": "Données de navigation (cookies, adresse IP) pour améliorer nos services et l'expérience de la plateforme",
+        "item4": "Historique d'achats, détails des abonnements et enregistrements d'accès aux contenus",
+        "item5": "Préférences et interactions avec le contenu des créateurs pour personnaliser votre expérience"
+      },
+      "section3": {
+        "title": "3. Utilisation des données",
+        "intro": "Vos données sont utilisées pour :",
+        "item1": "Gérer votre accès aux contenus numériques achetés et aux abonnements actifs",
+        "item2": "Traiter vos paiements et gérer votre compte et vos abonnements",
+        "item3": "Faciliter la communication entre vous, les créateurs et notre équipe de support",
+        "item4": "Vous envoyer des notifications concernant les abonnements, les nouveaux contenus et les mises à jour de compte",
+        "item5": "Améliorer notre plateforme, l'expérience utilisateur et les recommandations de contenu"
+      },
+      "section4": {
+        "title": "4. Partage des données",
+        "content": "Nous ne vendons jamais vos données personnelles. Vos informations de paiement sont traitées exclusivement par Stripe conformément à leurs politiques de confidentialité. Nous partageons un minimum d'informations nécessaires avec les créateurs (comme le statut d'abonnement) pour permettre l'accès au contenu. Les créateurs ne reçoivent pas vos coordonnées de paiement."
+      },
+      "section5": {
+        "title": "5. Sécurité",
+        "content": "Nous mettons en œuvre des mesures de sécurité techniques et organisationnelles robustes pour protéger vos données, informations de paiement et identifiants d'accès au contenu contre tout accès non autorisé, perte ou altération. Toutes les données sensibles sont cryptées en transit et au repos."
+      },
+      "section6": {
+        "title": "6. Vos droits",
+        "intro": "Conformément au RGPD, vous disposez des droits suivants :",
+        "item1": "Droit d'accès, de rectification et de suppression de vos données personnelles",
+        "item2": "Droit à la portabilité des données et à recevoir vos données dans un format structuré",
+        "item3": "Droit d'opposition au traitement et de restriction de certaines utilisations de vos données",
+        "item4": "Droit de retirer votre consentement pour les abonnements et d'annuler à tout moment"
+      },
+      "section7": {
+        "title": "7. Cookies",
+        "content": "Notre plateforme utilise des cookies essentiels pour l'authentification, la gestion de l'accès au contenu et le fonctionnement de la plateforme. Nous utilisons également des cookies analytiques pour comprendre comment vous utilisez notre plateforme et améliorer votre expérience. Vous pouvez gérer les préférences des cookies dans votre navigateur, bien que certaines fonctionnalités puissent être limitées."
+      },
+      "section8": {
+        "title": "8. Contact",
+        "content": "Pour toute question concernant vos données personnelles, pour exercer vos droits ou pour toute préoccupation relative à la confidentialité, veuillez nous contacter via notre formulaire de contact."
       }
     }
   },
