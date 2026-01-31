@@ -16,6 +16,7 @@
     "restart:prod": "./bin/restart.prod.sh",
     "translate": "node scripts/generate-translations.js",
     "prepare:medias": "node scripts/prepare-medias.js",
+    "cleanup:medias": "node scripts/cleanup-medias.js",
     "generate:datas": "node scripts/generate-datas.js"
   },
   "dependencies": {
