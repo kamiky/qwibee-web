@@ -173,6 +173,19 @@ async function generateVideoMetadata(uniqueId, sequentialNumber, paidFilename, p
 }
 
 /**
+ * Generate a URL-friendly slug from a username
+ * Converts to lowercase and removes special characters
+ */
+function generateSlug(username) {
+  return username
+    .toLowerCase()
+    .trim()
+    .replace(/[^a-z0-9-]/g, '-') // Replace non-alphanumeric chars with hyphens
+    .replace(/-+/g, '-') // Replace multiple hyphens with single hyphen
+    .replace(/^-|-$/g, ''); // Remove leading/trailing hyphens
+}
+
+/**
  * Read existing profile JSON if it exists
  */
 async function readExistingProfile(profileId) {
@@ -397,9 +410,13 @@ async function generateProfileJson(folderPath, profileId) {
     : Math.floor(Math.random() * 21) + 10;
   
   // Create profile object, preserving existing data where available
+  const username = existingProfile?.username || profileId;
+  const slug = existingProfile?.slug || generateSlug(username);
+  
   const profile = {
     id: profileId,
-    username: existingProfile?.username || profileId,
+    slug,
+    username,
     displayName: existingProfile?.displayName || {
       en: `Creator ${profileId.substring(0, 8)}`,
       fr: `Créateur ${profileId.substring(0, 8)}`,
@@ -454,6 +471,7 @@ export interface Video {
 
 export interface Profile {
   id: string;
+  slug: string;
   username: string;
   displayName: {
     en: string;
@@ -473,6 +491,15 @@ ${imports}
 
 export const profiles: Record<string, Profile> = {
 ${profilesObject}
+};
+
+// Helper function to generate profile URL
+export const getProfileUrl = (profileId: string, lang: 'en' | 'fr' = 'en'): string => {
+  const profile = profiles[profileId];
+  if (!profile) return '/404';
+  
+  const basePath = lang === 'fr' ? '/fr' : '';
+  return \`\${basePath}/u/\${profile.slug}/\${profile.id}\`;
 };
 `;
 }
