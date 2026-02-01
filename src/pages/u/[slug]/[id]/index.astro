@@ -1,7 +1,7 @@
 ---
 import LayoutCreator from "@/layouts/LayoutCreator.astro";
 import { useTranslations, type Language } from "@/i18n/translations";
-import { profiles, type ContentType } from "@/data/profiles";
+import { profiles, type ContentType, getProfileUrl } from "@/data/profiles";
 
 const { slug, id } = Astro.params;
 
@@ -130,6 +130,13 @@ const getVideoFilename = (
 
 // Keep original order from data file
 const sortedVideos = [...profile.videos];
+
+// Get all profiles as array (excluding current profile)
+const allProfiles = Object.values(profiles).filter(p => p.id !== profileId);
+
+// Randomly select 3 creators for the Explore section
+const shuffled = [...allProfiles].sort(() => Math.random() - 0.5);
+const randomCreators = shuffled.slice(0, 3);
 ---
 
 <LayoutCreator
@@ -499,6 +506,60 @@ const sortedVideos = [...profile.videos];
           })()}
       </section>
     </div>
+
+    <!-- Explore Creators Section -->
+    <section id="explore-creators" class="py-20 px-6 bg-gray-50">
+      <div class="max-w-7xl mx-auto">
+        <div class="text-center mb-16">
+          <h2
+            class="text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-900 mb-4"
+          >
+            Explore
+          </h2>
+        </div>
+
+        <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+          {
+            randomCreators.map((exploreProfile) => (
+              <a
+                href={getProfileUrl(exploreProfile.id, lang)}
+                class="group bg-white border border-gray-200 rounded-2xl overflow-hidden hover:border-brand-blue-500 hover:shadow-xl transition-all duration-300 hover:transform hover:-translate-y-1"
+              >
+                <div class="aspect-square bg-gradient-to-br from-blue-50 to-purple-50 flex items-center justify-center overflow-hidden">
+                  {exploreProfile.avatar ? (
+                    <img
+                      src={exploreProfile.avatar}
+                      alt={exploreProfile.displayName[lang]}
+                      class="w-full h-full object-cover object-top group-hover:scale-110 transition-transform duration-300"
+                    />
+                  ) : (
+                    <div class="text-6xl">👤</div>
+                  )}
+                </div>
+                <div class="p-6">
+                  <h3 class="text-xl font-bold mb-2 text-gray-900 group-hover:text-brand-blue-500 transition-colors">
+                    {exploreProfile.displayName[lang]}
+                  </h3>
+                  <div class="flex items-center justify-between">
+                    <span class="text-sm text-gray-500">
+                      {exploreProfile.videos.length} {t.profile.videos}
+                    </span>
+                    {exploreProfile.membershipPrice !== undefined && (
+                      <span class="text-brand-blue-500 font-semibold">
+                        {exploreProfile.membershipPrice === 0 
+                          ? "Free" 
+                          : `$${(exploreProfile.membershipPrice / 100).toFixed(2)}${t.profile.perMonth}`
+                        }
+                      </span>
+                    )}
+                  </div>
+                </div>
+              </a>
+            ))
+          }
+        </div>
+      </div>
+    </section>
   </main>
 
   <!-- Pass minimal data to client-side script -->
