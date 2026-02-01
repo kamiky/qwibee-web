@@ -12,7 +12,8 @@ The build process now uses a safe two-step approach that prevents broken builds 
 1. Backup current dist/          → dist-backup/
 2. Run astro build                → Creates new dist/
 3. Copy uploads to dist/          → dist/client/uploads
-4. Success?
+4. Create symlink                 → dist/server/client → ../client
+5. Success?
    ✓ YES: Delete dist-backup/
    ✗ NO:  Restore dist/ from dist-backup/
 ```
@@ -51,7 +52,11 @@ Both commands use `bin/safe-build.sh` which handles the entire safe build proces
    - Copy uploads using rsync with exclusions
    - If copy fails → restore from backup and exit
 
-4. **Cleanup Phase**
+4. **Symlink Phase**
+   - Create `dist/server/client -> ../client` symlink
+   - Required for SSR mode to access static assets
+
+5. **Cleanup Phase**
    - Remove `dist-backup/` on success
 
 ### Error Handling
@@ -160,3 +165,28 @@ yarn build
 3. **Same Locally & Production**: Consistent behavior everywhere
 4. **Clear Feedback**: Scripts report exactly what happened
 5. **Simple to Use**: Just `yarn build` or `yarn build:prod`
+
+## Troubleshooting
+
+### No Styles / MIME Type Errors
+
+**Symptom:**
+- Running `yarn start` shows no styles
+- Browser console error: "Expected a JavaScript-or-Wasm module script but the server responded with a MIME type of 'text/html'"
+
+**Cause:**
+Missing symlink `dist/server/client -> ../client`
+
+**Solution:**
+```bash
+# Quick fix (manual):
+cd dist/server
+ln -sf ../client ./client
+
+# Permanent fix:
+yarn build  # Rebuild with safe-build.sh (creates symlink automatically)
+```
+
+**Why this happens:**
+Astro SSR mode requires the server to access static assets (CSS, JS) via the symlink. Without it, the server can't find the client assets.
+

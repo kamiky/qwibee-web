@@ -103,7 +103,22 @@ fi
 FILE_COUNT=$(find dist/client/uploads -type f 2>/dev/null | wc -l | tr -d ' ')
 echo "     ✓ Copied $FILE_COUNT files"
 
-# Step 4: Clean up backup
+# Step 4: Create symlink for prerendered pages
+echo "  🔗 Creating symlink for prerendered pages..."
+if [ -d "dist/server" ]; then
+  cd dist/server
+  # Remove existing symlink if it exists
+  if [ -L "client" ] || [ -d "client" ]; then
+    rm -rf client
+  fi
+  ln -sf ../client ./client
+  cd ../..
+  echo "     ✓ Symlink created: dist/server/client -> ../client"
+else
+  echo "     ⚠️  dist/server not found, skipping symlink creation"
+fi
+
+# Step 5: Clean up backup
 if [ -d "dist-backup" ]; then
   echo "  🗑️  Removing backup..."
   rm -rf dist-backup
