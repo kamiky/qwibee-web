@@ -33,8 +33,8 @@ if [ $? -ne 0 ]; then
   exit 1
 fi
 
-# Step 3: Copy uploads
-echo "  📂 Copying uploads to dist/client/uploads..."
+# Step 3: Create symlink for uploads
+echo "  🔗 Creating symlink for uploads..."
 
 if [ ! -d "dist/client" ]; then
   echo "❌ Error: dist/client directory does not exist."
@@ -42,6 +42,7 @@ if [ ! -d "dist/client" ]; then
   exit 1
 fi
 
+# Remove existing uploads folder/symlink if it exists
 if [ -d "dist/client/uploads" ] || [ -L "dist/client/uploads" ]; then
   rm -rf dist/client/uploads
 fi
@@ -51,28 +52,31 @@ if [ -d "/var/www/qwibee-uploads" ]; then
   UPLOADS_SRC="/var/www/qwibee-uploads"
   echo "     📍 Production environment"
 else
-  UPLOADS_SRC="$WEB_DIR/../uploads"
+  # For local environment, use absolute path
+  UPLOADS_SRC="$(cd "$WEB_DIR/../uploads" && pwd)"
   echo "     📍 Local environment"
 fi
 
-rsync -a \
-  --exclude='.git' \
-  --exclude='.gitignore' \
-  --exclude='node_modules' \
-  --exclude='.DS_Store' \
-  --exclude='package.json' \
-  --exclude='README.md' \
-  --exclude='scripts' \
-  "$UPLOADS_SRC/" "dist/client/uploads/"
+# Create symlink
+ln -sf "$UPLOADS_SRC" "dist/client/uploads"
 
 if [ $? -ne 0 ]; then
-  echo "❌ Failed to copy uploads!"
+  echo "❌ Failed to create uploads symlink!"
   rm -rf dist
   exit 1
 fi
 
-FILE_COUNT=$(find dist/client/uploads -type f 2>/dev/null | wc -l | tr -d ' ')
-echo "     ✓ Copied $FILE_COUNT files"
+# Verify symlink was created
+if [ -L "dist/client/uploads" ]; then
+  TARGET=$(readlink dist/client/uploads)
+  FILE_COUNT=$(find "$UPLOADS_SRC" -type f 2>/dev/null | wc -l | tr -d ' ')
+  echo "     ✓ Symlink created: uploads -> $TARGET"
+  echo "     ✓ $FILE_COUNT files accessible"
+else
+  echo "❌ Failed to verify uploads symlink!"
+  rm -rf dist
+  exit 1
+fi
 
 # Step 4: Create symlink for SSR
 echo "  🔗 Creating symlink..."
