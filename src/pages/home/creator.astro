@@ -15,6 +15,10 @@ const isDevelopment = import.meta.env.MODE === "development";
 // Get all profiles as array
 const allProfiles = Object.values(profiles);
 
+// Randomly select 3 creators
+const shuffled = [...allProfiles].sort(() => Math.random() - 0.5);
+const randomCreators = shuffled.slice(0, 3);
+
 // Get profile1 avatar for hero images
 const profile1Avatar = "/home/avatar1.jpg";
 const profile2Avatar = "/home/avatar2.jpg";
@@ -136,24 +140,20 @@ const profile3Avatar = "/home/avatar3.jpg";
 
     
 
-    {isDevelopment && (
-    <!-- Featured Creators Section -->
+    <!-- Explore Creators Section -->
     <section id="creators" class="py-20 px-6 bg-gray-50">
       <div class="max-w-7xl mx-auto">
         <div class="text-center mb-16">
           <h2
             class="text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-900 mb-4"
           >
-            {t.sections.creators.title}
+            Explore
           </h2>
-          <p class="text-lg sm:text-xl text-gray-600 max-w-2xl mx-auto">
-            {t.sections.creators.subtitle}
-          </p>
         </div>
 
         <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
           {
-            allProfiles.map((profile) => (
+            randomCreators.map((profile) => (
               <a
                 href={getProfileUrl(profile.id, lang)}
                 class="group bg-white border border-gray-200 rounded-2xl overflow-hidden hover:border-brand-blue-500 hover:shadow-xl transition-all duration-300 hover:transform hover:-translate-y-1"
@@ -196,7 +196,6 @@ const profile3Avatar = "/home/avatar3.jpg";
         </div>
       </div>
     </section>
-    )}
 
 <!-- Creator Contact Form Section -->
     <section id="creator-contact" class="py-20 px-6 bg-white">
