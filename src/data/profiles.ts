@@ -23,6 +23,7 @@ export interface Video {
 
 export interface Profile {
   id: string;
+  slug: string;
   username: string;
   displayName: {
     en: string;
@@ -48,4 +49,13 @@ export const profiles: Record<string, Profile> = {
   uh29p8bf: uh29p8bf as Profile,
   uxykli0k: uxykli0k as Profile,
   u2as61e7: u2as61e7 as Profile,
+};
+
+// Helper function to generate profile URL
+export const getProfileUrl = (profileId: string, lang: 'en' | 'fr' = 'en'): string => {
+  const profile = profiles[profileId];
+  if (!profile) return '/404';
+  
+  const basePath = lang === 'fr' ? '/fr' : '';
+  return `${basePath}/u/${profile.slug}/${profile.id}`;
 };

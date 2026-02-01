@@ -52,17 +52,20 @@ export const POST: APIRoute = async ({ request, url }) => {
     const backendUrl =
       import.meta.env.PUBLIC_API_URL || "http://localhost:5002";
 
+    // Import profile helper to get proper URLs
+    const { getProfileUrl } = await import("@/data/profiles");
+
     // Determine final destination URLs (these get stored in DB)
     // For app memberships (profileId is null), redirect to home page
     // For creator memberships (profileId is set), redirect to creator page
     const destinationSuccessUrl = successUrl || (
       profileId 
-        ? `${baseUrl}/creator/${profileId}?membership=success`
+        ? `${baseUrl}${getProfileUrl(profileId)}?membership=success`
         : `${baseUrl}/?membership=success`
     );
     const destinationCancelUrl = cancelUrl || (
       profileId 
-        ? `${baseUrl}/creator/${profileId}?membership=canceled`
+        ? `${baseUrl}${getProfileUrl(profileId)}?membership=canceled`
         : `${baseUrl}/?membership=canceled`
     );
 

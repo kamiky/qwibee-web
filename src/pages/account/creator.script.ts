@@ -1,6 +1,6 @@
 import { useTranslations } from "@/i18n/translations";
 import type { Language } from "@/i18n/translations";
-import { profiles } from "@/data/profiles";
+import { profiles, getProfileUrl } from "@/data/profiles";
 import {
   getAuth,
   clearAuth,
@@ -244,10 +244,7 @@ export function initAccountPage() {
               dateOptions
             );
             const price = `$${(pc.amount / 100).toFixed(2)}`;
-            const profileUrl =
-              lang === "fr"
-                ? `/fr/creator/${pc.profileId}`
-                : `/creator/${pc.profileId}`;
+            const profileUrl = getProfileUrl(pc.profileId, lang);
 
             return `
               <div class="bg-gray-50 rounded-lg p-5">
@@ -338,10 +335,7 @@ export function initAccountPage() {
               renewalText = `${translations.account.membership.renews} ${new Date(m.currentPeriodEnd).toLocaleDateString(lang === "fr" ? "fr-FR" : "en-US", dateOptions)}`;
             }
 
-            const profileUrl =
-              lang === "fr"
-                ? `/fr/creator/${m.profileId}`
-                : `/creator/${m.profileId}`;
+            const profileUrl = getProfileUrl(m.profileId, lang);
 
             // Determine button label and icon based on cancel status
             const buttonLabel = m.cancelAtPeriodEnd

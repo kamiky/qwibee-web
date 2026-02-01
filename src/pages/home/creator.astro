@@ -1,7 +1,7 @@
 ---
 import LayoutCreator from "@/layouts/LayoutCreator.astro";
 import { useTranslations, type Language } from "@/i18n/translations";
-import { profiles } from "@/data/profiles";
+import { profiles, getProfileUrl } from "@/data/profiles";
 
 const lang: Language = "en";
 const t = useTranslations(lang);
@@ -19,11 +19,6 @@ const allProfiles = Object.values(profiles);
 const profile1Avatar = "/home/avatar1.jpg";
 const profile2Avatar = "/home/avatar2.jpg";
 const profile3Avatar = "/home/avatar3.jpg";
-
-// Helper function to generate profile URL based on language
-const getProfileUrl = (profileId: string) => {
-  return (lang as string) === "en" ? `/creator/${profileId}` : `/${lang}/creator/${profileId}`;
-};
 ---
 
 <LayoutCreator
@@ -160,7 +155,7 @@ const getProfileUrl = (profileId: string) => {
           {
             allProfiles.map((profile) => (
               <a
-                href={getProfileUrl(profile.id)}
+                href={getProfileUrl(profile.id, lang)}
                 class="group bg-white border border-gray-200 rounded-2xl overflow-hidden hover:border-brand-blue-500 hover:shadow-xl transition-all duration-300 hover:transform hover:-translate-y-1"
               >
                 <div class="aspect-square bg-gradient-to-br from-blue-50 to-purple-50 flex items-center justify-center overflow-hidden">

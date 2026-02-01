@@ -3,15 +3,18 @@ import LayoutCreator from "@/layouts/LayoutCreator.astro";
 import { useTranslations, type Language } from "@/i18n/translations";
 import { profiles, type ContentType } from "@/data/profiles";
 
-const { profileId } = Astro.params;
+const { slug, id } = Astro.params;
 
 // Get profile data first to check if it exists
-const profile = profiles[profileId || ""];
+const profile = profiles[id || ""];
 
-// Return 404 if profile not found (before setting any cookies)
-if (!profile) {
+// Validate slug matches the profile
+if (!profile || profile.slug !== slug) {
   return Astro.redirect("/404");
 }
+
+// Use id as profileId for compatibility with rest of the code
+const profileId = id;
 
 // Set cookie to indicate user is in creator mode (only if profile exists)
 Astro.cookies.set('qwb-creator-mode', 'true', {
@@ -525,8 +528,8 @@ const sortedVideos = [...profile.videos];
   <!-- Initialize the page with the external script -->
   <script>
     /* import to keep the full path for generated /fr files */
-    import { initProfilePage } from "@/pages/creator/[profileId]/profilePage.script.ts";
-    import type { ProfilePageData } from "@/pages/creator/[profileId]/profilePage.script.ts";
+    import { initProfilePage } from "@/pages/u/[slug]/[id]/profilePage.script.ts";
+    import type { ProfilePageData } from "@/pages/u/[slug]/[id]/profilePage.script.ts";
     
     if (window.__profilePageData) {
       initProfilePage(window.__profilePageData as ProfilePageData);

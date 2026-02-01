@@ -51,17 +51,20 @@ export const POST: APIRoute = async ({ request, url }) => {
     const baseUrl = import.meta.env.PUBLIC_APP_URL || url.origin;
     const backendUrl = import.meta.env.PUBLIC_API_URL || "http://localhost:5002";
 
+    // Import profile helper to get proper URLs
+    const { getProfileUrl } = await import("@/data/profiles");
+
     // Determine final destination URLs (these get stored in DB)
     // For app lifetime access (profileId is null), redirect to home page
     // For creator content (profileId is set), redirect to creator page
     const destinationSuccessUrl = successUrl || (
       profileId 
-        ? `${baseUrl}/creator/${profileId}?content_purchase=success&video_id=${videoId}`
+        ? `${baseUrl}${getProfileUrl(profileId)}?content_purchase=success&video_id=${videoId}`
         : `${baseUrl}/?purchase=success`
     );
     const destinationCancelUrl = cancelUrl || (
       profileId 
-        ? `${baseUrl}/creator/${profileId}?content_purchase=canceled`
+        ? `${baseUrl}${getProfileUrl(profileId)}?content_purchase=canceled`
         : `${baseUrl}/?purchase=canceled`
     );
 
