@@ -9,7 +9,7 @@ lerna-debug.log*
 
 node_modules
 dist
-dist-backup
+build
 dist-ssr
 *.local
 .astro

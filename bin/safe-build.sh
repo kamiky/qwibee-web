@@ -1,5 +1,5 @@
 #!/bin/bash
-# Safe build script: builds to dist-tmp, then swaps with dist if successful
+# Safe build script: builds to dist/, renames to build/ on success
 
 SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 WEB_DIR="$(dirname "$SCRIPT_DIR")"
@@ -7,18 +7,15 @@ BUILD_MODE="${1:-development}"
 
 cd "$WEB_DIR"
 
-echo "🏗️  Starting safe build process (mode: $BUILD_MODE)..."
+echo "🏗️  Starting build process (mode: $BUILD_MODE)..."
 
-# Step 1: Backup current dist to dist-backup if it exists
+# Step 1: Remove old dist/ if it exists (from previous failed build)
 if [ -d "dist" ]; then
-  echo "  💾 Backing up current dist to dist-backup..."
-  if [ -d "dist-backup" ]; then
-    rm -rf dist-backup
-  fi
-  mv dist dist-backup
+  echo "  🗑️  Removing old dist/..."
+  rm -rf dist
 fi
 
-# Step 2: Build (will create new dist/)
+# Step 2: Build (Astro builds to dist/)
 echo "  📦 Building..."
 if [ "$BUILD_MODE" = "production" ]; then
   yarn translate && astro check && astro build --mode production
@@ -29,38 +26,22 @@ fi
 # Check if build was successful
 if [ $? -ne 0 ]; then
   echo "❌ Build failed!"
-  
-  # Restore backup if build failed
-  if [ -d "dist-backup" ]; then
-    echo "  🔄 Restoring previous dist from backup..."
-    if [ -d "dist" ]; then
-      rm -rf dist
-    fi
-    mv dist-backup dist
-    echo "  ✓ Previous build restored"
+  echo "  🗑️  Cleaning up dist/..."
+  if [ -d "dist" ]; then
+    rm -rf dist
   fi
-  
   exit 1
 fi
 
-# Step 3: Copy uploads to new dist
+# Step 3: Copy uploads
 echo "  📂 Copying uploads to dist/client/uploads..."
 
-# Check if dist/client exists
 if [ ! -d "dist/client" ]; then
   echo "❌ Error: dist/client directory does not exist."
-  
-  # Restore backup
-  if [ -d "dist-backup" ]; then
-    echo "  🔄 Restoring previous dist from backup..."
-    rm -rf dist
-    mv dist-backup dist
-  fi
-  
+  rm -rf dist
   exit 1
 fi
 
-# Remove existing uploads folder in dist if it exists
 if [ -d "dist/client/uploads" ] || [ -L "dist/client/uploads" ]; then
   rm -rf dist/client/uploads
 fi
@@ -68,15 +49,12 @@ fi
 # Determine source based on environment
 if [ -d "/var/www/qwibee-uploads" ]; then
   UPLOADS_SRC="/var/www/qwibee-uploads"
-  echo "     📍 Production environment detected"
-  echo "     Copying /var/www/qwibee-uploads -> dist/client/uploads..."
+  echo "     📍 Production environment"
 else
   UPLOADS_SRC="$WEB_DIR/../uploads"
-  echo "     📍 Local environment detected"
-  echo "     Copying ../uploads -> dist/client/uploads..."
+  echo "     📍 Local environment"
 fi
 
-# Copy uploads folder using rsync
 rsync -a \
   --exclude='.git' \
   --exclude='.gitignore' \
@@ -89,42 +67,36 @@ rsync -a \
 
 if [ $? -ne 0 ]; then
   echo "❌ Failed to copy uploads!"
-  
-  # Restore backup
-  if [ -d "dist-backup" ]; then
-    echo "  🔄 Restoring previous dist from backup..."
-    rm -rf dist
-    mv dist-backup dist
-  fi
-  
+  rm -rf dist
   exit 1
 fi
 
 FILE_COUNT=$(find dist/client/uploads -type f 2>/dev/null | wc -l | tr -d ' ')
 echo "     ✓ Copied $FILE_COUNT files"
 
-# Step 4: Create symlink for prerendered pages
-echo "  🔗 Creating symlink for prerendered pages..."
+# Step 4: Create symlink for SSR
+echo "  🔗 Creating symlink..."
 if [ -d "dist/server" ]; then
   cd dist/server
-  # Remove existing symlink if it exists
   if [ -L "client" ] || [ -d "client" ]; then
     rm -rf client
   fi
   ln -sf ../client ./client
   cd ../..
-  echo "     ✓ Symlink created: dist/server/client -> ../client"
-else
-  echo "     ⚠️  dist/server not found, skipping symlink creation"
+  echo "     ✓ Symlink created"
 fi
 
-# Step 5: Clean up backup
-if [ -d "dist-backup" ]; then
-  echo "  🗑️  Removing backup..."
-  rm -rf dist-backup
+# Step 5: Replace build/ with new dist/
+echo "  🔄 Replacing build/ with new build..."
+
+if [ -d "build" ]; then
+  rm -rf build
 fi
+
+mv dist build
 
 echo "✅ Build completed successfully!"
 echo ""
-echo "📊 Build output at: dist/"
+echo "📊 Build output at: build/"
+echo "🚀 Site ready to start/restart"
 

@@ -5,7 +5,7 @@
   "scripts": {
     "dev": "yarn translate && astro dev",
     "setup:dev": "./bin/setup-dev.sh",
-    "start": "node dist/server/entry.mjs",
+    "start": "node build/server/entry.mjs",
     "build": "./bin/safe-build.sh development",
     "build:prod": "./bin/safe-build.sh production",
     "prod": "pm2 start ecosystem.config.cjs",

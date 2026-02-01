@@ -2,21 +2,27 @@
 
 ## Overview
 
-The build process now uses a safe two-step approach that prevents broken builds from affecting production. If a build fails at any stage, the previous working build is automatically restored.
+Simple and effective: Build to `dist/`, rename to `build/` on success. The old `build/` folder serves the site until the new build is complete and ready.
 
 ## How It Works
 
 ### Build Flow
 
 ```
-1. Backup current dist/          → dist-backup/
-2. Run astro build                → Creates new dist/
-3. Copy uploads to dist/          → dist/client/uploads
-4. Create symlink                 → dist/server/client → ../client
+1. Remove old dist/ (if exists from failed build)
+2. Run astro build → Creates dist/
+3. Copy uploads to dist/client/uploads
+4. Create symlink dist/server/client → ../client
 5. Success?
-   ✓ YES: Delete dist-backup/
-   ✗ NO:  Restore dist/ from dist-backup/
+   ✓ YES: mv dist/ → build/ (old build/ deleted, new build/ active)
+   ✗ NO:  rm dist/ (cleanup failed build)
 ```
+
+**Key points:**
+- Nginx/PM2 serve from `build/` 
+- Build happens in `dist/`
+- Only on success: `dist/` becomes `build/`
+- Site stays up until the swap happens
 
 ### Scripts
 
@@ -37,27 +43,23 @@ Both commands use `bin/safe-build.sh` which handles the entire safe build proces
 
 **Process:**
 
-1. **Backup Phase**
-   - If `dist/` exists, move it to `dist-backup/`
-   - This preserves the last working build
+1. **Clean Phase**
+   - Remove old `dist/` if it exists (leftover from failed build)
 
 2. **Build Phase**
    - Run translations
    - Run Astro type checking
-   - Run Astro build (development or production mode)
-   - If build fails → restore from backup and exit
+   - Run Astro build → creates `dist/`
+   - If build fails → remove `dist/` and exit
 
-3. **Upload Phase**
-   - Detect environment (local vs production)
-   - Copy uploads using rsync with exclusions
-   - If copy fails → restore from backup and exit
+3. **Finalize Phase**
+   - Copy uploads to `dist/client/uploads`
+   - Create symlink `dist/server/client → ../client`
+   - If anything fails → remove `dist/` and exit
 
-4. **Symlink Phase**
-   - Create `dist/server/client -> ../client` symlink
-   - Required for SSR mode to access static assets
-
-5. **Cleanup Phase**
-   - Remove `dist-backup/` on success
+4. **Swap Phase**
+   - Delete old `build/` if exists
+   - Rename `dist/` → `build/` (new build now active)
 
 ### Error Handling
 
@@ -66,22 +68,17 @@ Every critical step checks for errors:
 ```bash
 if [ $? -ne 0 ]; then
   echo "❌ Build failed!"
-  
-  # Restore backup if it exists
-  if [ -d "dist-backup" ]; then
-    echo "🔄 Restoring previous dist from backup..."
-    rm -rf dist
-    mv dist-backup dist
-  fi
-  
+  echo "🗑️  Cleaning up dist/..."
+  rm -rf dist
   exit 1
 fi
 ```
 
 This ensures that:
-- The previous build is never deleted until the new build succeeds
-- Failed builds don't leave the system in a broken state
-- Users continue to be served by the last successful build
+- **Site never goes down** - `build/` folder stays intact until new build succeeds
+- Failed builds are cleaned up automatically (`dist/` removed)
+- PM2/Nginx keep serving from `build/` folder
+- The swap is a single `mv` operation (instant)
 
 ## Production Deployment
 
@@ -114,13 +111,16 @@ fi
 
 ```
 web/
-├── dist/               # Current active build
-├── dist-backup/        # Temporary backup during build (auto-deleted)
+├── build/              # Active build (PM2/Nginx serve from here)
+├── dist/               # Temporary build folder (only during build process)
 └── bin/
-    └── safe-build.sh   # Safe build orchestrator
+    └── safe-build.sh   # Build orchestrator
 ```
 
-**Note:** `dist-backup/` is in `.gitignore`
+**Note:** 
+- `build/` is the active production build
+- `dist/` only exists during build process, then renamed to `build/`
+- Both `build/` and `dist/` are in `.gitignore`
 
 ## Testing
 

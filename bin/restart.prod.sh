@@ -15,18 +15,13 @@ yarn install
 echo "Building for production..."
 yarn build:prod
 
-# Only proceed if build was successful (safe-build.sh handles backup/restore)
+# Only proceed if build was successful (safe-build.sh handles everything)
 if [ $? -eq 0 ]; then
-  echo "Creating symlink for prerendered pages..."
-  cd dist/server
-  ln -sf ../client ./client
-  cd ../..
-
   echo "Restarting PM2 process..."
   pm2 restart qwibee-web
 
   echo "✅ Deployment complete!"
 else
-  echo "❌ Build failed! PM2 not restarted. Previous build is still running."
+  echo "❌ Build failed! PM2 not restarted."
   exit 1
 fi

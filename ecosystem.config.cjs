@@ -2,7 +2,7 @@ module.exports = {
   apps: [
     {
       name: "qwibee-web",
-      script: "dist/server/entry.mjs",
+      script: "build/server/entry.mjs",
       cwd: "/var/www/qwibee-web",
       instances: 1,
       exec_mode: "fork",
