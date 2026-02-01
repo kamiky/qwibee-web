@@ -12,7 +12,7 @@
   },
   "avatar": "/uploads/uxykli0k/paid_nhhhjhx6_y5aqknfm2taykvpdq75jxbn4kkxad9.jpg",
   "membershipPrice": 980,
-  "promotionPercentage": 5,
+  "promotionPercentage": 10,
   "videos": [
     {
       "id": "068n83c1",
@@ -388,7 +388,7 @@
       "price": 1084,
       "paidFilename": "paid_khqrunrn_i7o6dj5t91mctus9j8fy5vhz5q5jcr.jpeg",
       "previewFilename": "preview_khqrunrn_otb3rx5rn5b5xo1ucw65gft1pn0pxp.jpeg",
-      "type": "paid",
+      "type": "membership",
       "mimetype": "image/jpeg",
       "uploadedAt": "2026-01-17T14:06:35.048Z",
       "paidThumbnail": "paid_khqrunrn_i7o6dj5t91mctus9j8fy5vhz5q5jcr.jpeg",
