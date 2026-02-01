@@ -344,7 +344,7 @@ const randomCreators = shuffled.slice(0, 3);
                         />
                         {/* Video player - hidden by default, loaded on click */}
                         <video
-                          class="w-full aspect-video object-contain video-player bg-black hidden"
+                          class="w-full object-cover video-player bg-black hidden"
                           controls
                           preload="none"
                           data-video-src={`/uploads/${profile.id}/${videoFilename}`}
