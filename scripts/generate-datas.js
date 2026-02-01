@@ -12,7 +12,8 @@ const execAsync = promisify(exec);
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
-const UPLOADS_DIR = join(__dirname, "..", "public", "uploads");
+// Uploads folder is now at project root level
+const UPLOADS_DIR = join(__dirname, "..", "..", "uploads");
 const DATA_DIR = join(__dirname, "..", "src", "data");
 
 /**

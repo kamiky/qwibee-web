@@ -4,6 +4,7 @@
   "version": "0.0.1",
   "scripts": {
     "dev": "yarn translate && astro dev",
+    "setup:dev": "./bin/setup-dev.sh",
     "start": "node dist/server/entry.mjs",
     "build": "yarn translate && astro check && astro build",
     "build:prod": "yarn translate && astro check && astro build --mode production",
@@ -15,8 +16,8 @@
     "deploy:medias": "./bin/deploy.medias.sh",
     "restart:prod": "./bin/restart.prod.sh",
     "translate": "node scripts/generate-translations.js",
-    "prepare:medias": "node scripts/prepare-medias.js",
-    "cleanup:medias": "node scripts/cleanup-medias.js",
+    "prepare:medias": "cd ../uploads && node scripts/prepare-medias.js",
+    "cleanup:medias": "cd ../uploads && node scripts/cleanup-medias.js",
     "generate:datas": "node scripts/generate-datas.js"
   },
   "dependencies": {
