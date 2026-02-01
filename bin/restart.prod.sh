@@ -13,10 +13,6 @@ yarn install
 echo "Building for production..."
 yarn build:prod
 
-echo "Copying uploads folder to dist/client/uploads..."
-rm -rf dist/client/uploads
-cp -r /var/www/qwibee-uploads dist/client/uploads
-
 echo "Creating symlink for prerendered pages..."
 cd dist/server
 ln -sf ../client ./client
