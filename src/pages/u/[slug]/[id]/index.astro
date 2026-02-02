@@ -13,6 +13,12 @@ if (!profile || profile.slug !== slug) {
   return Astro.redirect("/404");
 }
 
+// Check if profile is dev-only and we're not in development mode
+const isDevelopment = import.meta.env.MODE === "development";
+if (profile.devonly === true && !isDevelopment) {
+  return Astro.redirect("/404");
+}
+
 // Use id as profileId for compatibility with rest of the code
 const profileId = id;
 

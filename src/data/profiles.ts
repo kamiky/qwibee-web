@@ -25,6 +25,7 @@ export interface Profile {
   id: string;
   slug: string;
   username: string;
+  devonly?: boolean; // If true, only show in development mode
   displayName: {
     en: string;
     fr: string;
@@ -45,13 +46,28 @@ import uxykli0k from "./uxykli0k.json";
 import u2as61e7 from "./u2as61e7.json";
 import uoik2tfv from "./uoik2tfv.json";
 
-export const profiles: Record<string, Profile> = {
+// All profiles including dev-only
+const allProfiles: Record<string, Profile> = {
   u1me293c: u1me293c as Profile,
   uh29p8bf: uh29p8bf as Profile,
   uxykli0k: uxykli0k as Profile,
   u2as61e7: u2as61e7 as Profile,
   uoik2tfv: uoik2tfv as Profile,
 };
+
+// Helper to check if we're in development mode
+const isDevelopment = import.meta.env.MODE === "development";
+
+// Filter out dev-only profiles in production/staging
+export const profiles: Record<string, Profile> = Object.fromEntries(
+  Object.entries(allProfiles).filter(([_, profile]) => {
+    // If profile has devonly: true, only include it in development mode
+    if (profile.devonly === true) {
+      return isDevelopment;
+    }
+    return true;
+  })
+);
 
 // Helper function to generate profile URL
 export const getProfileUrl = (profileId: string, lang: 'en' | 'fr' = 'en'): string => {
