@@ -95,7 +95,10 @@
     "willRenew": "Will renew",
     "endOfMembership": "End of membership:",
     "willRenewOn": "Will renew on",
-    "membershipEndsOn": "Membership ends on"
+    "membershipEndsOn": "Membership ends on",
+    "promotionTitle": "🎉 New Subscriber Offer!",
+    "promotionDescription": "Get {percentage}% off all one-shot purchases",
+    "promotionTimeRemaining": "Time remaining"
   },
   "footer": {
     "tagline": "Unique products from creators all over the world.",

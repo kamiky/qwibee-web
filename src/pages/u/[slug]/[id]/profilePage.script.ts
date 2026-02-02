@@ -253,7 +253,7 @@ export function initProfilePage(data: ProfilePageData) {
   }
 
   // Function to show paid content pricing for subscribed users
-  function showPaidContentPricing() {
+  function showPaidContentPricing(hasActivePromotion: boolean = false) {
     // Find all paid content pricing divs that are hidden (only show for locked paid videos)
     const paidVideos = document.querySelectorAll(
       '.video-card[data-video-type="paid"]'
@@ -266,25 +266,121 @@ export function initProfilePage(data: ProfilePageData) {
       if (lockIcon) {
         const pricingDiv = card.querySelector(".paid-content-pricing");
         if (pricingDiv) {
+          // Show/hide the strikethrough original price based on active promotion
+          const originalPrice = pricingDiv.querySelector(".text-gray-400");
+          if (originalPrice) {
+            (originalPrice as HTMLElement).style.display = hasActivePromotion && promotionPercentage > 0 ? "inline" : "none";
+          }
+
           (pricingDiv as HTMLElement).style.display = "flex";
           count++;
         }
       }
     });
 
-    console.log(`Showed pricing for ${count} locked paid videos`);
+    console.log(`Showed pricing for ${count} locked paid videos${hasActivePromotion ? " with promotion" : ""}`);
   }
 
-  // Function to show content type badges (Members/-17%) for subscribed users
-  function showContentTypeBadges() {
+  // Function to show content type badges (Members/-X%) for subscribed users
+  function showContentTypeBadges(hasActivePromotion: boolean = false) {
     // Find all content type badges (both membership and paid)
     const badges = document.querySelectorAll(".content-type-badge");
 
     badges.forEach((badge) => {
-      (badge as HTMLElement).style.display = "block";
+      const videoType = (badge as HTMLElement).getAttribute("data-video-type");
+      
+      // For paid content badges, only show if there's an active promotion
+      if (videoType === "paid") {
+        if (hasActivePromotion && promotionPercentage > 0) {
+          (badge as HTMLElement).style.display = "block";
+        }
+      } else {
+        // Always show membership badges
+        (badge as HTMLElement).style.display = "block";
+      }
     });
 
-    console.log(`Showed ${badges.length} content type badges`);
+    console.log(`Showed content type badges${hasActivePromotion ? " with promotion" : ""}`);
+  }
+
+  // Check if user has active promotion
+  function checkActivePromotion(membership: any): { isActive: boolean; expiresAt: Date | null; remainingSeconds: number } {
+    if (!membership || !membership.promotionExpiresAt) {
+      return { isActive: false, expiresAt: null, remainingSeconds: 0 };
+    }
+
+    const expiresAt = new Date(membership.promotionExpiresAt);
+    const now = new Date();
+    const remainingSeconds = Math.max(0, Math.floor((expiresAt.getTime() - now.getTime()) / 1000));
+
+    return {
+      isActive: remainingSeconds > 0,
+      expiresAt: expiresAt,
+      remainingSeconds: remainingSeconds,
+    };
+  }
+
+  // Display promotion countdown timer
+  function displayPromotionCountdown(remainingSeconds: number) {
+    // Create countdown element if it doesn't exist
+    let countdownEl = document.getElementById("promotion-countdown");
+    if (!countdownEl) {
+      const profileHeader = document.querySelector("section.mb-12");
+      if (!profileHeader) return;
+
+      const countdownContainer = document.createElement("div");
+      countdownContainer.id = "promotion-countdown-container";
+      countdownContainer.className = "mt-6 mb-4 bg-gradient-to-r from-orange-500 to-red-500 text-white px-6 py-4 rounded-lg shadow-lg";
+      const promotionTitle = translations.profile.promotionTitle || "🎉 New Subscriber Offer!";
+      const promotionDescription = (translations.profile.promotionDescription || "Get {percentage}% off all one-shot purchases").replace("{percentage}", promotionPercentage.toString());
+      const promotionTimeRemaining = translations.profile.promotionTimeRemaining || "Time remaining";
+      
+      countdownContainer.innerHTML = `
+        <div class="flex items-center justify-between">
+          <div class="flex items-center gap-3">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+            </svg>
+            <div>
+              <div class="font-bold text-lg">${promotionTitle}</div>
+              <div class="text-sm opacity-90">${promotionDescription}</div>
+            </div>
+          </div>
+          <div class="text-right">
+            <div class="text-2xl font-bold" id="promotion-countdown">00:00</div>
+            <div class="text-xs opacity-90">${promotionTimeRemaining}</div>
+          </div>
+        </div>
+      `;
+      profileHeader.appendChild(countdownContainer);
+      countdownEl = document.getElementById("promotion-countdown");
+    }
+
+    // Update countdown every second
+    const updateCountdown = () => {
+      const minutes = Math.floor(remainingSeconds / 60);
+      const seconds = remainingSeconds % 60;
+      const timeString = `${minutes.toString().padStart(2, "0")}:${seconds.toString().padStart(2, "0")}`;
+
+      if (countdownEl) {
+        countdownEl.textContent = timeString;
+      }
+
+      if (remainingSeconds <= 0) {
+        // Promotion expired - remove countdown and reload page
+        const container = document.getElementById("promotion-countdown-container");
+        if (container) {
+          container.remove();
+        }
+        // Reload to update prices
+        window.location.reload();
+      } else {
+        remainingSeconds--;
+        setTimeout(updateCountdown, 1000);
+      }
+    };
+
+    updateCountdown();
   }
 
   // Check access on page load and update UI
@@ -299,11 +395,21 @@ export function initProfilePage(data: ProfilePageData) {
         // Unlock membership videos (no reload on normal page load)
         unlockMembershipVideos(false);
 
-        // Show paid content pricing for subscribed users
-        showPaidContentPricing();
+        // Check if user has active promotion
+        const promotion = checkActivePromotion(membership);
+        const hasActivePromotion = promotion.isActive && promotionPercentage > 0;
 
-        // Show content type badges for subscribed users
-        showContentTypeBadges();
+        // Show paid content pricing for subscribed users (with promotion if active)
+        showPaidContentPricing(hasActivePromotion);
+
+        // Show content type badges for subscribed users (with promotion if active)
+        showContentTypeBadges(hasActivePromotion);
+
+        // Display promotion countdown if active
+        if (hasActivePromotion) {
+          console.log(`🎉 Active promotion: ${promotionPercentage}% off for ${promotion.remainingSeconds} seconds`);
+          displayPromotionCountdown(promotion.remainingSeconds);
+        }
 
         // Use real subscription data from backend
         const renewalDate = membership.currentPeriodEnd
@@ -845,6 +951,10 @@ export function initProfilePage(data: ProfilePageData) {
         return;
       }
 
+      // Check if user has active promotion
+      const { hasAccess, membership } = await checkMembershipAccess();
+      const promotion = hasAccess && membership ? checkActivePromotion(membership) : { isActive: false, expiresAt: null, remainingSeconds: 0 };
+
       // Open new tab immediately to avoid popup blockers
       const stripeWindow = window.open("about:blank", "_blank");
 
@@ -908,7 +1018,12 @@ export function initProfilePage(data: ProfilePageData) {
         }
 
         // Calculate the promotional price to send to Stripe
-        const finalPrice = calculatePromotionalPrice(videoData.price);
+        // If user has active promotion, apply the discount
+        let finalPrice = videoData.price;
+        if (promotion.isActive && promotionPercentage > 0) {
+          finalPrice = calculatePromotionalPrice(videoData.price);
+          console.log(`🎉 Applying ${promotionPercentage}% promotion: ${videoData.price} → ${finalPrice} cents`);
+        }
 
         const response = await fetch(
           "/api/stripe/create-content-checkout-session",
