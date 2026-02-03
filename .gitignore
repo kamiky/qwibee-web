@@ -34,6 +34,7 @@ dist-ssr
 .env.wmf
 connect
 bin/deploy.prod.sh
+bin/deploy.staging.sh
 public/videos
 public/uploads
 src/pages/fr
