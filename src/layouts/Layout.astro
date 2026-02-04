@@ -10,7 +10,6 @@ interface Props {
   ogType?: string;
   twitterCard?: string;
   canonicalUrl?: string;
-  keywords?: string;
   author?: string;
   robots?: string;
 }
@@ -23,7 +22,6 @@ const {
   ogType = "website",
   twitterCard = "summary_large_image",
   canonicalUrl,
-  keywords = "apps, developer, web apps, digital tools, animated wallpapers, VS Code, Cursor",
   author = "qwibee",
   robots = "noindex, nofollow",
 } = Astro.props;
@@ -49,7 +47,6 @@ const siteName = "qwibee";
     <title>{title}</title>
     <meta name="title" content={title} />
     <meta name="description" content={description} />
-    <meta name="keywords" content={keywords} />
     <meta name="author" content={author} />
     <meta name="robots" content={robots} />
     <link rel="canonical" href={canonical} />
