@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<svg width="529px" height="246px" viewBox="0 0 529 246" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<svg width="574px" height="263px" viewBox="0 0 574 263" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
     <!-- Generator: Sketch 52.2 (67145) - http://www.bohemiancoding.com/sketch -->
     <title>QwB</title>
     <desc>Created with Sketch.</desc>
@@ -9,13 +9,11 @@
             <stop stop-color="#7C4DFF" offset="100%"></stop>
         </linearGradient>
     </defs>
-    <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" font-family="ComicSansMS, Comic Sans MS" font-size="250" font-weight="normal">
-        <g id="Artboard" transform="translate(-314.000000, -185.000000)" fill="url(#linearGradient-1)">
-            <g id="qwb">
-                <text id="QwB">
-                    <tspan x="305" y="377">QwB</tspan>
-                </text>
-            </g>
+    <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" font-family="ComicSansMS-Bold, Comic Sans MS" font-size="267" font-weight="bold">
+        <g id="Artboard" transform="translate(-27.000000, -180.000000)" fill="url(#linearGradient-1)">
+            <text id="QwB">
+                <tspan x="23" y="385">QwB</tspan>
+            </text>
         </g>
     </g>
 </svg>
