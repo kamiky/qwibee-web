@@ -1226,15 +1226,6 @@ export function initProfilePage(data: ProfilePageData) {
 
       // Handle 2+ tokens: Unlock for FREE without Stripe
       if (tokenCount >= 2) {
-        // Show confirmation dialog
-        const confirmMessage = lang === 'en' 
-          ? `Use 2 tokens to unlock this content for FREE?\n\nYou have ${tokenCount} tokens.`
-          : `Utiliser 2 jetons pour débloquer ce contenu GRATUITEMENT ?\n\nVous avez ${tokenCount} jetons.`;
-        
-        if (!confirm(confirmMessage)) {
-          return;
-        }
-
         // Show loading state
         const originalText = (button as HTMLButtonElement).textContent;
         (button as HTMLButtonElement).disabled = true;
@@ -1272,11 +1263,6 @@ export function initProfilePage(data: ProfilePageData) {
 
           const data = await response.json();
           console.log("✅ Content unlocked with tokens:", data);
-
-          // Show success message
-          alert(lang === 'en' 
-            ? '✅ Content unlocked! Refreshing page...' 
-            : '✅ Contenu débloqué ! Actualisation...');
 
           // Reload page to show unlocked content
           window.location.reload();
@@ -1359,23 +1345,22 @@ export function initProfilePage(data: ProfilePageData) {
         }
 
         // Calculate the price - tokens take priority over time-limited promotion
-        // If user has token(s): apply token discount to ORIGINAL price (ignore promo)
+        // If user has token(s): send ORIGINAL price to backend (backend will apply discount)
         // If user has no tokens: apply time-limited promotion if active
-        let finalPrice = videoData.price;
+        let contentPriceToSend = videoData.price;
         let tokensToUse = 0;
         
         if (tokenCount === 1) {
-          // Use 1 token: 50% off ORIGINAL price
-          finalPrice = Math.round(videoData.price * 0.5);
+          // Use 1 token: 50% off - backend will apply the discount
           tokensToUse = 1;
-          console.log(`🎟️ Using 1 token (50% off original): ${videoData.price} → ${finalPrice} cents`);
+          console.log(`🎟️ Using 1 token (50% off) - sending original price ${videoData.price} cents to backend`);
         } else if (promotion.isActive && promotionPercentage > 0) {
-          // No tokens, but has active time-limited promotion
-          finalPrice = calculatePromotionalPrice(videoData.price);
-          console.log(`🎉 Using time-limited promotion (${promotionPercentage}%): ${videoData.price} → ${finalPrice} cents`);
+          // No tokens, but has active time-limited promotion - apply discount here
+          contentPriceToSend = calculatePromotionalPrice(videoData.price);
+          console.log(`🎉 Using time-limited promotion (${promotionPercentage}%): ${videoData.price} → ${contentPriceToSend} cents`);
         }
         
-        console.log(`💰 Final price: ${finalPrice} cents (original: ${videoData.price} cents)`);
+        console.log(`💰 Price sent to backend: ${contentPriceToSend} cents (original: ${videoData.price} cents)${tokensToUse > 0 ? ', backend will apply token discount' : ''}`);
 
 
         const response = await fetch(
@@ -1388,7 +1373,7 @@ export function initProfilePage(data: ProfilePageData) {
             body: JSON.stringify({
               profileId: currentProfileId,
               videoId: videoId,
-              contentPrice: finalPrice,
+              contentPrice: contentPriceToSend,
               tokensToUse: tokensToUse, // Pass tokens to use (0 or 1)
               // Don't pass successUrl/cancelUrl - let backend use defaults with redirect tokens
               customerEmail,
