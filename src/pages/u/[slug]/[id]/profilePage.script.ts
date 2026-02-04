@@ -51,37 +51,9 @@ export function initProfilePage(data: ProfilePageData) {
     : "en";
   const translations = useTranslations(lang);
 
-  // Award pending tokens on-demand (simpler than cron for MVP)
-  const awardPendingTokens = async () => {
-    try {
-      // Call backend endpoint to check and award tokens if needed
-      // This endpoint checks if any tokens need to be awarded based on nextAwardAt
-      const response = await fetch(`${window.location.origin.replace(':4321', ':8002')}/purchase-tokens/award-pending`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "x-api-key": "internal", // Simple protection, will be replaced with proper auth
-        },
-      });
-
-      if (response.ok) {
-        const data = await response.json();
-        if (data.data.awardedCount > 0) {
-          console.log(`✅ Awarded ${data.data.awardedCount} token(s)`);
-        }
-      }
-    } catch (error) {
-      // Silently fail - this is opportunistic
-      console.log("Token award check failed (non-critical):", error);
-    }
-  };
-
   // Check if user has access token and verify it
   // Returns { hasAccess: boolean, membership: object | null, purchasedContent: array, purchaseTokens: array }
   const checkMembershipAccess = async () => {
-    // Opportunistically try to award tokens (non-blocking)
-    awardPendingTokens();
-
     // Debug mode: simulate different membership levels
     if (debug.isDebugMode) {
       console.log(
