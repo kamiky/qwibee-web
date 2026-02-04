@@ -476,6 +476,65 @@ export function initProfilePage(data: ProfilePageData) {
     updateCountdown();
   }
 
+  // DEBUG ONLY: Setup debug token button
+  function setupDebugTokenButton(hasAccess: boolean) {
+    if (!debug.isDebugMode && !window.location.hostname.includes('localhost')) {
+      return; // Only in dev
+    }
+
+    const debugBtn = document.getElementById("debug-add-token-btn");
+    if (!debugBtn) return;
+
+    // Only show if user has active membership
+    if (hasAccess) {
+      debugBtn.classList.remove("hidden");
+      
+      debugBtn.addEventListener("click", async () => {
+        const token = getAccessToken();
+        if (!token) {
+          alert("Not authenticated");
+          return;
+        }
+
+        // Disable button
+        debugBtn.setAttribute("disabled", "true");
+        const originalText = debugBtn.textContent;
+        debugBtn.textContent = "Adding...";
+
+        try {
+          const response = await fetch(`${window.location.origin.replace(':4321', ':5002')}/debug/add-token`, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              "Authorization": `Bearer ${token}`,
+            },
+            body: JSON.stringify({
+              profileId: currentProfileId,
+            }),
+          });
+
+          if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(errorData.message || "Failed to add token");
+          }
+
+          const data = await response.json();
+          console.log("✅ Debug: Added 1 token. New count:", data.data.tokenCount);
+
+          // Reload page to show updated token count
+          window.location.reload();
+        } catch (error) {
+          console.error("Error adding debug token:", error);
+          alert(`Failed to add token: ${error instanceof Error ? error.message : "Unknown error"}`);
+          
+          // Restore button
+          debugBtn.removeAttribute("disabled");
+          debugBtn.textContent = originalText;
+        }
+      });
+    }
+  }
+
   // Check access on page load and update UI
   checkMembershipAccess().then(
     ({ hasAccess, membership, purchasedContent, purchaseTokens }) => {
@@ -483,6 +542,9 @@ export function initProfilePage(data: ProfilePageData) {
       if (purchasedContent && purchasedContent.length > 0) {
         unlockPaidContentVideos(purchasedContent, false);
       }
+
+      // Setup debug token button (dev only)
+      setupDebugTokenButton(hasAccess);
 
       if (hasAccess && membership) {
         // Unlock membership videos (no reload on normal page load)

@@ -180,6 +180,16 @@ const randomCreators = shuffled.slice(0, 3);
   </div>
 
   <main class="pt-24 min-h-screen bg-white">
+    <!-- DEBUG ONLY: Add Token Button (only in dev) -->
+    {import.meta.env.DEV && (
+      <button
+        id="debug-add-token-btn"
+        class="hidden fixed top-24 right-6 z-50 bg-purple-600 hover:bg-purple-700 text-white font-semibold py-2 px-4 rounded-lg shadow-lg transition-all"
+      >
+        +1 Token (debug)
+      </button>
+    )}
+
     <div class="max-w-6xl mx-auto px-6">
       <!-- Success/Cancel Messages -->
       <div id="membership-status-message" class="mb-8 hidden">
