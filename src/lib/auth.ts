@@ -166,7 +166,7 @@ export async function verifyToken(): Promise<{
 
   try {
     const backendUrl =
-      import.meta.env.PUBLIC_API_URL || "http://localhost:5002";
+      import.meta.env.PUBLIC_API_URL || "http://localhost:8002";
     const response = await fetch(`${backendUrl}/auth/verify-token`, {
       method: "POST",
       headers: {
@@ -209,7 +209,7 @@ export async function refreshAccessToken(): Promise<boolean> {
 
   try {
     const backendUrl =
-      import.meta.env.PUBLIC_API_URL || "http://localhost:5002";
+      import.meta.env.PUBLIC_API_URL || "http://localhost:8002";
     const response = await fetch(`${backendUrl}/auth/refresh-token`, {
       method: "POST",
       headers: {
@@ -249,7 +249,7 @@ export async function logout(): Promise<void> {
 
   try {
     const backendUrl =
-      import.meta.env.PUBLIC_API_URL || "http://localhost:5002";
+      import.meta.env.PUBLIC_API_URL || "http://localhost:8002";
     await fetch(`${backendUrl}/auth/logout`, {
       method: "POST",
       headers: {
@@ -275,7 +275,7 @@ export async function getMemberships(): Promise<any[]> {
 
   try {
     const backendUrl =
-      import.meta.env.PUBLIC_API_URL || "http://localhost:5002";
+      import.meta.env.PUBLIC_API_URL || "http://localhost:8002";
     const response = await fetch(`${backendUrl}/auth/memberships`, {
       method: "GET",
       headers: {

@@ -42,7 +42,7 @@ const accessToken = Astro.cookies.get('qwb_access_token')?.value;
 
 if (accessToken) {
   try {
-    const backendUrl = import.meta.env.PUBLIC_API_URL || 'http://localhost:5002';
+    const backendUrl = import.meta.env.PUBLIC_API_URL || 'http://localhost:8002';
     const response = await fetch(`${backendUrl}/auth/verify-token`, {
       method: 'POST',
       headers: {

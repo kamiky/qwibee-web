@@ -50,7 +50,7 @@ export const POST: APIRoute = async ({ request, url }) => {
     // Get the base URL
     const baseUrl = import.meta.env.PUBLIC_APP_URL || url.origin;
     const backendUrl =
-      import.meta.env.PUBLIC_API_URL || "http://localhost:5002";
+      import.meta.env.PUBLIC_API_URL || "http://localhost:8002";
 
     // Import profile helper to get proper URLs
     const { getProfileUrl } = await import("@/data/profiles");

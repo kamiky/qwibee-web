@@ -19,7 +19,7 @@ const accessToken = Astro.cookies.get("qwb_access_token")?.value;
 if (accessToken) {
   try {
     const backendUrl =
-      import.meta.env.PUBLIC_API_URL || "http://localhost:5002";
+      import.meta.env.PUBLIC_API_URL || "http://localhost:8002";
     const response = await fetch(`${backendUrl}/auth/verify-token`, {
       method: "POST",
       headers: {
@@ -134,13 +134,13 @@ if (accessToken) {
       width: auto;
       display: block;
       filter: drop-shadow(0 0 20px rgba(255, 0, 255, 0.6))
-              drop-shadow(0 0 40px rgba(0, 255, 255, 0.4));
+        drop-shadow(0 0 40px rgba(0, 255, 255, 0.4));
       transition: all 0.3s ease;
     }
 
     .logo-link:hover .logo-img {
       filter: drop-shadow(0 0 30px rgba(0, 255, 255, 0.8))
-              drop-shadow(0 0 50px rgba(255, 0, 255, 0.6));
+        drop-shadow(0 0 50px rgba(255, 0, 255, 0.6));
       transform: scale(1.1);
     }
 

@@ -55,7 +55,7 @@ Create a `.env` file in the root:
 ```env
 # App URLs
 PUBLIC_APP_URL=http://localhost:4321
-PUBLIC_API_URL=http://localhost:5002
+PUBLIC_API_URL=http://localhost:8002
 ```
 
 ### Installation

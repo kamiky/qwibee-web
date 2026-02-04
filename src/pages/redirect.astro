@@ -3,7 +3,7 @@ export const prerender = false;
 
 const key = Astro.url.searchParams.get("key");
 const type = Astro.url.searchParams.get("type");
-const backendUrl = import.meta.env.PUBLIC_API_URL || "http://localhost:5002";
+const backendUrl = import.meta.env.PUBLIC_API_URL || "http://localhost:8002";
 const baseUrl = import.meta.env.PUBLIC_APP_URL || Astro.url.origin;
 
 // If no key or type provided, redirect to home

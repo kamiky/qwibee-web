@@ -56,7 +56,7 @@ export function initProfilePage(data: ProfilePageData) {
     try {
       // Call backend endpoint to check and award tokens if needed
       // This endpoint checks if any tokens need to be awarded based on nextAwardAt
-      const response = await fetch(`${window.location.origin.replace(':4321', ':5002')}/purchase-tokens/award-pending`, {
+      const response = await fetch(`${window.location.origin.replace(':4321', ':8002')}/purchase-tokens/award-pending`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -502,7 +502,7 @@ export function initProfilePage(data: ProfilePageData) {
         debugBtn.textContent = "Adding...";
 
         try {
-          const response = await fetch(`${window.location.origin.replace(':4321', ':5002')}/debug/add-token`, {
+          const response = await fetch(`${window.location.origin.replace(':4321', ':8002')}/debug/add-token`, {
             method: "POST",
             headers: {
               "Content-Type": "application/json",

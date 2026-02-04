@@ -16,7 +16,7 @@ export const POST: APIRoute = async ({ request }) => {
     }
 
     const backendUrl =
-      import.meta.env.PUBLIC_API_URL || "http://localhost:5002";
+      import.meta.env.PUBLIC_API_URL || "http://localhost:8002";
 
     const response = await fetch(`${backendUrl}/auth/verify-magic-link`, {
       method: "POST",

@@ -36,7 +36,7 @@ export const POST: APIRoute = async ({ request }) => {
     }
 
     // Forward to backend API
-    const backendUrl = import.meta.env.PUBLIC_API_URL || "http://localhost:5002";
+    const backendUrl = import.meta.env.PUBLIC_API_URL || "http://localhost:8002";
     const response = await fetch(`${backendUrl}/contact/creator`, {
       method: "POST",
       headers: {

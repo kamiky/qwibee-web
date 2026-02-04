@@ -37,7 +37,7 @@ export const onRequest = defineMiddleware(async (context, next) => {
     if (accessToken) {
       try {
         const backendUrl =
-          import.meta.env.PUBLIC_API_URL || "http://localhost:5002";
+          import.meta.env.PUBLIC_API_URL || "http://localhost:8002";
         const response = await fetch(`${backendUrl}/auth/verify-token`, {
           method: "POST",
           headers: {

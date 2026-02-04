@@ -55,7 +55,7 @@ const accessToken = Astro.cookies.get('qwb_access_token')?.value;
 if (accessToken) {
   try {
     // Verify token with backend to get memberships and purchased content
-    const backendUrl = import.meta.env.PUBLIC_API_URL || 'http://localhost:5002';
+    const backendUrl = import.meta.env.PUBLIC_API_URL || 'http://localhost:8002';
     const response = await fetch(`${backendUrl}/auth/verify-token`, {
       method: 'POST',
       headers: {
