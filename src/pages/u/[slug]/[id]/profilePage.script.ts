@@ -434,10 +434,14 @@ export function initProfilePage(data: ProfilePageData) {
       ? `${tokenCount} token${tokenCount !== 1 ? 's' : ''} left`
       : `${tokenCount} jeton${tokenCount > 1 ? 's' : ''} restant${tokenCount > 1 ? 's' : ''}`;
     
-    // Create subtitle text
-    const subtitleText = lang === 'en' 
-      ? `You have ${discountPercentage}% discount on next purchase`
-      : `Vous avez ${discountPercentage}% de réduction sur le prochain achat`;
+    // Create subtitle text - different wording when user has 0 tokens
+    const subtitleText = tokenCount === 0
+      ? (lang === 'en' 
+          ? `You will have ${discountPercentage}% discount per token`
+          : `Vous aurez ${discountPercentage}% de réduction par jeton`)
+      : (lang === 'en' 
+          ? `You have ${discountPercentage}% discount on next purchase`
+          : `Vous avez ${discountPercentage}% de réduction sur le prochain achat`);
     
     // Create days label and description (handle singular/plural)
     const daysLabel = lang === 'en' 
