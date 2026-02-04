@@ -51,9 +51,37 @@ export function initProfilePage(data: ProfilePageData) {
     : "en";
   const translations = useTranslations(lang);
 
+  // Award pending tokens on-demand (simpler than cron for MVP)
+  const awardPendingTokens = async () => {
+    try {
+      // Call backend endpoint to check and award tokens if needed
+      // This endpoint checks if any tokens need to be awarded based on nextAwardAt
+      const response = await fetch(`${window.location.origin.replace(':4321', ':5002')}/purchase-tokens/award-pending`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "x-api-key": "internal", // Simple protection, will be replaced with proper auth
+        },
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        if (data.data.awardedCount > 0) {
+          console.log(`✅ Awarded ${data.data.awardedCount} token(s)`);
+        }
+      }
+    } catch (error) {
+      // Silently fail - this is opportunistic
+      console.log("Token award check failed (non-critical):", error);
+    }
+  };
+
   // Check if user has access token and verify it
-  // Returns { hasAccess: boolean, membership: object | null, purchasedContent: array }
+  // Returns { hasAccess: boolean, membership: object | null, purchasedContent: array, purchaseTokens: array }
   const checkMembershipAccess = async () => {
+    // Opportunistically try to award tokens (non-blocking)
+    awardPendingTokens();
+
     // Debug mode: simulate different membership levels
     if (debug.isDebugMode) {
       console.log(
@@ -67,6 +95,7 @@ export function initProfilePage(data: ProfilePageData) {
           hasAccess: true,
           membership: { status: "active", profileId: currentProfileId },
           purchasedContent: profileVideos.map((v) => v.id),
+          purchaseTokens: [{ profileId: currentProfileId, tokenCount: 3, daysRemaining: 15 }],
         };
       } else if (debug.simulateMode === "membership") {
         // Simulate having membership only (no paid content)
@@ -77,6 +106,7 @@ export function initProfilePage(data: ProfilePageData) {
           hasAccess: true,
           membership: { status: "active", profileId: currentProfileId },
           purchasedContent: [],
+          purchaseTokens: [{ profileId: currentProfileId, tokenCount: 1, daysRemaining: 10 }],
         };
       } else {
         // Default debug mode: no membership, no purchased content (free only)
@@ -85,6 +115,7 @@ export function initProfilePage(data: ProfilePageData) {
           hasAccess: false,
           membership: null,
           purchasedContent: [],
+          purchaseTokens: [],
         };
       }
     }
@@ -92,7 +123,7 @@ export function initProfilePage(data: ProfilePageData) {
     const token = getAccessToken();
 
     if (!token) {
-      return { hasAccess: false, membership: null, purchasedContent: [] };
+      return { hasAccess: false, membership: null, purchasedContent: [], purchaseTokens: [] };
     }
 
     try {
@@ -105,7 +136,7 @@ export function initProfilePage(data: ProfilePageData) {
       });
 
       if (!response.ok) {
-        return { hasAccess: false, membership: null, purchasedContent: [] };
+        return { hasAccess: false, membership: null, purchasedContent: [], purchaseTokens: [] };
       }
 
       const data = await response.json();
@@ -124,17 +155,22 @@ export function initProfilePage(data: ProfilePageData) {
           .filter((pc: any) => pc.profileId === currentProfileId)
           .map((pc: any) => pc.videoId);
 
+        // Get purchase tokens for this profile
+        const allTokens = data.data.purchaseTokens || [];
+        const tokensForProfile = allTokens.filter((t: any) => t.profileId === currentProfileId);
+
         return {
           hasAccess: !!membership,
           membership: membership || null,
           purchasedContent: purchasedForProfile,
+          purchaseTokens: tokensForProfile,
         };
       }
 
-      return { hasAccess: false, membership: null, purchasedContent: [] };
+      return { hasAccess: false, membership: null, purchasedContent: [], purchaseTokens: [] };
     } catch (error) {
       console.error("Error verifying token:", error);
-      return { hasAccess: false, membership: null, purchasedContent: [] };
+      return { hasAccess: false, membership: null, purchasedContent: [], purchaseTokens: [] };
     }
   };
 
@@ -303,6 +339,60 @@ export function initProfilePage(data: ProfilePageData) {
     console.log(`Showed content type badges${hasActivePromotion ? " with promotion" : ""}`);
   }
 
+  // Display token bar with user's token count
+  function displayTokenBar(tokens: any) {
+    const tokensBar = document.getElementById("tokens-bar");
+    if (!tokensBar || !tokens || tokens.length === 0) {
+      return;
+    }
+
+    const tokenData = tokens[0]; // Get first token (should be for current profile)
+    const tokenCount = tokenData.tokenCount || 0;
+    const daysRemaining = tokenData.daysRemaining || 0;
+
+    // Update token count and plurals
+    const tokenCountEl = document.getElementById("token-count");
+    const tokenPluralEl = document.getElementById("token-plural");
+    const daysCountEl = document.getElementById("days-count");
+    const daysCountSubtitleEl = document.getElementById("days-count-subtitle");
+    const explanationEl = document.getElementById("token-explanation");
+
+    if (tokenCountEl) tokenCountEl.textContent = tokenCount.toString();
+    
+    // Handle plurals for token
+    if (lang === 'en') {
+      if (tokenPluralEl) tokenPluralEl.textContent = tokenCount > 1 ? "s" : "";
+    } else {
+      // French
+      if (tokenPluralEl) tokenPluralEl.textContent = tokenCount > 1 ? "s" : "";
+    }
+    
+    // Update days counter on the right side and in subtitle
+    if (daysCountEl) daysCountEl.textContent = daysRemaining.toString();
+    if (daysCountSubtitleEl) daysCountSubtitleEl.textContent = daysRemaining.toString();
+
+    // Update explanation based on token count
+    if (explanationEl) {
+      if (tokenCount === 1) {
+        explanationEl.textContent = lang === 'en' 
+          ? '50% discount on next purchase' 
+          : '50% de réduction sur le prochain achat';
+      } else if (tokenCount >= 2) {
+        explanationEl.textContent = lang === 'en' 
+          ? '100% discount on next purchase' 
+          : '100% de réduction sur le prochain achat';
+      } else {
+        // 0 tokens
+        explanationEl.textContent = lang === 'en' 
+          ? '50% discount on next purchase' 
+          : '50% de réduction sur le prochain achat';
+      }
+    }
+
+    // Show the bar
+    tokensBar.classList.remove("hidden");
+  }
+
   // Check if user has active promotion
   function checkActivePromotion(membership: any): { isActive: boolean; expiresAt: Date | null; remainingSeconds: number } {
     if (!membership || !membership.promotionExpiresAt) {
@@ -388,7 +478,7 @@ export function initProfilePage(data: ProfilePageData) {
 
   // Check access on page load and update UI
   checkMembershipAccess().then(
-    ({ hasAccess, membership, purchasedContent }) => {
+    ({ hasAccess, membership, purchasedContent, purchaseTokens }) => {
       // Unlock purchased content videos (no reload on normal page load)
       if (purchasedContent && purchasedContent.length > 0) {
         unlockPaidContentVideos(purchasedContent, false);
@@ -397,6 +487,40 @@ export function initProfilePage(data: ProfilePageData) {
       if (hasAccess && membership) {
         // Unlock membership videos (no reload on normal page load)
         unlockMembershipVideos(false);
+
+        // Display token bar if user has active membership
+        console.log("Purchase tokens data:", purchaseTokens);
+        
+        if (purchaseTokens && purchaseTokens.length > 0) {
+          console.log("✅ Displaying token bar with data:", purchaseTokens[0]);
+          displayTokenBar(purchaseTokens);
+        } else {
+          // If no token data yet, still show the bar with default values
+          // This can happen right after subscription before token record is created
+          console.warn("⚠️ No token data available - showing default values");
+          const tokensBar = document.getElementById("tokens-bar");
+          if (tokensBar) {
+            const tokenCountEl = document.getElementById("token-count");
+            const tokenPluralEl = document.getElementById("token-plural");
+            const daysCountEl = document.getElementById("days-count");
+            const daysCountSubtitleEl = document.getElementById("days-count-subtitle");
+            const explanationEl = document.getElementById("token-explanation");
+            
+            if (tokenCountEl) tokenCountEl.textContent = "0";
+            if (tokenPluralEl) tokenPluralEl.textContent = ""; // 0 tokens = no 's' in English
+            if (daysCountEl) daysCountEl.textContent = "30";
+            if (daysCountSubtitleEl) daysCountSubtitleEl.textContent = "30";
+            
+            // Default explanation for 0 tokens
+            if (explanationEl) {
+              explanationEl.textContent = lang === 'en' 
+                ? '50% discount on next purchase' 
+                : '50% de réduction sur le prochain achat';
+            }
+            
+            tokensBar.classList.remove("hidden");
+          }
+        }
 
         // Check if user has active promotion
         const promotion = checkActivePromotion(membership);
@@ -954,10 +1078,88 @@ export function initProfilePage(data: ProfilePageData) {
         return;
       }
 
-      // Check if user has active promotion
-      const { hasAccess, membership } = await checkMembershipAccess();
+      // Check if user has active promotion and tokens
+      const { hasAccess, membership, purchaseTokens } = await checkMembershipAccess();
       const promotion = hasAccess && membership ? checkActivePromotion(membership) : { isActive: false, expiresAt: null, remainingSeconds: 0 };
+      
+      // Get token count for this profile
+      const tokenData = purchaseTokens && purchaseTokens.length > 0 ? purchaseTokens[0] : null;
+      const tokenCount = tokenData?.tokenCount || 0;
 
+      console.log(`User has ${tokenCount} tokens for this profile`);
+
+      // Handle 2+ tokens: Unlock for FREE without Stripe
+      if (tokenCount >= 2) {
+        // Show confirmation dialog
+        const confirmMessage = lang === 'en' 
+          ? `Use 2 tokens to unlock this content for FREE?\n\nYou have ${tokenCount} tokens.`
+          : `Utiliser 2 jetons pour débloquer ce contenu GRATUITEMENT ?\n\nVous avez ${tokenCount} jetons.`;
+        
+        if (!confirm(confirmMessage)) {
+          return;
+        }
+
+        // Show loading state
+        const originalText = (button as HTMLButtonElement).textContent;
+        (button as HTMLButtonElement).disabled = true;
+        (button as HTMLButtonElement).textContent = translations.profile.loading;
+
+        try {
+          // Extract user email from token
+          let customerEmail = null;
+          try {
+            const payload = JSON.parse(atob(token.split(".")[1]));
+            customerEmail = payload.email;
+          } catch (e) {
+            console.error("Error decoding token:", e);
+            throw new Error("Invalid authentication token");
+          }
+
+          // Call backend to unlock content with tokens
+          const response = await fetch("/api/stripe/unlock-content-with-tokens", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              profileId: currentProfileId,
+              videoId: videoId,
+              customerEmail,
+              tokensToUse: 2,
+            }),
+          });
+
+          if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(errorData.error || "Failed to unlock content");
+          }
+
+          const data = await response.json();
+          console.log("✅ Content unlocked with tokens:", data);
+
+          // Show success message
+          alert(lang === 'en' 
+            ? '✅ Content unlocked! Refreshing page...' 
+            : '✅ Contenu débloqué ! Actualisation...');
+
+          // Reload page to show unlocked content
+          window.location.reload();
+        } catch (error) {
+          console.error("Error unlocking content with tokens:", error);
+          alert(
+            lang === 'en'
+              ? `Failed to unlock content with tokens.\n\nError: ${error instanceof Error ? error.message : "Unknown error"}`
+              : `Échec du déblocage avec les jetons.\n\nErreur: ${error instanceof Error ? error.message : "Erreur inconnue"}`
+          );
+
+          // Restore original text
+          (button as HTMLButtonElement).textContent = originalText;
+          (button as HTMLButtonElement).disabled = false;
+        }
+        return;
+      }
+
+      // Handle 1 token or 0 tokens: Use Stripe with discount
       // Open new tab immediately to avoid popup blockers
       const stripeWindow = window.open("about:blank", "_blank");
 
@@ -1020,10 +1222,18 @@ export function initProfilePage(data: ProfilePageData) {
           console.error("Error decoding token:", e);
         }
 
-        // Calculate the promotional price to send to Stripe
-        // If user has active promotion, apply the discount
+        // Calculate the price and token usage
+        // Priority: 1 token (50% off) > active promotion > full price
         let finalPrice = videoData.price;
-        if (promotion.isActive && promotionPercentage > 0) {
+        let tokensToUse = 0;
+        
+        if (tokenCount === 1) {
+          // Apply 1 token for 50% discount
+          finalPrice = Math.round(videoData.price * 0.5);
+          tokensToUse = 1;
+          console.log(`🎟️ Using 1 token for 50% discount: ${videoData.price} → ${finalPrice} cents`);
+        } else if (promotion.isActive && promotionPercentage > 0) {
+          // No tokens, but has active promotion
           finalPrice = calculatePromotionalPrice(videoData.price);
           console.log(`🎉 Applying ${promotionPercentage}% promotion: ${videoData.price} → ${finalPrice} cents`);
         }
@@ -1039,6 +1249,7 @@ export function initProfilePage(data: ProfilePageData) {
               profileId: currentProfileId,
               videoId: videoId,
               contentPrice: finalPrice,
+              tokensToUse: tokensToUse, // Pass tokens to use (0 or 1)
               // Don't pass successUrl/cancelUrl - let backend use defaults with redirect tokens
               customerEmail,
               language: lang,
