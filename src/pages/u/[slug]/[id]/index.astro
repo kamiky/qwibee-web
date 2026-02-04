@@ -137,8 +137,16 @@ const getVideoFilename = (
 // Keep original order from data file
 const sortedVideos = [...profile.videos];
 
-// Get all profiles as array (excluding current profile)
-const allProfiles = Object.values(profiles).filter(p => p.id !== profileId);
+// Get all profiles as array (excluding current profile and dev-only profiles)
+const allProfiles = Object.values(profiles).filter(p => {
+  // Exclude current profile
+  if (p.id === profileId) return false;
+  
+  // Exclude dev-only profiles from suggestions (always, even in development)
+  if (p.devonly === true) return false;
+  
+  return true;
+});
 
 // Randomly select 3 creators for the Explore section
 const shuffled = [...allProfiles].sort(() => Math.random() - 0.5);
