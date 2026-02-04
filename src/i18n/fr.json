@@ -97,7 +97,7 @@
     "willRenewOn": "Sera renouvelé le",
     "membershipEndsOn": "L'abonnement se termine le",
     "promotionTitle": "🎉 Offre Nouvel Abonné !",
-    "promotionDescription": "Obtenez {percentage}% de réduction sur tous les achats ponctuels",
+    "promotionDescription": "Vous avez {percentage}% de réduction sur tous les achats",
     "promotionTimeRemaining": "Temps restant"
   },
   "footer": {

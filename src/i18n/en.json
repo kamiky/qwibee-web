@@ -97,7 +97,7 @@
     "willRenewOn": "Will renew on",
     "membershipEndsOn": "Membership ends on",
     "promotionTitle": "🎉 New Subscriber Offer!",
-    "promotionDescription": "Get {percentage}% off all one-shot purchases",
+    "promotionDescription": "You have {percentage}% off on all purchases",
     "promotionTimeRemaining": "Time remaining"
   },
   "footer": {

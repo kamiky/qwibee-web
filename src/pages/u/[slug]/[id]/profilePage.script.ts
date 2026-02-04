@@ -325,34 +325,35 @@ export function initProfilePage(data: ProfilePageData) {
     // Create countdown element if it doesn't exist
     let countdownEl = document.getElementById("promotion-countdown");
     if (!countdownEl) {
-      const profileHeader = document.querySelector("section.mb-12");
-      if (!profileHeader) return;
-
       const countdownContainer = document.createElement("div");
       countdownContainer.id = "promotion-countdown-container";
-      countdownContainer.className = "mt-6 mb-4 bg-gradient-to-r from-orange-500 to-red-500 text-white px-6 py-4 rounded-lg shadow-lg";
+      countdownContainer.className = "fixed bottom-0 left-0 right-0 z-50 bg-gradient-to-r from-orange-500 to-red-500 text-white px-4 py-3 sm:px-6 sm:py-4 shadow-2xl";
       const promotionTitle = translations.profile.promotionTitle || "🎉 New Subscriber Offer!";
       const promotionDescription = (translations.profile.promotionDescription || "Get {percentage}% off all one-shot purchases").replace("{percentage}", promotionPercentage.toString());
       const promotionTimeRemaining = translations.profile.promotionTimeRemaining || "Time remaining";
       
       countdownContainer.innerHTML = `
-        <div class="flex items-center justify-between">
+        <div class="max-w-6xl mx-auto flex items-center justify-between flex-wrap gap-3">
           <div class="flex items-center gap-3">
-            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg class="w-5 h-5 sm:w-6 sm:h-6 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
             </svg>
             <div>
-              <div class="font-bold text-lg">${promotionTitle}</div>
-              <div class="text-sm opacity-90">${promotionDescription}</div>
+              <div class="font-bold text-base sm:text-lg">${promotionTitle}</div>
+              <div class="text-xs sm:text-sm opacity-90">${promotionDescription}</div>
             </div>
           </div>
-          <div class="text-right">
-            <div class="text-2xl font-bold" id="promotion-countdown">00:00</div>
+          <div class="text-right flex-shrink-0">
+            <div class="text-xl sm:text-2xl font-bold" id="promotion-countdown">00:00</div>
             <div class="text-xs opacity-90">${promotionTimeRemaining}</div>
           </div>
         </div>
       `;
-      profileHeader.appendChild(countdownContainer);
+      document.body.appendChild(countdownContainer);
+      
+      // Add bottom padding to body to prevent content from being hidden behind the fixed bar
+      document.body.style.paddingBottom = "100px";
+      
       countdownEl = document.getElementById("promotion-countdown");
     }
 
@@ -371,6 +372,8 @@ export function initProfilePage(data: ProfilePageData) {
         const container = document.getElementById("promotion-countdown-container");
         if (container) {
           container.remove();
+          // Remove bottom padding
+          document.body.style.paddingBottom = "";
         }
         // Reload to update prices
         window.location.reload();
