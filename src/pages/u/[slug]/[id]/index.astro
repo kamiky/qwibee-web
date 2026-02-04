@@ -518,6 +518,8 @@ const randomCreators = shuffled.slice(0, 3);
                             {!!(profile.promotionPercentage && profile.promotionPercentage > 0) && (
                               <span class="text-gray-400 line-through text-sm">{formatPrice(video.price)}</span>
                             )}
+                            {/* Token discount badge - hidden by default, shown with JS if user has tokens */}
+                            <span class="token-discount-badge bg-orange-500 text-white text-xs font-bold px-2 py-0.5 rounded" style="display: none;"></span>
                             <span class="locked-label text-brand-blue-500 font-bold text-lg">
                               {formatPrice(calculatePromotionalPrice(video.price))}
                             </span>
