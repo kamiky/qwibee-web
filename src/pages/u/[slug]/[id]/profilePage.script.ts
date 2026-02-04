@@ -403,10 +403,22 @@ export function initProfilePage(data: ProfilePageData) {
     console.log(`Showed content type badges${hasActivePromotion ? " with time-limited promotion" : ""}`);
   }
 
-  // Display token bar with user's token count
-  function displayTokenBar(tokens: any) {
-    const tokensBar = document.getElementById("tokens-bar");
-    if (!tokensBar || !tokens || tokens.length === 0) {
+  // Display token bar with user's token count (same design as time-limited promotion bar)
+  function displayTokenBar(tokens: any, hasActivePromotion: boolean) {
+    // Don't show token bar if time-limited promotion is active
+    if (hasActivePromotion) {
+      console.log("Time-limited promotion active - token bar will be shown after it expires");
+      return;
+    }
+
+    if (!tokens || tokens.length === 0) {
+      return;
+    }
+
+    // Check if token bar already exists
+    let tokenBarContainer = document.getElementById("token-bar-container");
+    if (tokenBarContainer) {
+      // Bar already exists, just update it
       return;
     }
 
@@ -414,47 +426,58 @@ export function initProfilePage(data: ProfilePageData) {
     const tokenCount = tokenData.tokenCount || 0;
     const daysRemaining = tokenData.daysRemaining || 0;
 
-    // Update token count and plurals
-    const tokenCountEl = document.getElementById("token-count");
-    const tokenPluralEl = document.getElementById("token-plural");
-    const daysCountEl = document.getElementById("days-count");
-    const daysCountSubtitleEl = document.getElementById("days-count-subtitle");
-    const explanationEl = document.getElementById("token-explanation");
-
-    if (tokenCountEl) tokenCountEl.textContent = tokenCount.toString();
+    // Calculate discount percentage based on token count
+    const discountPercentage = tokenCount >= 2 ? 100 : tokenCount === 1 ? 50 : 50;
     
-    // Handle plurals for token
-    if (lang === 'en') {
-      if (tokenPluralEl) tokenPluralEl.textContent = tokenCount > 1 ? "s" : "";
-    } else {
-      // French
-      if (tokenPluralEl) tokenPluralEl.textContent = tokenCount > 1 ? "s" : "";
-    }
+    // Create token count text with proper pluralization
+    const tokenCountText = lang === 'en' 
+      ? `${tokenCount} token${tokenCount !== 1 ? 's' : ''} left`
+      : `${tokenCount} jeton${tokenCount > 1 ? 's' : ''} restant${tokenCount > 1 ? 's' : ''}`;
     
-    // Update days counter on the right side and in subtitle
-    if (daysCountEl) daysCountEl.textContent = daysRemaining.toString();
-    if (daysCountSubtitleEl) daysCountSubtitleEl.textContent = daysRemaining.toString();
+    // Create subtitle text
+    const subtitleText = lang === 'en' 
+      ? `You have ${discountPercentage}% discount on next purchase`
+      : `Vous avez ${discountPercentage}% de réduction sur le prochain achat`;
+    
+    // Create days label and description (handle singular/plural)
+    const daysLabel = lang === 'en' 
+      ? (daysRemaining === 1 ? 'day' : 'days')
+      : (daysRemaining === 1 ? 'jour' : 'jours');
+    const daysDescription = lang === 'en' 
+      ? 'before the next token'
+      : 'avant le prochain jeton';
 
-    // Update explanation based on token count
-    if (explanationEl) {
-      if (tokenCount === 1) {
-        explanationEl.textContent = lang === 'en' 
-          ? '50% discount on next purchase' 
-          : '50% de réduction sur le prochain achat';
-      } else if (tokenCount >= 2) {
-        explanationEl.textContent = lang === 'en' 
-          ? '100% discount on next purchase' 
-          : '100% de réduction sur le prochain achat';
-      } else {
-        // 0 tokens
-        explanationEl.textContent = lang === 'en' 
-          ? '50% discount on next purchase' 
-          : '50% de réduction sur le prochain achat';
-      }
-    }
-
-    // Show the bar
-    tokensBar.classList.remove("hidden");
+    // Create the token bar container (same design as promotion countdown)
+    tokenBarContainer = document.createElement("div");
+    tokenBarContainer.id = "token-bar-container";
+    tokenBarContainer.className = "fixed bottom-0 left-0 right-0 z-50 bg-gradient-to-r from-orange-500 to-amber-500 text-white px-4 py-3 sm:px-6 sm:py-4 shadow-2xl";
+    
+    tokenBarContainer.innerHTML = `
+      <div class="max-w-6xl mx-auto flex items-center justify-between flex-wrap gap-3">
+        <div class="flex items-center gap-3">
+          <div class="bg-white/20 text-white p-2.5 rounded-full flex-shrink-0">
+            <svg class="w-5 h-5 sm:w-6 sm:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+            </svg>
+          </div>
+          <div>
+            <div class="font-bold text-base sm:text-lg">${tokenCountText}</div>
+            <div class="text-xs sm:text-sm opacity-90">${subtitleText}</div>
+          </div>
+        </div>
+        <div class="text-right flex-shrink-0">
+          <div class="text-xl sm:text-2xl font-bold">${daysRemaining} ${daysLabel}</div>
+          <div class="text-xs opacity-90">${daysDescription}</div>
+        </div>
+      </div>
+    `;
+    
+    document.body.appendChild(tokenBarContainer);
+    
+    // Add bottom padding to body to prevent content from being hidden behind the fixed bar
+    document.body.style.paddingBottom = "100px";
+    
+    console.log(`✅ Token bar displayed: ${tokenCount} tokens, ${daysRemaining} days remaining`);
   }
 
   // Check if user has active promotion
@@ -475,7 +498,7 @@ export function initProfilePage(data: ProfilePageData) {
   }
 
   // Display promotion countdown timer
-  function displayPromotionCountdown(remainingSeconds: number) {
+  function displayPromotionCountdown(remainingSeconds: number, purchaseTokens: any) {
     // Create countdown element if it doesn't exist
     let countdownEl = document.getElementById("promotion-countdown");
     if (!countdownEl) {
@@ -522,13 +545,21 @@ export function initProfilePage(data: ProfilePageData) {
       }
 
       if (remainingSeconds <= 0) {
-        // Promotion expired - remove countdown and reload page
+        // Promotion expired - remove countdown bar
         const container = document.getElementById("promotion-countdown-container");
         if (container) {
           container.remove();
-          // Remove bottom padding
+        }
+        
+        // Now show the token bar (if user has tokens)
+        if (purchaseTokens && purchaseTokens.length > 0) {
+          console.log("⏰ Time-limited promotion expired - showing token bar");
+          displayTokenBar(purchaseTokens, false);
+        } else {
+          // No tokens to show, just remove bottom padding
           document.body.style.paddingBottom = "";
         }
+        
         // Reload to update prices
         window.location.reload();
       } else {
@@ -616,37 +647,6 @@ export function initProfilePage(data: ProfilePageData) {
 
         // Display token bar if user has active membership
         console.log("Purchase tokens data:", purchaseTokens);
-        
-        if (purchaseTokens && purchaseTokens.length > 0) {
-          console.log("✅ Displaying token bar with data:", purchaseTokens[0]);
-          displayTokenBar(purchaseTokens);
-        } else {
-          // If no token data yet, still show the bar with default values
-          // This can happen right after subscription before token record is created
-          console.warn("⚠️ No token data available - showing default values");
-          const tokensBar = document.getElementById("tokens-bar");
-          if (tokensBar) {
-            const tokenCountEl = document.getElementById("token-count");
-            const tokenPluralEl = document.getElementById("token-plural");
-            const daysCountEl = document.getElementById("days-count");
-            const daysCountSubtitleEl = document.getElementById("days-count-subtitle");
-            const explanationEl = document.getElementById("token-explanation");
-            
-            if (tokenCountEl) tokenCountEl.textContent = "0";
-            if (tokenPluralEl) tokenPluralEl.textContent = ""; // 0 tokens = no 's' in English
-            if (daysCountEl) daysCountEl.textContent = "30";
-            if (daysCountSubtitleEl) daysCountSubtitleEl.textContent = "30";
-            
-            // Default explanation for 0 tokens
-            if (explanationEl) {
-              explanationEl.textContent = lang === 'en' 
-                ? '50% discount on next purchase' 
-                : '50% de réduction sur le prochain achat';
-            }
-            
-            tokensBar.classList.remove("hidden");
-          }
-        }
 
         // Check if user has active promotion
         const promotion = checkActivePromotion(membership);
@@ -662,10 +662,16 @@ export function initProfilePage(data: ProfilePageData) {
         // Show content type badges for subscribed users (with time-limited promotion only)
         showContentTypeBadges(hasActivePromotion);
 
-        // Display promotion countdown if active
+        // Display promotion countdown if active, otherwise show token bar
         if (hasActivePromotion) {
           console.log(`🎉 Active promotion: ${promotionPercentage}% off for ${promotion.remainingSeconds} seconds`);
-          displayPromotionCountdown(promotion.remainingSeconds);
+          displayPromotionCountdown(promotion.remainingSeconds, purchaseTokens);
+        } else {
+          // No active time-limited promotion - show token bar if user has tokens
+          if (purchaseTokens && purchaseTokens.length > 0) {
+            console.log("✅ Displaying token bar with data:", purchaseTokens[0]);
+            displayTokenBar(purchaseTokens, false);
+          }
         }
 
         // Use real subscription data from backend
