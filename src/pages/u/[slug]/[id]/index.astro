@@ -841,10 +841,11 @@ const randomCreators = shuffled.slice(0, 3);
                 data-profile-id={profile.id}
                 class="w-full bg-brand-blue-500 hover:bg-brand-blue-600 text-white font-bold py-5 px-6 rounded-lg transition-all shadow-lg hover:shadow-xl"
               >
-                <div class="flex items-center justify-between">
+                {/* Desktop layout (>= 480px): side by side */}
+                <div class="hidden min-[480px]:flex items-center justify-between">
                   <div class="flex items-center gap-3">
                     {/* Unlock icon */}
-                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <svg class="w-6 h-6 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 11V7a4 4 0 118 0m-4 8v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2z"></path>
                     </svg>
                     <div class="text-left">
@@ -858,7 +859,34 @@ const randomCreators = shuffled.slice(0, 3);
                   </div>
                   {/* Price display */}
                   {profile.membershipPrice !== undefined && (
-                    <div class="text-xl font-bold">
+                    <div class="text-xl font-bold flex-shrink-0 ml-4">
+                      {profile.membershipPrice === 0 
+                        ? (lang === 'en' ? 'Free' : 'Gratuit')
+                        : `${formatPrice(profile.membershipPrice)}${t.profile.perMonth}`
+                      }
+                    </div>
+                  )}
+                </div>
+
+                {/* Mobile layout (< 480px): stacked vertically */}
+                <div class="flex min-[480px]:hidden flex-col items-center gap-3">
+                  <div class="flex items-center gap-3">
+                    {/* Unlock icon */}
+                    <svg class="w-6 h-6 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 11V7a4 4 0 118 0m-4 8v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2z"></path>
+                    </svg>
+                    <div class="text-center">
+                      <div class="text-base">
+                        {lang === 'en' ? 'Unlock more contents' : 'Débloquer plus de contenus'}
+                      </div>
+                      <div class="text-xs font-normal opacity-90">
+                        {videoText} & {imageText}
+                      </div>
+                    </div>
+                  </div>
+                  {/* Price display - under the text */}
+                  {profile.membershipPrice !== undefined && (
+                    <div class="text-2xl font-bold">
                       {profile.membershipPrice === 0 
                         ? (lang === 'en' ? 'Free' : 'Gratuit')
                         : `${formatPrice(profile.membershipPrice)}${t.profile.perMonth}`
