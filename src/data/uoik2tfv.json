@@ -14,6 +14,7 @@
   "avatar": "/uploads/uoik2tfv/paid_0rty3aef_jkkzsuat5dg0b3shko1xzu9dqk0xhv_thumb.jpg",
   "membershipPrice": 999,
   "promotionPercentage": 60,
+  "showDescription": false,
   "videos": [
     {
       "id": "0rty3aef",

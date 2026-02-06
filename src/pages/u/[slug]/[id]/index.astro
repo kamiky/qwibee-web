@@ -137,16 +137,19 @@ const getVideoFilename = (
 // Keep original order from data file
 const allVideos = [...profile.videos];
 
+// Check if user has membership (real or simulated in debug mode)
+const hasActiveMembership = USER_PLAN === "membership" || (isDebugMode && simulateMode === "membership") || (isDebugMode && simulateMode === "all");
+
 // Filter hidden content for non-subscribers
 const sortedVideos = allVideos.filter(video => {
-  // If user has membership, show everything
-  if (USER_PLAN === "membership") return true;
+  // IMPORTANT: If user has membership (real or simulated), show ALL content (including hidden)
+  if (hasActiveMembership) return true;
   
   // If no membership, only show non-hidden content
   return !video.hide;
 });
 
-// Count hidden content for CTA
+// Count hidden content for CTA and debug section
 const hiddenVideos = allVideos.filter(v => v.hide);
 const hiddenCount = hiddenVideos.length;
 
@@ -282,9 +285,11 @@ const randomCreators = shuffled.slice(0, 3);
             <h1 class="text-4xl font-bold mb-3 text-gray-900">
               {profile.displayName[lang]}
             </h1>
-            <!-- <p class="text-base text-gray-500 mb-6 leading-relaxed">
-              {profile.bio[lang]}
-            </p> -->
+            {profile.showDescription && (
+              <p class="text-base text-gray-500 mb-6 leading-relaxed whitespace-pre-line">
+                {profile.bio[lang]}
+              </p>
+            )}
 
             <!-- Membership Option -->
             {
@@ -569,8 +574,9 @@ const randomCreators = shuffled.slice(0, 3);
             );
           })()}
         
-        {/* Hidden Content Section - only in dev with ?debug=true */}
-        {isDevelopment && showMediaTitles && hiddenVideos.length > 0 && (
+        {/* Hidden Content Section - ONLY in dev with ?debug=true AND user is NOT subscribed (no simulation)
+            (subscribed users already see all content in the main grid above) */}
+        {isDevelopment && showMediaTitles && !hasActiveMembership && hiddenVideos.length > 0 && (
           <div class="mt-16">
             <div class="mb-8">
               <h2 class="text-2xl font-bold text-red-600">
@@ -700,8 +706,8 @@ const randomCreators = shuffled.slice(0, 3);
           </div>
         )}
         
-        {/* CTA Button for hidden content - only show if user is NOT subscribed and there are hidden items */}
-        {USER_PLAN !== "membership" && hiddenCount > 0 && (
+        {/* CTA Button for hidden content - only show if user is NOT subscribed (real or simulated) and there are hidden items */}
+        {!hasActiveMembership && hiddenCount > 0 && (
           <div class="mt-12">
             <button
               id="subscribe-to-see-more-btn"

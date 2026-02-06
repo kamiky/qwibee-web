@@ -3,16 +3,17 @@
   "slug": "marion",
   "username": "Marion",
   "displayName": {
-    "en": "Marion H",
-    "fr": "Marion H"
+    "en": "Marion",
+    "fr": "Marion"
   },
   "bio": {
-    "en": "Before you ask: YES, i show everything! but please keep it to yourself.",
-    "fr": "Avant de demander: OUI, je montre tout! mais s'il te plaît garde le pour toi."
+    "en": "🇫🇷 Traveling in asia\n❤️ Festivals & parties\n😁 Montre toi si tu es français\nIG: mrionha \n\nBefore you ask:\nYES, i show everything!\n(but please keep it to yourself)",
+    "fr": "🇫🇷 Traveling in asia\n❤️ Festivals & parties\n😁 Montre toi si tu es français\nIG: mrionha \n\nBefore you ask:\nYES, i show everything!\n(but please keep it to yourself)"
   },
   "avatar": "/uploads/uh29p8bf/paid_2n0zz8s4_bwbkxacvt0hy5ls4pw734k4xw8c3cf.png",
   "membershipPrice": 800,
   "promotionPercentage": 60,
+  "showDescription": true,
   "videos": [
     {
       "id": "128nufb8",
@@ -50,7 +51,7 @@
       "paidFilename": "paid_1fw8ghgf_khagnttwi9fpio68vjno12mekxuey4.mp4",
       "previewFilename": "preview_1fw8ghgf_3n41siva9d61xvxmzs8lgoionhvw9q.mp4",
       "type": "paid",
-      "hide": false,
+      "hide": true,
       "mimetype": "video/mp4",
       "uploadedAt": "2026-01-15T16:06:19.943Z",
       "paidThumbnail": "paid_1fw8ghgf_khagnttwi9fpio68vjno12mekxuey4_thumb.jpg",
@@ -134,7 +135,7 @@
       "paidFilename": "paid_6jh4pa1l_9wnwhu114hqwagahxgd618luer6ezl.mp4",
       "previewFilename": "preview_6jh4pa1l_0cih8i9n7r6n22sz493re3rxlbjkuz.mp4",
       "type": "paid",
-      "hide": false,
+      "hide": true,
       "mimetype": "video/mp4",
       "uploadedAt": "2026-01-15T16:06:19.943Z",
       "paidThumbnail": "paid_6jh4pa1l_9wnwhu114hqwagahxgd618luer6ezl_thumb.jpg",
