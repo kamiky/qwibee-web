@@ -12,10 +12,13 @@ const isReadyForProduction = import.meta.env.MODE === "production" ? true : true
 // Check if we're in development mode
 const isDevelopment = import.meta.env.MODE === "development";
 
-// Get all profiles as array (excluding dev-only profiles)
+// Get all profiles as array (excluding dev-only profiles and specific hidden profiles)
 const allProfiles = Object.values(profiles).filter(p => {
   // Exclude dev-only profiles from suggestions (always, even in development)
   if (p.devonly === true) return false;
+  
+  // Exclude specific profiles from homepage
+  if (p.id === "uh29p8bf") return false;
   
   return true;
 });
