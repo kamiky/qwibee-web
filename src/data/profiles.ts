@@ -56,6 +56,7 @@ import uh29p8bf from "./uh29p8bf.json";
 import uxykli0k from "./uxykli0k.json";
 import u2as61e7 from "./u2as61e7.json";
 import uoik2tfv from "./uoik2tfv.json";
+import ul7nwt0a from "./ul7nwt0a.json";
 
 // All profiles including dev-only
 const allProfiles: Record<string, Profile> = {
@@ -64,6 +65,7 @@ const allProfiles: Record<string, Profile> = {
   uxykli0k: uxykli0k as Profile,
   u2as61e7: u2as61e7 as Profile,
   uoik2tfv: uoik2tfv as Profile,
+  ul7nwt0a: ul7nwt0a as Profile,
 };
 
 // Helper to check if we're in development mode
