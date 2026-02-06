@@ -461,7 +461,7 @@ export function initProfilePage(data: ProfilePageData) {
     tokenBarContainer.className = "fixed bottom-0 left-0 right-0 z-50 bg-gradient-to-r from-orange-500 to-amber-500 text-white px-4 py-3 sm:px-6 sm:py-4 shadow-2xl";
     
     tokenBarContainer.innerHTML = `
-      <div class="max-w-6xl mx-auto flex items-center justify-between flex-wrap gap-3">
+      <div class="max-w-6xl mx-auto flex flex-col min-[480px]:flex-row min-[480px]:items-center min-[480px]:justify-between gap-3">
         <div class="flex items-center gap-3">
           <div class="bg-white/20 text-white p-2.5 rounded-full flex-shrink-0">
             <svg class="w-5 h-5 sm:w-6 sm:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -471,9 +471,10 @@ export function initProfilePage(data: ProfilePageData) {
           <div>
             <div class="font-bold text-base sm:text-lg">${tokenCountText}</div>
             <div class="text-xs sm:text-sm opacity-90">${subtitleText}</div>
+            <div class="text-base font-bold min-[480px]:hidden">${daysRemaining} ${daysLabel} ${daysDescription}</div>
           </div>
         </div>
-        <div class="text-right flex-shrink-0">
+        <div class="hidden min-[480px]:block text-right flex-shrink-0">
           <div class="text-xl sm:text-2xl font-bold">${daysRemaining} ${daysLabel}</div>
           <div class="text-xs opacity-90">${daysDescription}</div>
         </div>
