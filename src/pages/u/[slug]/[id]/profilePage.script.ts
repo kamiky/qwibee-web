@@ -303,68 +303,77 @@ export function initProfilePage(data: ProfilePageData) {
             const finalPrice = calculatePriceWithTokens(originalPrice, tokenCount);
             
             // Get price elements
-            const originalPriceEl = pricingDiv.querySelector(".text-gray-400") as HTMLElement;
-            const tokenBadgeEl = pricingDiv.querySelector(".token-discount-badge") as HTMLElement;
+            const originalPriceEl = pricingDiv.querySelector(".original-price-strikethrough") as HTMLElement;
+            const promoBadgeEl = pricingDiv.querySelector(".promotion-discount-badge") as HTMLElement;
             const finalPriceEl = pricingDiv.querySelector(".locked-label") as HTMLElement;
             
-            // Determine what to show:
-            // - If tokens >= 2: Show "FREE" in green + "100%" badge
-            // - If tokens === 1: Show discounted price + "-50%" badge
-            // - If tokens === 0: Show price (with or without time-limited promo)
+            // Priority: subscription promotion > token promotion > no promotion
+            // Never show both promotions at the same time
             
-            const hasTokenDiscount = tokenCount > 0;
-            const hasAnyDiscount = hasActivePromotion || hasTokenDiscount;
-            
-            if (tokenCount >= 2) {
-              // FREE with tokens
+            if (hasActivePromotion) {
+              // Time-limited subscription promotion has priority
+              if (finalPriceEl) {
+                finalPriceEl.textContent = formatPrice(promotionalPrice);
+                finalPriceEl.classList.remove('text-green-600');
+                finalPriceEl.classList.add('text-brand-blue-500');
+              }
+              if (originalPriceEl) {
+                originalPriceEl.style.display = "inline";
+              }
+              // Show subscription promotion badge
+              if (promoBadgeEl && promotionPercentage > 0) {
+                promoBadgeEl.textContent = `-${promotionPercentage}%`;
+                promoBadgeEl.classList.remove('bg-green-600');
+                promoBadgeEl.classList.add('bg-orange-500');
+                promoBadgeEl.style.display = "inline";
+              }
+            } else if (tokenCount >= 2) {
+              // FREE with 2+ tokens (only if NO active subscription promotion)
               if (finalPriceEl) {
                 finalPriceEl.textContent = lang === 'en' ? 'FREE' : 'GRATUIT';
                 finalPriceEl.classList.remove('text-brand-blue-500');
                 finalPriceEl.classList.add('text-green-600');
               }
               if (originalPriceEl) {
-                originalPriceEl.textContent = `${formatPrice(originalPrice)}`;
                 originalPriceEl.style.display = "inline";
               }
               // Show 100% token discount badge in green
-              if (tokenBadgeEl) {
-                tokenBadgeEl.textContent = "-100%";
-                tokenBadgeEl.classList.remove('bg-orange-500');
-                tokenBadgeEl.classList.add('bg-green-600');
-                tokenBadgeEl.style.display = "inline";
+              if (promoBadgeEl) {
+                promoBadgeEl.textContent = "-100%";
+                promoBadgeEl.classList.remove('bg-orange-500');
+                promoBadgeEl.classList.add('bg-green-600');
+                promoBadgeEl.style.display = "inline";
               }
             } else if (tokenCount === 1) {
-              // 50% off with 1 token
+              // 50% off with 1 token (only if NO active subscription promotion)
               if (finalPriceEl) {
                 finalPriceEl.textContent = formatPrice(finalPrice);
                 finalPriceEl.classList.remove('text-green-600');
                 finalPriceEl.classList.add('text-brand-blue-500');
               }
               if (originalPriceEl) {
-                originalPriceEl.textContent = `${formatPrice(originalPrice)}`;
                 originalPriceEl.style.display = "inline";
               }
               // Show -50% token discount badge in orange
-              if (tokenBadgeEl) {
-                tokenBadgeEl.textContent = "-50%";
-                tokenBadgeEl.classList.remove('bg-green-600');
-                tokenBadgeEl.classList.add('bg-orange-500');
-                tokenBadgeEl.style.display = "inline";
+              if (promoBadgeEl) {
+                promoBadgeEl.textContent = "-50%";
+                promoBadgeEl.classList.remove('bg-green-600');
+                promoBadgeEl.classList.add('bg-orange-500');
+                promoBadgeEl.style.display = "inline";
               }
             } else {
-              // No tokens - show price with or without time-limited promo
+              // No promotion at all - show original price only
               if (finalPriceEl) {
-                finalPriceEl.textContent = formatPrice(finalPrice);
+                finalPriceEl.textContent = formatPrice(originalPrice);
                 finalPriceEl.classList.remove('text-green-600');
                 finalPriceEl.classList.add('text-brand-blue-500');
               }
               if (originalPriceEl) {
-                originalPriceEl.textContent = `${formatPrice(originalPrice)}`;
-                originalPriceEl.style.display = hasActivePromotion ? "inline" : "none";
+                originalPriceEl.style.display = "none";
               }
-              // Hide token badge
-              if (tokenBadgeEl) {
-                tokenBadgeEl.style.display = "none";
+              // Hide promotion badge
+              if (promoBadgeEl) {
+                promoBadgeEl.style.display = "none";
               }
             }
           }
@@ -375,32 +384,27 @@ export function initProfilePage(data: ProfilePageData) {
       }
     });
 
-    const discountInfo = tokenCount >= 2 ? " (FREE with tokens)" : 
-                         tokenCount === 1 ? " (50% off with token)" :
-                         hasActivePromotion ? " (with time-limited promotion)" : "";
+    const discountInfo = hasActivePromotion ? " (with time-limited promotion)" :
+                         tokenCount >= 2 ? " (FREE with tokens)" : 
+                         tokenCount === 1 ? " (50% off with token)" : "";
     console.log(`Showed pricing for ${count} locked paid videos${discountInfo}`);
   }
 
-  // Function to show content type badges (Members/-X%) for subscribed users
-  function showContentTypeBadges(hasActivePromotion: boolean = false) {
-    // Find all content type badges (both membership and paid)
+  // Function to show content type badges (Members only - for membership content)
+  function showContentTypeBadges() {
+    // Find all content type badges (only membership badges now)
     const badges = document.querySelectorAll(".content-type-badge");
 
     badges.forEach((badge) => {
       const videoType = (badge as HTMLElement).getAttribute("data-video-type");
       
-      // For paid content badges, only show if there's an active time-limited promotion
-      if (videoType === "paid") {
-        if (hasActivePromotion && promotionPercentage > 0) {
-          (badge as HTMLElement).style.display = "block";
-        }
-      } else {
-        // Always show membership badges
+      // Only show membership badges (not paid - promotions are shown under thumbnail now)
+      if (videoType === "membership") {
         (badge as HTMLElement).style.display = "block";
       }
     });
 
-    console.log(`Showed content type badges${hasActivePromotion ? " with time-limited promotion" : ""}`);
+    console.log("Showed membership badges");
   }
 
   // Display token bar with user's token count (same design as time-limited promotion bar)
@@ -663,8 +667,8 @@ export function initProfilePage(data: ProfilePageData) {
         // Show paid content pricing for subscribed users (with promotion and/or tokens)
         showPaidContentPricing(hasActivePromotion, tokenCount);
 
-        // Show content type badges for subscribed users (with time-limited promotion only)
-        showContentTypeBadges(hasActivePromotion);
+        // Show content type badges for subscribed users (membership badges only)
+        showContentTypeBadges();
 
         // Display promotion countdown if active, otherwise show token bar
         if (hasActivePromotion) {
@@ -1228,8 +1232,9 @@ export function initProfilePage(data: ProfilePageData) {
 
       console.log(`User has ${tokenCount} tokens for this profile`);
 
-      // Handle 2+ tokens: Unlock for FREE without Stripe
-      if (tokenCount >= 2) {
+      // Handle 2+ tokens: Unlock for FREE without Stripe (only if NO active subscription promotion)
+      // Subscription promotion always has priority over tokens
+      if (tokenCount >= 2 && !promotion.isActive) {
         // Show loading state
         const originalText = (button as HTMLButtonElement).textContent;
         (button as HTMLButtonElement).disabled = true;
@@ -1348,20 +1353,19 @@ export function initProfilePage(data: ProfilePageData) {
           console.error("Error decoding token:", e);
         }
 
-        // Calculate the price - tokens take priority over time-limited promotion
-        // If user has token(s): send ORIGINAL price to backend (backend will apply discount)
-        // If user has no tokens: apply time-limited promotion if active
+        // Calculate the price - subscription promotion has PRIORITY over tokens
+        // Priority: subscription promotion > token discount > original price
         let contentPriceToSend = videoData.price;
         let tokensToUse = 0;
         
-        if (tokenCount === 1) {
-          // Use 1 token: 50% off - backend will apply the discount
-          tokensToUse = 1;
-          console.log(`🎟️ Using 1 token (50% off) - sending original price ${videoData.price} cents to backend`);
-        } else if (promotion.isActive && promotionPercentage > 0) {
-          // No tokens, but has active time-limited promotion - apply discount here
+        if (promotion.isActive && promotionPercentage > 0) {
+          // Subscription promotion has priority - apply discount here
           contentPriceToSend = calculatePromotionalPrice(videoData.price);
           console.log(`🎉 Using time-limited promotion (${promotionPercentage}%): ${videoData.price} → ${contentPriceToSend} cents`);
+        } else if (tokenCount === 1) {
+          // No active promotion - use 1 token: 50% off - backend will apply the discount
+          tokensToUse = 1;
+          console.log(`🎟️ Using 1 token (50% off) - sending original price ${videoData.price} cents to backend`);
         }
         
         console.log(`💰 Price sent to backend: ${contentPriceToSend} cents (original: ${videoData.price} cents)${tokensToUse > 0 ? ', backend will apply token discount' : ''}`);

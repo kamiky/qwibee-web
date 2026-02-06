@@ -536,11 +536,9 @@ const randomCreators = shuffled.slice(0, 3);
                     )}
 
                     {/* Content Type Badge - Hidden by default, shown only for subscribed users, removed when unlocked */}
-                    {(video.type === "membership" || video.type === "paid") && !userHasAccess && (
-                      <div class={`content-type-badge absolute top-2 left-2 text-white text-xs font-bold px-2.5 py-1 rounded ${
-                        video.type === "membership" ? "bg-blue-500" : "bg-orange-500"
-                      }`} style="display: none;" data-video-type={video.type}>
-                        {video.type === "membership" ? "Members" : profile.promotionPercentage ? `-${profile.promotionPercentage}%` : ""}
+                    {video.type === "membership" && !userHasAccess && (
+                      <div class="content-type-badge absolute top-2 left-2 bg-blue-500 text-white text-xs font-bold px-2.5 py-1 rounded" style="display: none;" data-video-type={video.type}>
+                        Members
                       </div>
                     )}
 
@@ -635,13 +633,13 @@ const randomCreators = shuffled.slice(0, 3);
                       {!userHasAccess && video.type === "paid" && (
                         <div class="paid-content-pricing flex items-center gap-4" style="display: none;">
                           <div class="flex items-baseline gap-2">
-                            {!!(profile.promotionPercentage && profile.promotionPercentage > 0) && (
-                              <span class="text-gray-400 line-through text-sm">{formatPrice(video.price)}</span>
-                            )}
-                            {/* Token discount badge - hidden by default, shown with JS if user has tokens */}
-                            <span class="token-discount-badge bg-orange-500 text-white text-xs font-bold px-2 py-0.5 rounded" style="display: none;"></span>
+                            {/* Original price - shown when there's a discount (strikethrough) */}
+                            <span class="original-price-strikethrough text-gray-400 line-through text-sm" style="display: none;">{formatPrice(video.price)}</span>
+                            {/* Promotion discount badge - hidden by default, shown with JS if user has active promotion OR tokens */}
+                            <span class="promotion-discount-badge bg-orange-500 text-white text-xs font-bold px-2 py-0.5 rounded" style="display: none;"></span>
+                            {/* Final price - starts as original price, updated by JS based on promotions/tokens */}
                             <span class="locked-label text-brand-blue-500 font-bold text-lg">
-                              {formatPrice(calculatePromotionalPrice(video.price))}
+                              {formatPrice(video.price)}
                             </span>
                           </div>
                           {/* Action Button for paid content */}
