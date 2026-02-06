@@ -157,6 +157,7 @@ async function generateVideoMetadata(uniqueId, sequentialNumber, paidFilename, p
     paidFilename,
     previewFilename,
     type: contentType,
+    hide: false, // Default to visible
     mimetype,
     uploadedAt: new Date().toISOString(),
   };
@@ -306,6 +307,11 @@ async function processFolderVideos(folderPath, profileId, existingProfile) {
         videoData.price = 0;
       }
       
+      // Preserve hide property, default to false if not present
+      if (videoData.hide === undefined) {
+        videoData.hide = false;
+      }
+      
       // Preserve uploadedAt if it exists, otherwise set it now
       if (!videoData.uploadedAt) {
         videoData.uploadedAt = new Date().toISOString();
@@ -429,6 +435,8 @@ async function generateProfileJson(folderPath, profileId) {
     ...(avatar && { avatar }),
     membershipPrice: existingProfile?.membershipPrice !== undefined ? existingProfile.membershipPrice : 999, // Preserve existing price or default to $9.99/month
     promotionPercentage, // Promotion discount percentage for paid content
+    ...(existingProfile?.showDescription !== undefined && { showDescription: existingProfile.showDescription }), // Preserve showDescription if it exists
+    ...(existingProfile?.socials && { socials: existingProfile.socials }), // Preserve socials if it exists
     videos,
   };
   
@@ -466,6 +474,7 @@ export interface Video {
   paidThumbnail?: string; // Thumbnail for paid content (video frame or image itself)
   previewThumbnail?: string; // Thumbnail for preview content (video frame or blurred image)
   type: ContentType; // 'free' = always accessible, 'membership' = requires subscription, 'paid' = requires individual purchase
+  hide: boolean; // Whether the video should be hidden from the profile
   mimetype: string; // MIME type of the content (e.g., 'video/mp4', 'image/jpeg', 'image/png')
   uploadedAt: string; // ISO 8601 timestamp of when the content was uploaded
 }
@@ -485,6 +494,12 @@ export interface Profile {
   avatar?: string;
   membershipPrice?: number; // Monthly membership price in cents
   promotionPercentage?: number; // Promotion discount percentage (e.g., 20 for 20% off paid content)
+  showDescription?: boolean; // Whether to show description on profile page
+  socials?: {
+    instagram?: string;
+    website?: string;
+    [key: string]: string | undefined;
+  }; // Social media links
   videos: Video[];
 }
 
