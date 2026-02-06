@@ -17,6 +17,7 @@ export interface Video {
   paidThumbnail?: string; // Thumbnail for paid content (video frame or image itself)
   previewThumbnail?: string; // Thumbnail for preview content (video frame or blurred image)
   type: ContentType; // 'free' = always accessible, 'membership' = requires subscription, 'paid' = requires individual purchase
+  hide: boolean; // If true, this content will be hidden from non-subscribers
   mimetype: string; // MIME type of the content (e.g., 'video/mp4', 'image/jpeg', 'image/png')
   uploadedAt: string; // ISO 8601 timestamp of when the content was uploaded
 }

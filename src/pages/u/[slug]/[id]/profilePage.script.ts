@@ -1581,4 +1581,21 @@ export function initProfilePage(data: ProfilePageData) {
       }
     }
   });
+
+  // Handle "Subscribe to see more" button click
+  const subscribeToSeeMoreBtn = document.getElementById("subscribe-to-see-more-btn");
+  if (subscribeToSeeMoreBtn) {
+    subscribeToSeeMoreBtn.addEventListener("click", () => {
+      // Scroll to the main membership CTA button at the top
+      const membershipBtn = document.getElementById("membership-cta-btn");
+      if (membershipBtn) {
+        membershipBtn.scrollIntoView({ behavior: "smooth", block: "center" });
+        // Add a visual highlight effect
+        membershipBtn.classList.add("ring-4", "ring-brand-blue-300");
+        setTimeout(() => {
+          membershipBtn.classList.remove("ring-4", "ring-brand-blue-300");
+        }, 2000);
+      }
+    });
+  }
 }

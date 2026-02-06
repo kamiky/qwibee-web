@@ -135,7 +135,20 @@ const getVideoFilename = (
 };
 
 // Keep original order from data file
-const sortedVideos = [...profile.videos];
+const allVideos = [...profile.videos];
+
+// Filter hidden content for non-subscribers
+const sortedVideos = allVideos.filter(video => {
+  // If user has membership, show everything
+  if (USER_PLAN === "membership") return true;
+  
+  // If no membership, only show non-hidden content
+  return !video.hide;
+});
+
+// Count hidden content for CTA
+const hiddenVideos = allVideos.filter(v => v.hide);
+const hiddenCount = hiddenVideos.length;
 
 // Get all profiles as array (excluding current profile and dev-only profiles)
 const allProfiles = Object.values(profiles).filter(p => {
@@ -323,9 +336,32 @@ const randomCreators = shuffled.slice(0, 3);
 
       <!-- Videos Grid -->
       <section>
-        <h2 class="text-2xl font-bold mb-8 text-gray-900">
-          {t.profile.videos}
-        </h2>
+        {(() => {
+          // Count images and videos from all videos (including hidden ones for display purposes)
+          const imageCount = allVideos.filter(v => v.mimetype?.startsWith('image/')).length;
+          const videoCount = allVideos.filter(v => v.mimetype?.startsWith('video/')).length;
+          
+          // Create the subtitle with counts
+          const imageText = lang === 'en' 
+            ? `${imageCount} image${imageCount !== 1 ? 's' : ''}` 
+            : `${imageCount} image${imageCount > 1 ? 's' : ''}`;
+          const videoText = lang === 'en'
+            ? `${videoCount} video${videoCount !== 1 ? 's' : ''}`
+            : `${videoCount} vidéo${videoCount > 1 ? 's' : ''}`;
+          
+          return (
+            <div class="mb-8">
+              <h2 class="text-2xl font-bold text-gray-900">
+                {t.profile.videos}
+              </h2>
+              <p class="text-sm text-gray-600 mt-1">
+                {imageText} & {videoText}
+              </p>
+            </div>
+          );
+        })()}
+      </section>
+      <section>
         
         {/* Define function to render a video card */}
         {(() => {
@@ -532,6 +568,152 @@ const randomCreators = shuffled.slice(0, 3);
               </>
             );
           })()}
+        
+        {/* Hidden Content Section - only in dev with ?debug=true */}
+        {isDevelopment && showMediaTitles && hiddenVideos.length > 0 && (
+          <div class="mt-16">
+            <div class="mb-8">
+              <h2 class="text-2xl font-bold text-red-600">
+                Hidden
+              </h2>
+              <p class="text-sm text-gray-600 mt-1">
+                {lang === 'en' 
+                  ? `${hiddenVideos.length} hidden content${hiddenVideos.length !== 1 ? 's' : ''} (debug mode only)` 
+                  : `${hiddenVideos.length} contenu${hiddenVideos.length > 1 ? 's' : ''} caché${hiddenVideos.length > 1 ? 's' : ''} (mode debug uniquement)`}
+              </p>
+            </div>
+            
+            {(() => {
+              const renderVideoCard = (video: typeof sortedVideos[0]) => {
+                const userHasAccess = hasAccess(video.type, video.id);
+                const videoFilename = getVideoFilename(
+                  video.type,
+                  video.id,
+                  video.paidFilename,
+                  video.previewFilename
+                );
+                const thumbnailFilename = userHasAccess 
+                  ? (video.paidThumbnail || video.paidFilename)
+                  : (video.previewThumbnail || video.previewFilename);
+                const isImage = video.mimetype?.startsWith('image/');
+
+                return (
+                  <div
+                    class="group video-card cursor-pointer mb-6 opacity-60 border-2 border-red-300 rounded-lg overflow-hidden"
+                    data-video-type={video.type}
+                    data-video-id={video.id}
+                  >
+                    <div class="bg-gray-100 relative overflow-hidden video-container">
+                      {isImage ? (
+                        <img
+                          class="w-full object-cover video-player"
+                          src={`/uploads/${profile.id}/${videoFilename}`}
+                          alt={video.title[lang]}
+                          data-paid-src={`/uploads/${profile.id}/${video.paidFilename}`}
+                          data-preview-src={`/uploads/${profile.id}/${video.previewFilename}`}
+                          data-has-access={userHasAccess ? "true" : "false"}
+                        />
+                      ) : (
+                        <>
+                          <img
+                            class="video-thumbnail w-full object-cover"
+                            src={`/uploads/${profile.id}/${thumbnailFilename}`}
+                            alt={video.title[lang]}
+                          />
+                          <video
+                            class="w-full object-cover video-player bg-black hidden"
+                            controls
+                            preload="none"
+                            data-video-src={`/uploads/${profile.id}/${videoFilename}`}
+                            data-mimetype={video.mimetype || "video/mp4"}
+                          >
+                          </video>
+                        </>
+                      )}
+
+                      {!isImage && (
+                        <div class="custom-play-icon absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-black/60 text-white p-4 rounded-full cursor-pointer hover:bg-black/75 transition-all">
+                          <svg
+                            class="w-8 h-8"
+                            fill="currentColor"
+                            viewBox="0 0 24 24"
+                          >
+                            <path
+                              d="M8 5v14l11-7z"
+                            />
+                          </svg>
+                        </div>
+                      )}
+
+                      {video.duration && !isImage && (
+                        <div class="video-duration absolute bottom-2 right-2 bg-black/70 text-white text-xs px-2 py-0.5 rounded">
+                          {video.duration}
+                        </div>
+                      )}
+                      
+                      {/* Hidden Badge */}
+                      <div class="absolute top-2 right-2 bg-red-500 text-white text-xs font-bold px-2.5 py-1 rounded">
+                        HIDDEN
+                      </div>
+                    </div>
+
+                    <div class="p-3 bg-white">
+                      <h3 class="text-base font-semibold text-gray-900 mb-1 line-clamp-1">
+                        {video.title[lang]}
+                      </h3>
+                    </div>
+                  </div>
+                );
+              };
+
+              return (
+                <>
+                  {/* Mobile: Single column */}
+                  <div class="flex flex-col md:hidden">
+                    {hiddenVideos.map(renderVideoCard)}
+                  </div>
+
+                  {/* Tablet: 2 columns */}
+                  <div class="hidden md:flex lg:hidden gap-6">
+                    {[0, 1].map((colIndex) => (
+                      <div class="flex-1 flex flex-col">
+                        {hiddenVideos
+                          .filter((_, index) => index % 2 === colIndex)
+                          .map(renderVideoCard)}
+                      </div>
+                    ))}
+                  </div>
+
+                  {/* Desktop: 3 columns */}
+                  <div class="hidden lg:flex gap-6">
+                    {[0, 1, 2].map((colIndex) => (
+                      <div class="flex-1 flex flex-col">
+                        {hiddenVideos
+                          .filter((_, index) => index % 3 === colIndex)
+                          .map(renderVideoCard)}
+                      </div>
+                    ))}
+                  </div>
+                </>
+              );
+            })()}
+          </div>
+        )}
+        
+        {/* CTA Button for hidden content - only show if user is NOT subscribed and there are hidden items */}
+        {USER_PLAN !== "membership" && hiddenCount > 0 && (
+          <div class="mt-12">
+            <button
+              id="subscribe-to-see-more-btn"
+              data-profile-id={profile.id}
+              class="w-full bg-brand-blue-500 hover:bg-brand-blue-600 text-white font-bold py-4 px-6 rounded-lg transition-all text-lg shadow-lg hover:shadow-xl"
+            >
+              {lang === 'en' 
+                ? `Subscribe to see ${hiddenCount} more content${hiddenCount !== 1 ? 's' : ''}` 
+                : `S'abonner pour voir ${hiddenCount} contenu${hiddenCount > 1 ? 's' : ''} de plus`}
+            </button>
+          </div>
+        )}
       </section>
     </div>
 
