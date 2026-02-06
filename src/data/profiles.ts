@@ -39,6 +39,15 @@ export interface Profile {
   membershipPrice?: number; // Monthly membership price in cents
   promotionPercentage?: number; // Promotion discount percentage (e.g., 20 for 20% off paid content)
   showDescription?: boolean; // If true, show the bio description under the creator name
+  socials?: {
+    instagram?: string; // Instagram username or URL
+    tiktok?: string; // TikTok username or URL
+    telegram?: string; // Telegram username or URL
+    whatsapp?: string; // WhatsApp number or URL
+    line?: string; // LINE ID or URL
+    wechat?: string; // WeChat ID
+    website?: string; // Any website URL
+  };
   videos: Video[];
 }
 
