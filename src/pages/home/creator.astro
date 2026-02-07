@@ -6,6 +6,10 @@ import { profiles, getProfileUrl } from "@/data/profiles";
 const lang: Language = "en";
 const t = useTranslations(lang);
 
+// Check if user is logged in
+const accessToken = Astro.cookies.get('qwb_access_token')?.value;
+const isLoggedIn = !!accessToken;
+
 // website is ready for production now
 const isReadyForProduction = import.meta.env.MODE === "production" ? true : true;
 
@@ -94,21 +98,29 @@ const profile3Avatar = "/home/avatar3.jpg";
             <h1
               class="text-4xl sm:text-5xl lg:text-6xl font-bold text-gray-900 leading-tight tracking-tight"
             >
-              {lang === 'fr' ? 'Inscrivez-vous pour soutenir vos créateurs préférés' : 'Sign up to support your favorite creators'}
+              {isLoggedIn 
+                ? (lang === 'fr' ? 'Soutenez vos créateurs préférés' : 'Support your favorite creators')
+                : (lang === 'fr' ? 'Inscrivez-vous pour soutenir vos créateurs préférés' : 'Sign up to support your favorite creators')
+              }
             </h1>
             <p
               class="text-lg sm:text-xl text-gray-600 leading-relaxed max-w-xl mx-auto lg:mx-0 font-light"
             >
-              {lang === 'fr' ? 'Rejoignez Qwibee et accédez à du contenu exclusif de vos créateurs préférés.' : 'Join Qwibee and access exclusive content from your favorite creators.'}
+              {isLoggedIn
+                ? (lang === 'fr' ? 'Découvrez des créateurs incroyables et accédez à du contenu exclusif.' : 'Discover amazing creators and access exclusive content.')
+                : (lang === 'fr' ? 'Rejoignez Qwibee et accédez à du contenu exclusif de vos créateurs préférés.' : 'Join Qwibee and access exclusive content from your favorite creators.')
+              }
             </p>
-            <div class="flex justify-center lg:justify-start">
-              <a
-                href="/login"
-                class="inline-block bg-brand-blue-500 hover:bg-brand-blue-600 text-white font-semibold py-4 px-8 rounded-full transition-all transform hover:scale-105 shadow-lg hover:shadow-xl duration-200"
-              >
-                {lang === 'fr' ? 'S\'inscrire' : 'Sign Up'}
-              </a>
-            </div>
+            {!isLoggedIn && (
+              <div class="flex justify-center lg:justify-start">
+                <a
+                  href="/login"
+                  class="inline-block bg-brand-blue-500 hover:bg-brand-blue-600 text-white font-semibold py-4 px-8 rounded-full transition-all transform hover:scale-105 shadow-lg hover:shadow-xl duration-200"
+                >
+                  {lang === 'fr' ? 'S\'inscrire' : 'Sign Up'}
+                </a>
+              </div>
+            )}
           </div>
 
           <!-- Desktop: Images on Right (Original Layout) -->
