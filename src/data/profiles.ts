@@ -88,5 +88,5 @@ export const getProfileUrl = (profileId: string, lang: 'en' | 'fr' = 'en'): stri
   if (!profile) return '/404';
   
   const basePath = lang === 'fr' ? '/fr' : '';
-  return `${basePath}/u/${profile.slug}/${profile.id}`;
+  return `${basePath}/u/${profile.slug}`;
 };
