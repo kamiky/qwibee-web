@@ -3,6 +3,11 @@ export default {
   content: ["./src/**/*.{astro,html,js,jsx,md,mdx,svelte,ts,tsx,vue}"],
   theme: {
     extend: {
+      fontFamily: {
+        'sans': ['Rubik', 'Roboto', 'system-ui', '-apple-system', 'sans-serif'],
+        'rubik': ['Rubik', 'Roboto', 'sans-serif'],
+        'roboto': ['Roboto', 'sans-serif'],
+      },
       colors: {
         "dark-blue": {
           900: "#0a0e1a",

@@ -46,7 +46,7 @@ const profile3Avatar = "/home/avatar3.jpg";
     </main>
   ) : (
     <>
-      <main class="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
+      <main class="min-h-screen bg-gradient-to-br from-gray-50 via-blue-50/30 to-gray-100">
     <!-- Hero Section -->
     <section class="pt-32 pb-20 px-6">
       <div class="max-w-7xl mx-auto">
@@ -56,7 +56,7 @@ const profile3Avatar = "/home/avatar3.jpg";
             <div class="relative w-full h-[300px] flex items-center justify-center gap-3">
               <!-- Image 1 - Left (smaller on mobile) -->
               <div
-                class="relative w-24 h-36 sm:w-32 sm:h-48 rounded-2xl overflow-hidden shadow-xl transform -rotate-6"
+                class="relative w-24 h-36 sm:w-32 sm:h-48 rounded-2xl overflow-hidden shadow-xl transform -rotate-6 transition-transform duration-300 hover:rotate-0 hover:scale-105"
               >
                 <img
                   src={profile1Avatar}
@@ -67,7 +67,7 @@ const profile3Avatar = "/home/avatar3.jpg";
 
               <!-- Image 2 - Center (larger on mobile) -->
               <div
-                class="relative w-32 h-48 sm:w-40 sm:h-60 rounded-2xl overflow-hidden shadow-xl z-10"
+                class="relative w-32 h-48 sm:w-40 sm:h-60 rounded-2xl overflow-hidden shadow-xl z-10 transition-transform duration-300 hover:scale-110"
               >
                 <img
                   src={profile2Avatar}
@@ -78,7 +78,7 @@ const profile3Avatar = "/home/avatar3.jpg";
 
               <!-- Image 3 - Right (smaller on mobile) -->
               <div
-                class="relative w-24 h-36 sm:w-32 sm:h-48 rounded-2xl overflow-hidden shadow-xl transform rotate-6"
+                class="relative w-24 h-36 sm:w-32 sm:h-48 rounded-2xl overflow-hidden shadow-xl transform rotate-6 transition-transform duration-300 hover:rotate-0 hover:scale-105"
               >
                 <img
                   src={profile3Avatar}
@@ -92,12 +92,12 @@ const profile3Avatar = "/home/avatar3.jpg";
           <!-- Text Content -->
           <div class="space-y-8 text-center lg:text-left">
             <h1
-              class="text-4xl sm:text-5xl lg:text-6xl font-bold text-gray-900 leading-tight"
+              class="text-4xl sm:text-5xl lg:text-6xl font-bold text-gray-900 leading-tight tracking-tight"
             >
               {t.hero.title}
             </h1>
             <p
-              class="text-lg sm:text-xl text-gray-600 leading-relaxed max-w-xl mx-auto lg:mx-0"
+              class="text-lg sm:text-xl text-gray-600 leading-relaxed max-w-xl mx-auto lg:mx-0 font-light"
             >
               {t.hero.subtitle}
             </p>
@@ -149,14 +149,17 @@ const profile3Avatar = "/home/avatar3.jpg";
     
 
     <!-- Explore Creators Section -->
-    <section id="creators" class="py-20 px-6 bg-gray-50">
+    <section id="creators" class="py-20 px-6 bg-white/80 backdrop-blur-sm">
       <div class="max-w-7xl mx-auto">
         <div class="text-center mb-16">
           <h2
-            class="text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-900 mb-4"
+            class="text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-900 mb-4 tracking-tight"
           >
             Explore
           </h2>
+          <p class="text-gray-600 text-lg max-w-2xl mx-auto">
+            Discover amazing creators and their content
+          </p>
         </div>
 
         <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
@@ -164,14 +167,14 @@ const profile3Avatar = "/home/avatar3.jpg";
             randomCreators.map((profile) => (
               <a
                 href={getProfileUrl(profile.id, lang)}
-                class="group bg-white border border-gray-200 rounded-2xl overflow-hidden hover:border-brand-blue-500 hover:shadow-xl transition-all duration-300 hover:transform hover:-translate-y-1"
+                class="group bg-white border border-gray-200 rounded-2xl overflow-hidden hover:border-brand-blue-500 hover:shadow-2xl transition-all duration-300 hover:transform hover:-translate-y-2"
               >
                 <div class="aspect-square bg-gradient-to-br from-blue-50 to-purple-50 flex items-center justify-center overflow-hidden">
                   {profile.avatar ? (
                     <img
                       src={profile.avatar}
                       alt={profile.displayName[lang]}
-                      class="w-full h-full object-cover object-top group-hover:scale-110 transition-transform duration-300"
+                      class="w-full h-full object-cover object-top group-hover:scale-110 transition-transform duration-500"
                     />
                   ) : (
                     <div class="text-6xl">👤</div>
@@ -185,7 +188,7 @@ const profile3Avatar = "/home/avatar3.jpg";
                     {profile.bio[lang]}
                   </p> */}
                   <div class="flex items-center justify-between">
-                    <span class="text-sm text-gray-500">
+                    <span class="text-sm text-gray-500 font-medium">
                       {profile.videos.length} {t.profile.videos}
                     </span>
                     {profile.membershipPrice !== undefined && (
@@ -206,15 +209,15 @@ const profile3Avatar = "/home/avatar3.jpg";
     </section>
 
 <!-- Creator Contact Form Section -->
-    <section id="creator-contact" class="py-20 px-6 bg-white">
+    <section id="creator-contact" class="py-20 px-6 bg-gradient-to-br from-gray-50 to-blue-50/30">
       <div class="max-w-3xl mx-auto">
         <div class="text-center mb-12">
           <h2
-            class="text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-900 mb-4"
+            class="text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-900 mb-4 tracking-tight"
           >
             {t.creatorContact.title}
           </h2>
-          <p class="text-lg sm:text-xl text-gray-600 max-w-2xl mx-auto">
+          <p class="text-lg sm:text-xl text-gray-600 max-w-2xl mx-auto font-light">
             {t.creatorContact.subtitle}
           </p>
         </div>
@@ -222,7 +225,7 @@ const profile3Avatar = "/home/avatar3.jpg";
         <!-- Creator Contact Form -->
         <div
           id="creator-contact-form-container"
-          class="bg-white rounded-2xl shadow-lg p-8 border border-gray-200"
+          class="bg-white rounded-2xl shadow-xl p-6 sm:p-8 border border-gray-100"
         >
           <form id="creator-contact-form" class="space-y-6">
             <!-- Name Field -->
@@ -238,7 +241,7 @@ const profile3Avatar = "/home/avatar3.jpg";
                 id="creator-name"
                 name="name"
                 required
-                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-blue-500 focus:border-transparent transition-all"
+                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-blue-500 focus:border-transparent transition-all font-rubik"
                 placeholder={t.creatorContact.form.namePlaceholder}
               />
             </div>
@@ -256,7 +259,7 @@ const profile3Avatar = "/home/avatar3.jpg";
                 id="creator-email"
                 name="email"
                 required
-                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-blue-500 focus:border-transparent transition-all"
+                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-blue-500 focus:border-transparent transition-all font-rubik"
                 placeholder={t.creatorContact.form.emailPlaceholder}
               />
             </div>
@@ -274,7 +277,7 @@ const profile3Avatar = "/home/avatar3.jpg";
                 id="creator-job"
                 name="job"
                 required
-                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-blue-500 focus:border-transparent transition-all"
+                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-blue-500 focus:border-transparent transition-all font-rubik"
                 placeholder={t.creatorContact.form.jobPlaceholder}
               />
             </div>
@@ -292,7 +295,7 @@ const profile3Avatar = "/home/avatar3.jpg";
                 name="productType"
                 required
                 rows="4"
-                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-blue-500 focus:border-transparent transition-all resize-none"
+                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-blue-500 focus:border-transparent transition-all resize-none font-rubik"
                 placeholder={t.creatorContact.form.productTypePlaceholder}
               ></textarea>
             </div>
@@ -302,7 +305,7 @@ const profile3Avatar = "/home/avatar3.jpg";
               <button
                 type="submit"
                 id="creator-submit-btn"
-                class="w-full bg-brand-blue-500 hover:bg-brand-blue-600 text-white font-semibold py-4 px-8 rounded-full transition-all transform hover:scale-105 shadow-lg hover:shadow-xl"
+                class="w-full bg-brand-blue-500 hover:bg-brand-blue-600 text-white font-semibold py-4 px-8 rounded-full transition-all transform hover:scale-105 shadow-lg hover:shadow-xl duration-200"
               >
                 {t.creatorContact.form.submit}
               </button>

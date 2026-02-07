@@ -33,13 +33,20 @@ const t = useTranslations(lang);
       <div id="account-container" class="hidden">
         <!-- Header -->
         <div class="mb-8 text-center">
-          <h1 class="text-4xl font-bold mb-2 text-gray-900">
+          <h1
+            class="text-4xl sm:text-5xl font-bold mb-3 text-gray-900 tracking-tight"
+          >
             {t.account.title}
           </h1>
+          <p class="text-gray-600 max-w-xl mx-auto">
+            Manage your subscriptions, purchases, and account settings
+          </p>
         </div>
 
         <!-- Single Unified Card -->
-        <div class="bg-white rounded-2xl p-8">
+        <div
+          class="bg-white rounded-2xl p-6 sm:p-8 shadow-lg border border-gray-100"
+        >
           <!-- User Info Section -->
           <div class="mb-8">
             <div class="flex items-center gap-2 mb-4">
@@ -60,7 +67,7 @@ const t = useTranslations(lang);
                 {t.account.accountInfo}
               </h2>
             </div>
-            <div class="space-y-2 ml-7">
+            <div class="space-y-2">
               <div>
                 <label
                   class="text-xs font-medium text-gray-400 uppercase tracking-wide"
@@ -78,10 +85,12 @@ const t = useTranslations(lang);
 
           <!-- Memberships Section -->
           <div class="mb-8">
-            <div class="flex items-center justify-between mb-4">
+            <div
+              class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-4"
+            >
               <div class="flex items-center gap-2">
                 <svg
-                  class="w-5 h-5 text-brand-blue-500"
+                  class="w-5 h-5 text-brand-blue-500 flex-shrink-0"
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
@@ -99,7 +108,7 @@ const t = useTranslations(lang);
               </div>
               <button
                 id="manage-all-btn"
-                class="hidden bg-brand-blue-500 hover:bg-brand-blue-600 text-white font-semibold py-2.5 px-5 rounded-full transition-all gap-2 text-sm"
+                class="hidden bg-brand-blue-500 hover:bg-brand-blue-600 text-white font-semibold py-2.5 px-5 rounded-full transition-all flex items-center justify-center gap-2 text-sm shadow-md hover:shadow-lg transform hover:scale-105 duration-200"
               >
                 <svg
                   class="w-4 h-4"
@@ -119,13 +128,13 @@ const t = useTranslations(lang);
                     stroke-width="2"
                     d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
                 </svg>
-                {t.account.manageAllSubscriptions}
+                <span>{t.account.manageAllSubscriptions}</span>
               </button>
             </div>
-            <div id="memberships-list" class="space-y-3 ml-7">
+            <div id="memberships-list" class="space-y-3">
               <!-- Memberships will be loaded here -->
             </div>
-            <div id="no-memberships" class="hidden text-center py-6 ml-7">
+            <div id="no-memberships" class="hidden text-center py-6">
               <div class="text-5xl mb-3">📭</div>
               <p class="text-gray-500 mb-3 text-sm">
                 {t.account.noMemberships}
@@ -156,10 +165,10 @@ const t = useTranslations(lang);
                 {t.account.purchasedContent.title}
               </h2>
             </div>
-            <div id="purchased-content-list" class="space-y-3 ml-7">
+            <div id="purchased-content-list" class="space-y-3">
               <!-- Purchased content will be loaded here -->
             </div>
-            <div id="no-purchased-content" class="hidden text-center py-6 ml-7">
+            <div id="no-purchased-content" class="hidden text-center py-6">
               <div class="text-5xl mb-3">🎬</div>
               <p class="text-gray-500 mb-3 text-sm">
                 {t.account.purchasedContent.noPurchasedContent}
@@ -195,7 +204,7 @@ const t = useTranslations(lang);
                 {t.account.actions}
               </h2>
             </div>
-            <div class="space-y-3 ml-7">
+            <div class="space-y-3">
               <button
                 id="logout-btn"
                 class="w-full bg-gray-100 hover:bg-gray-200 text-gray-700 font-semibold py-3.5 px-6 rounded-full transition-all flex items-center justify-center gap-2"
