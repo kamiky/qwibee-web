@@ -4,7 +4,7 @@
 
 SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 WEB_DIR="$(dirname "$SCRIPT_DIR")"
-UPLOADS_DIR="$WEB_DIR/../uploads"
+UPLOADS_DIR="$WEB_DIR/../uploads/assets"
 PUBLIC_UPLOADS="$WEB_DIR/public/uploads"
 
 echo "🔗 Setting up local development environment..."
@@ -16,7 +16,7 @@ if [ -L "$PUBLIC_UPLOADS" ] || [ -d "$PUBLIC_UPLOADS" ]; then
 fi
 
 # Create symlink
-echo "  Creating symlink: public/uploads -> ../../uploads"
+echo "  Creating symlink: public/uploads -> ../../uploads/assets"
 ln -s "$UPLOADS_DIR" "$PUBLIC_UPLOADS"
 
 echo "✓ Development environment setup complete!"

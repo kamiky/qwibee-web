@@ -53,8 +53,8 @@ if [ -d "/var/www/qwibee-uploads" ]; then
   UPLOADS_SRC="/var/www/qwibee-uploads"
   echo "     📍 Production environment"
 else
-  # For local environment, use absolute path
-  UPLOADS_SRC="$(cd "$WEB_DIR/../uploads" && pwd)"
+  # For local environment, use absolute path to assets folder
+  UPLOADS_SRC="$(cd "$WEB_DIR/../uploads/assets" && pwd)"
   echo "     📍 Local environment"
 fi
 

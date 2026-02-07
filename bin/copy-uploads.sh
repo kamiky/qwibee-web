@@ -21,15 +21,15 @@ fi
 
 # Determine source based on environment
 # In production: use /var/www/qwibee-uploads
-# In local: use ../uploads
+# In local: use ../uploads/assets
 if [ -d "/var/www/qwibee-uploads" ]; then
   UPLOADS_SRC="/var/www/qwibee-uploads"
   echo "  📍 Production environment detected"
   echo "  Copying /var/www/qwibee-uploads -> dist/client/uploads..."
 else
-  UPLOADS_SRC="$WEB_DIR/../uploads"
+  UPLOADS_SRC="$WEB_DIR/../uploads/assets"
   echo "  📍 Local environment detected"
-  echo "  Copying ../uploads -> dist/client/uploads..."
+  echo "  Copying ../uploads/assets -> dist/client/uploads..."
 fi
 
 # Copy uploads folder to dist/client using rsync to exclude unnecessary files
@@ -38,9 +38,6 @@ rsync -a \
   --exclude='.gitignore' \
   --exclude='node_modules' \
   --exclude='.DS_Store' \
-  --exclude='package.json' \
-  --exclude='README.md' \
-  --exclude='scripts' \
   "$UPLOADS_SRC/" "$UPLOADS_DEST/"
 
 # Count files copied (excluding directories)

@@ -13,7 +13,7 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
 // Uploads folder is now at project root level
-const UPLOADS_DIR = join(__dirname, "..", "..", "uploads");
+const UPLOADS_DIR = join(__dirname, "..", "..", "uploads", "assets");
 const DATA_DIR = join(__dirname, "..", "src", "data");
 
 /**
