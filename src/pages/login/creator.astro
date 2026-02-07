@@ -59,6 +59,35 @@ const t = useTranslations(lang);
               >{t.auth.form.submitButton}</span
             >
           </button>
+
+          <!-- Terms and Conditions Notice -->
+          <p class="text-sm text-gray-600 mt-4 text-center">
+            {lang === 'fr' ? (
+              <>
+                En vous connectant et en utilisant Qwibee, vous acceptez nos{' '}
+                <a href="/fr/terms-of-sale" class="text-brand-blue-500 hover:text-brand-blue-600 underline">
+                  Conditions d'utilisation
+                </a>{' '}
+                et notre{' '}
+                <a href="/fr/privacy-policy" class="text-brand-blue-500 hover:text-brand-blue-600 underline">
+                  Politique de confidentialité
+                </a>
+                , et vous confirmez que vous avez au moins 18 ans.
+              </>
+            ) : (
+              <>
+                By logging in and using Qwibee, you agree to our{' '}
+                <a href="/terms-of-sale" class="text-brand-blue-500 hover:text-brand-blue-600 underline">
+                  Terms of Use
+                </a>{' '}
+                and our{' '}
+                <a href="/privacy-policy" class="text-brand-blue-500 hover:text-brand-blue-600 underline">
+                  Privacy Policy
+                </a>
+                , and you confirm that you are at least 18 years old.
+              </>
+            )}
+          </p>
         </div>
 
         <!-- Success Message (hidden by default) -->

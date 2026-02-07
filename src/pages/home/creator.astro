@@ -94,13 +94,21 @@ const profile3Avatar = "/home/avatar3.jpg";
             <h1
               class="text-4xl sm:text-5xl lg:text-6xl font-bold text-gray-900 leading-tight tracking-tight"
             >
-              {t.hero.title}
+              {lang === 'fr' ? 'Inscrivez-vous pour soutenir vos créateurs préférés' : 'Sign up to support your favorite creators'}
             </h1>
             <p
               class="text-lg sm:text-xl text-gray-600 leading-relaxed max-w-xl mx-auto lg:mx-0 font-light"
             >
-              {t.hero.subtitle}
+              {lang === 'fr' ? 'Rejoignez Qwibee et accédez à du contenu exclusif de vos créateurs préférés.' : 'Join Qwibee and access exclusive content from your favorite creators.'}
             </p>
+            <div class="flex justify-center lg:justify-start">
+              <a
+                href="/login"
+                class="inline-block bg-brand-blue-500 hover:bg-brand-blue-600 text-white font-semibold py-4 px-8 rounded-full transition-all transform hover:scale-105 shadow-lg hover:shadow-xl duration-200"
+              >
+                {lang === 'fr' ? 'S\'inscrire' : 'Sign Up'}
+              </a>
+            </div>
           </div>
 
           <!-- Desktop: Images on Right (Original Layout) -->
@@ -208,7 +216,8 @@ const profile3Avatar = "/home/avatar3.jpg";
       </div>
     </section>
 
-<!-- Creator Contact Form Section -->
+<!-- Creator Contact Form Section - COMMENTED OUT FOR NOW -->
+    <!--
     <section id="creator-contact" class="py-20 px-6 bg-gradient-to-br from-gray-50 to-blue-50/30">
       <div class="max-w-3xl mx-auto">
         <div class="text-center mb-12">
@@ -222,13 +231,11 @@ const profile3Avatar = "/home/avatar3.jpg";
           </p>
         </div>
 
-        <!-- Creator Contact Form -->
         <div
           id="creator-contact-form-container"
           class="bg-white rounded-2xl shadow-xl p-6 sm:p-8 border border-gray-100"
         >
           <form id="creator-contact-form" class="space-y-6">
-            <!-- Name Field -->
             <div>
               <label
                 for="creator-name"
@@ -246,7 +253,6 @@ const profile3Avatar = "/home/avatar3.jpg";
               />
             </div>
 
-            <!-- Email Field -->
             <div>
               <label
                 for="creator-email"
@@ -264,7 +270,6 @@ const profile3Avatar = "/home/avatar3.jpg";
               />
             </div>
 
-            <!-- Job Field -->
             <div>
               <label
                 for="creator-job"
@@ -282,7 +287,6 @@ const profile3Avatar = "/home/avatar3.jpg";
               />
             </div>
 
-            <!-- Product Type Field -->
             <div>
               <label
                 for="creator-product-type"
@@ -300,7 +304,6 @@ const profile3Avatar = "/home/avatar3.jpg";
               ></textarea>
             </div>
 
-            <!-- Submit Button -->
             <div>
               <button
                 type="submit"
@@ -312,7 +315,6 @@ const profile3Avatar = "/home/avatar3.jpg";
             </div>
           </form>
 
-          <!-- Success Message (hidden by default) -->
           <div
             id="creator-success-message"
             class="hidden text-center space-y-4"
@@ -326,7 +328,6 @@ const profile3Avatar = "/home/avatar3.jpg";
             </p>
           </div>
 
-          <!-- Error Message (hidden by default) -->
           <div
             id="creator-error-message"
             class="hidden bg-red-50 border border-red-200 rounded-lg p-4"
@@ -346,6 +347,7 @@ const profile3Avatar = "/home/avatar3.jpg";
         </div>
       </div>
     </section>
+    -->
       </main>
 
       <script is:inline>
@@ -367,7 +369,8 @@ const profile3Avatar = "/home/avatar3.jpg";
         });
       });
 
-      // Creator Contact Form Handler
+      // Creator Contact Form Handler - COMMENTED OUT
+      /*
       const creatorForm = document.getElementById("creator-contact-form");
       const creatorSubmitBtn = document.getElementById("creator-submit-btn");
       const creatorSuccessMessage = document.getElementById("creator-success-message");
@@ -450,6 +453,7 @@ const profile3Avatar = "/home/avatar3.jpg";
       } else {
         console.error("Form or submit button not found!");
       }
+      */
     });
       </script>
     </>
