@@ -120,6 +120,18 @@ function determineContentType(index, totalVideos) {
 }
 
 /**
+ * Generate a random 6-character ID (alphanumeric)
+ */
+function generateRandomId() {
+  const chars = 'abcdefghijklmnopqrstuvwxyz0123456789';
+  let result = '';
+  for (let i = 0; i < 6; i++) {
+    result += chars.charAt(Math.floor(Math.random() * chars.length));
+  }
+  return result;
+}
+
+/**
  * Generate default video metadata
  */
 async function generateVideoMetadata(uniqueId, sequentialNumber, paidFilename, previewFilename, paidThumbnail, previewThumbnail, totalExisting, profileId) {
@@ -131,6 +143,9 @@ async function generateVideoMetadata(uniqueId, sequentialNumber, paidFilename, p
   
   // Generate random price between $4.99 and $14.99 for paid content
   const basePrice = contentType === "paid" ? Math.floor(Math.random() * 1000) + 499 : 0;
+  
+  // Generate random 6-character ID for the title
+  const randomId = generateRandomId();
   
   // Get video duration if it's a video file
   let duration = "0:00";
@@ -145,12 +160,12 @@ async function generateVideoMetadata(uniqueId, sequentialNumber, paidFilename, p
   const metadata = {
     id: uniqueId,
     title: {
-      en: `${contentTypeName} ${totalExisting + sequentialNumber}`,
-      fr: `${contentTypeNameFr} ${totalExisting + sequentialNumber}`,
+      en: `${contentTypeName} ${randomId}`,
+      fr: `${contentTypeNameFr} ${randomId}`,
     },
     description: {
-      en: `Description for ${contentTypeName.toLowerCase()} ${totalExisting + sequentialNumber}`,
-      fr: `Description de l'${contentTypeNameFr.toLowerCase()} ${totalExisting + sequentialNumber}`,
+      en: `Description for ${contentTypeName.toLowerCase()} ${randomId}`,
+      fr: `Description de l'${contentTypeNameFr.toLowerCase()} ${randomId}`,
     },
     duration,
     price: basePrice,
@@ -276,11 +291,10 @@ async function processFolderVideos(folderPath, profileId, existingProfile) {
     });
   }
   
-  // Collect all videos: existing ones + new ones
-  const videos = [];
+  // Separate new videos from existing ones
   const newVideos = [];
   
-  // Process all video groups found in the folder
+  // Process all video groups found in the folder to identify new ones
   for (const [uniqueId, group] of videoGroups.entries()) {
     if (!group.paidFilename) {
       console.log(`    ⚠️  No paid file found for ID ${uniqueId}`);
@@ -289,57 +303,7 @@ async function processFolderVideos(folderPath, profileId, existingProfile) {
     
     const existingVideo = existingVideosMap.get(uniqueId);
     
-    if (existingVideo) {
-      // Keep existing video data, just update file paths
-      const videoData = {
-        ...existingVideo,
-        paidFilename: group.paidFilename,
-        previewFilename: group.previewFilename || undefined,
-      };
-      
-      // Remove priceAfterPromotion if it exists (deprecated field)
-      delete videoData.priceAfterPromotion;
-      
-      // Ensure price is set correctly
-      if (existingVideo.type === "paid") {
-        videoData.price = existingVideo.price || 999;
-      } else {
-        videoData.price = 0;
-      }
-      
-      // Preserve hide property, default to false if not present
-      if (videoData.hide === undefined) {
-        videoData.hide = false;
-      }
-      
-      // Preserve uploadedAt if it exists, otherwise set it now
-      if (!videoData.uploadedAt) {
-        videoData.uploadedAt = new Date().toISOString();
-      }
-      
-      // Update duration if it's a video and duration is missing or "0:00"
-      const isImage = videoData.mimetype && videoData.mimetype.startsWith('image/');
-      if (!isImage && (!videoData.duration || videoData.duration === "0:00")) {
-        const paidFilePath = join(folderPath, group.paidFilename);
-        const extractedDuration = await getVideoDuration(paidFilePath);
-        if (extractedDuration) {
-          videoData.duration = extractedDuration;
-        }
-      }
-      
-      // Update thumbnails (for videos, use thumbnail files; for images, use the image files themselves)
-      if (isImage) {
-        videoData.paidThumbnail = group.paidFilename;
-        videoData.previewThumbnail = group.previewFilename || undefined;
-      } else {
-        videoData.paidThumbnail = group.paidThumbnail || undefined;
-        videoData.previewThumbnail = group.previewThumbnail || undefined;
-      }
-      
-      videos.push(videoData);
-      // Mark as processed
-      existingVideosMap.delete(uniqueId);
-    } else {
+    if (!existingVideo) {
       // This is a new video/image
       newVideos.push({
         uniqueId,
@@ -351,8 +315,8 @@ async function processFolderVideos(folderPath, profileId, existingProfile) {
     }
   }
   
-  // Add new videos with generated metadata
-  const existingCount = videos.length;
+  // Generate metadata for new videos
+  const newVideosWithMetadata = [];
   for (let index = 0; index < newVideos.length; index++) {
     const newVideo = newVideos[index];
     const metadata = await generateVideoMetadata(
@@ -362,18 +326,84 @@ async function processFolderVideos(folderPath, profileId, existingProfile) {
       newVideo.previewFilename,
       newVideo.paidThumbnail,
       newVideo.previewThumbnail,
-      existingCount,
+      0, // Don't count existing when numbering new videos
       profileId
     );
-    videos.push(metadata);
+    newVideosWithMetadata.push(metadata);
   }
   
-  console.log(`    ✓ Found ${videos.length} content item(s) (${videos.length - newVideos.length} existing, ${newVideos.length} new)`);
+  // Now process existing videos in their ORIGINAL order
+  const existingVideosUpdated = [];
+  if (existingProfile && existingProfile.videos) {
+    for (const existingVideo of existingProfile.videos) {
+      const group = videoGroups.get(existingVideo.id);
+      
+      if (group && group.paidFilename) {
+        // Keep existing video data, just update file paths
+        const videoData = {
+          ...existingVideo,
+          paidFilename: group.paidFilename,
+          previewFilename: group.previewFilename || undefined,
+        };
+        
+        // Remove priceAfterPromotion if it exists (deprecated field)
+        delete videoData.priceAfterPromotion;
+        
+        // Ensure price is set correctly
+        if (existingVideo.type === "paid") {
+          videoData.price = existingVideo.price || 999;
+        } else {
+          videoData.price = 0;
+        }
+        
+        // Preserve hide property, default to false if not present
+        if (videoData.hide === undefined) {
+          videoData.hide = false;
+        }
+        
+        // Preserve uploadedAt if it exists, otherwise set it now
+        if (!videoData.uploadedAt) {
+          videoData.uploadedAt = new Date().toISOString();
+        }
+        
+        // Update duration if it's a video and duration is missing or "0:00"
+        const isImage = videoData.mimetype && videoData.mimetype.startsWith('image/');
+        if (!isImage && (!videoData.duration || videoData.duration === "0:00")) {
+          const paidFilePath = join(folderPath, group.paidFilename);
+          const extractedDuration = await getVideoDuration(paidFilePath);
+          if (extractedDuration) {
+            videoData.duration = extractedDuration;
+          }
+        }
+        
+        // Update thumbnails (for videos, use thumbnail files; for images, use the image files themselves)
+        if (isImage) {
+          videoData.paidThumbnail = group.paidFilename;
+          videoData.previewThumbnail = group.previewFilename || undefined;
+        } else {
+          videoData.paidThumbnail = group.paidThumbnail || undefined;
+          videoData.previewThumbnail = group.previewThumbnail || undefined;
+        }
+        
+        existingVideosUpdated.push(videoData);
+        // Mark as processed
+        existingVideosMap.delete(existingVideo.id);
+      } else {
+        // File no longer exists in folder - will be removed (don't add to list)
+        console.log(`    ⚠️  File for ID ${existingVideo.id} not found in folder (removed)`);
+      }
+    }
+  }
+  
+  // Combine: new videos first (at the top), then existing videos in their original order
+  const allVideos = [...newVideosWithMetadata, ...existingVideosUpdated];
+  
+  console.log(`    ✓ Found ${allVideos.length} content item(s) (${allVideos.length - newVideos.length} existing, ${newVideos.length} new)`);
   if (existingVideosMap.size > 0) {
     console.log(`    ⚠️  ${existingVideosMap.size} item(s) from JSON not found in folder (removed)`);
   }
   
-  return videos;
+  return allVideos;
 }
 
 /**
