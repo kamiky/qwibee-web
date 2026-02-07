@@ -13,7 +13,7 @@ ssh-add ~/.ssh/id_rsa
 
 echo "Deploying medias to production server..."
 rsync -avz --delete --progress -e ssh \
-  ../../../qwibee/uploads/assets/ \
+  ../uploads/assets/ \
   root@142.93.173.10:/var/www/qwibee-uploads/
 
 echo "✓ Medias deployed successfully to /var/www/qwibee-uploads!"
