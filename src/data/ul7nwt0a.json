@@ -11,19 +11,146 @@
     "fr": "Don't be shy"
   },
   "avatar": "/uploads/ul7nwt0a/paid_0g6mfyih_1y4x2e2l2ni9eta6jaamnv9pqqgi3g.jpg",
-  "membershipPrice": 999,
+  "membershipPrice": 400,
   "promotionPercentage": 25,
   "showDescription": true,
   "videos": [
     {
-      "id": "0g6mfyih",
+      "id": "uy9shwqr",
       "title": {
-        "en": "Image 1",
-        "fr": "Image 1"
+        "en": "Video 1",
+        "fr": "Vidéo 1"
       },
       "description": {
-        "en": "Description for image 1",
-        "fr": "Description de l'image 1"
+        "en": "Description for video 1",
+        "fr": "Description de l'vidéo 1"
+      },
+      "duration": "4:14",
+      "price": 4500,
+      "paidFilename": "paid_uy9shwqr_3elzmuy8e246nvht59j575s783u713.mp4",
+      "previewFilename": "preview_uy9shwqr_zizykn6cq4s120vh13ak4orgs5atf8.mp4",
+      "type": "paid",
+      "hide": true,
+      "mimetype": "video/mp4",
+      "uploadedAt": "2026-02-06T22:09:17.346Z",
+      "paidThumbnail": "paid_uy9shwqr_3elzmuy8e246nvht59j575s783u713_thumb.jpg",
+      "previewThumbnail": "preview_uy9shwqr_zizykn6cq4s120vh13ak4orgs5atf8_thumb.jpg"
+    },
+    {
+      "id": "q7eqd0tl",
+      "title": {
+        "en": "Video 2",
+        "fr": "Vidéo 2"
+      },
+      "description": {
+        "en": "Description for video 2",
+        "fr": "Description de l'vidéo 2"
+      },
+      "duration": "2:22",
+      "price": 1800,
+      "paidFilename": "paid_q7eqd0tl_5fifckeczxfbyc7ilvfddgtsmyor6c.mp4",
+      "previewFilename": "preview_q7eqd0tl_lpx6wqznzv3ycyegaz59cxcn797qrn.mp4",
+      "type": "paid",
+      "hide": true,
+      "mimetype": "video/mp4",
+      "uploadedAt": "2026-02-06T22:09:17.233Z",
+      "paidThumbnail": "paid_q7eqd0tl_5fifckeczxfbyc7ilvfddgtsmyor6c_thumb.jpg",
+      "previewThumbnail": "preview_q7eqd0tl_lpx6wqznzv3ycyegaz59cxcn797qrn_thumb.jpg"
+    },
+    
+    {
+      "id": "4rj8rr1i",
+      "title": {
+        "en": "Video 3",
+        "fr": "Vidéo 3"
+      },
+      "description": {
+        "en": "Description for video 3",
+        "fr": "Description de l'vidéo 3"
+      },
+      "duration": "0:16",
+      "price": 500,
+      "paidFilename": "paid_4rj8rr1i_uptylp5pnh9fcfadhqssms1w0zyw76.mp4",
+      "previewFilename": "preview_4rj8rr1i_mtyzw72jdqpsog1jif7c6ry5rl5vwl.mp4",
+      "type": "paid",
+      "hide": true,
+      "mimetype": "video/mp4",
+      "uploadedAt": "2026-02-06T22:09:17.023Z",
+      "paidThumbnail": "paid_4rj8rr1i_uptylp5pnh9fcfadhqssms1w0zyw76_thumb.jpg",
+      "previewThumbnail": "preview_4rj8rr1i_mtyzw72jdqpsog1jif7c6ry5rl5vwl_thumb.jpg"
+    },
+    {
+      "id": "xxvzjicf",
+      "title": {
+        "en": "Video 4",
+        "fr": "Vidéo 4"
+      },
+      "description": {
+        "en": "Description for video 4",
+        "fr": "Description de l'vidéo 4"
+      },
+      "duration": "0:17",
+      "price": 564,
+      "paidFilename": "paid_xxvzjicf_jb6gpkxayook9q8jkrzt9021pfa4n6.mp4",
+      "previewFilename": "preview_xxvzjicf_npy5d0v23w00xkmab5ahwp4jsv5i4s.mp4",
+      "type": "membership",
+      "hide": true,
+      "mimetype": "video/mp4",
+      "uploadedAt": "2026-02-06T22:09:17.454Z",
+      "paidThumbnail": "paid_xxvzjicf_jb6gpkxayook9q8jkrzt9021pfa4n6_thumb.jpg",
+      "previewThumbnail": "preview_xxvzjicf_npy5d0v23w00xkmab5ahwp4jsv5i4s_thumb.jpg"
+    },
+    {
+      "id": "0ukzk9hn",
+      "title": {
+        "en": "Video 5",
+        "fr": "Vidéo 5"
+      },
+      "description": {
+        "en": "Description for video 5",
+        "fr": "Description de l'vidéo 5"
+      },
+      "duration": "0:11",
+      "price": 0,
+      "paidFilename": "paid_0ukzk9hn_he55p9a8gu4s2qveyqsekev6gjzctn.mp4",
+      "previewFilename": "preview_0ukzk9hn_ncv2fqd4pac6mgnuh6jksj9ngg7h3q.mp4",
+      "type": "membership",
+      "hide": true,
+      "mimetype": "video/mp4",
+      "uploadedAt": "2026-02-06T22:09:16.911Z",
+      "paidThumbnail": "paid_0ukzk9hn_he55p9a8gu4s2qveyqsekev6gjzctn_thumb.jpg",
+      "previewThumbnail": "preview_0ukzk9hn_ncv2fqd4pac6mgnuh6jksj9ngg7h3q_thumb.jpg"
+    },
+    {
+      "id": "5ec8ptqk",
+      "title": {
+        "en": "Video 6",
+        "fr": "Vidéo 6"
+      },
+      "description": {
+        "en": "Description for video 6",
+        "fr": "Description de l'vidéo 6"
+      },
+      "duration": "0:06",
+      "price": 0,
+      "paidFilename": "paid_5ec8ptqk_kp60ukor23y8w6ddsuluixb7ngd638.mp4",
+      "previewFilename": "preview_5ec8ptqk_7k2k7cpt000xw4amlh0b4k6hhhgjwn.mp4",
+      "type": "membership",
+      "hide": true,
+      "mimetype": "video/mp4",
+      "uploadedAt": "2026-02-06T22:09:17.127Z",
+      "paidThumbnail": "paid_5ec8ptqk_kp60ukor23y8w6ddsuluixb7ngd638_thumb.jpg",
+      "previewThumbnail": "preview_5ec8ptqk_7k2k7cpt000xw4amlh0b4k6hhhgjwn_thumb.jpg"
+    },
+    {
+      "id": "0g6mfyih",
+      "title": {
+        "en": "Image 7",
+        "fr": "Image 7"
+      },
+      "description": {
+        "en": "Description for image 7",
+        "fr": "Description de l'image 7"
       },
       "duration": "0:00",
       "price": 0,
@@ -39,12 +166,12 @@
     {
       "id": "1ern15xa",
       "title": {
-        "en": "Image 2",
-        "fr": "Image 2"
+        "en": "Image 8",
+        "fr": "Image 8"
       },
       "description": {
-        "en": "Description for image 2",
-        "fr": "Description de l'image 2"
+        "en": "Description for image 8",
+        "fr": "Description de l'image 8"
       },
       "duration": "0:00",
       "price": 0,
@@ -60,12 +187,12 @@
     {
       "id": "22ub8oov",
       "title": {
-        "en": "Image 3",
-        "fr": "Image 3"
+        "en": "Image 9",
+        "fr": "Image 9"
       },
       "description": {
-        "en": "Description for image 3",
-        "fr": "Description de l'image 3"
+        "en": "Description for image 9",
+        "fr": "Description de l'image 9"
       },
       "duration": "0:00",
       "price": 0,
@@ -81,12 +208,12 @@
     {
       "id": "4dg0z0is",
       "title": {
-        "en": "Image 4",
-        "fr": "Image 4"
+        "en": "Image 10",
+        "fr": "Image 10"
       },
       "description": {
-        "en": "Description for image 4",
-        "fr": "Description de l'image 4"
+        "en": "Description for image 10",
+        "fr": "Description de l'image 10"
       },
       "duration": "0:00",
       "price": 0,
@@ -102,12 +229,12 @@
     {
       "id": "9k7yo0rd",
       "title": {
-        "en": "Image 5",
-        "fr": "Image 5"
+        "en": "Image 11",
+        "fr": "Image 11"
       },
       "description": {
-        "en": "Description for image 5",
-        "fr": "Description de l'image 5"
+        "en": "Description for image 11",
+        "fr": "Description de l'image 11"
       },
       "duration": "0:00",
       "price": 0,
@@ -123,12 +250,12 @@
     {
       "id": "ae883zd6",
       "title": {
-        "en": "Image 6",
-        "fr": "Image 6"
+        "en": "Image 12",
+        "fr": "Image 12"
       },
       "description": {
-        "en": "Description for image 6",
-        "fr": "Description de l'image 6"
+        "en": "Description for image 12",
+        "fr": "Description de l'image 12"
       },
       "duration": "0:00",
       "price": 0,
@@ -144,12 +271,12 @@
     {
       "id": "b3hzf1vl",
       "title": {
-        "en": "Image 7",
-        "fr": "Image 7"
+        "en": "Image 13",
+        "fr": "Image 13"
       },
       "description": {
-        "en": "Description for image 7",
-        "fr": "Description de l'image 7"
+        "en": "Description for image 13",
+        "fr": "Description de l'image 13"
       },
       "duration": "0:00",
       "price": 0,
@@ -165,12 +292,12 @@
     {
       "id": "fj5ukzje",
       "title": {
-        "en": "Image 9",
-        "fr": "Image 9"
+        "en": "Image 14",
+        "fr": "Image 14"
       },
       "description": {
-        "en": "Description for image 9",
-        "fr": "Description de l'image 9"
+        "en": "Description for image 14",
+        "fr": "Description de l'image 14"
       },
       "duration": "0:00",
       "price": 0,
@@ -186,12 +313,12 @@
     {
       "id": "fxtwvuvs",
       "title": {
-        "en": "Image 10",
-        "fr": "Image 10"
+        "en": "Image 15",
+        "fr": "Image 15"
       },
       "description": {
-        "en": "Description for image 10",
-        "fr": "Description de l'image 10"
+        "en": "Description for image 15",
+        "fr": "Description de l'image 15"
       },
       "duration": "0:00",
       "price": 0,
@@ -207,12 +334,12 @@
     {
       "id": "go7pf4r2",
       "title": {
-        "en": "Image 11",
-        "fr": "Image 11"
+        "en": "Image 16",
+        "fr": "Image 16"
       },
       "description": {
-        "en": "Description for image 11",
-        "fr": "Description de l'image 11"
+        "en": "Description for image 16",
+        "fr": "Description de l'image 16"
       },
       "duration": "0:00",
       "price": 0,
@@ -228,12 +355,12 @@
     {
       "id": "lnq7qy42",
       "title": {
-        "en": "Image 13",
-        "fr": "Image 13"
+        "en": "Image 17",
+        "fr": "Image 17"
       },
       "description": {
-        "en": "Description for image 13",
-        "fr": "Description de l'image 13"
+        "en": "Description for image 17",
+        "fr": "Description de l'image 17"
       },
       "duration": "0:00",
       "price": 0,
@@ -249,12 +376,12 @@
     {
       "id": "lqg7ih0u",
       "title": {
-        "en": "Image 14",
-        "fr": "Image 14"
+        "en": "Image 18",
+        "fr": "Image 18"
       },
       "description": {
-        "en": "Description for image 14",
-        "fr": "Description de l'image 14"
+        "en": "Description for image 18",
+        "fr": "Description de l'image 18"
       },
       "duration": "0:00",
       "price": 0,
@@ -270,12 +397,12 @@
     {
       "id": "ugootinc",
       "title": {
-        "en": "Image 18",
-        "fr": "Image 18"
+        "en": "Image 19",
+        "fr": "Image 19"
       },
       "description": {
-        "en": "Description for image 18",
-        "fr": "Description de l'image 18"
+        "en": "Description for image 19",
+        "fr": "Description de l'image 19"
       },
       "duration": "0:00",
       "price": 0,
@@ -287,132 +414,6 @@
       "uploadedAt": "2026-02-06T21:40:27.850Z",
       "paidThumbnail": "paid_ugootinc_36rnyvua5gmeuyxuanur8j2e9rpnx4.jpeg",
       "previewThumbnail": "preview_ugootinc_vj9d51v943crenh6rh8ff1bnpc922o.jpeg"
-    },
-    {
-      "id": "0ukzk9hn",
-      "title": {
-        "en": "Video 14",
-        "fr": "Vidéo 14"
-      },
-      "description": {
-        "en": "Description for video 14",
-        "fr": "Description de l'vidéo 14"
-      },
-      "duration": "0:11",
-      "price": 0,
-      "paidFilename": "paid_0ukzk9hn_he55p9a8gu4s2qveyqsekev6gjzctn.mp4",
-      "previewFilename": "preview_0ukzk9hn_ncv2fqd4pac6mgnuh6jksj9ngg7h3q.mp4",
-      "type": "membership",
-      "hide": true,
-      "mimetype": "video/mp4",
-      "uploadedAt": "2026-02-06T22:09:16.911Z",
-      "paidThumbnail": "paid_0ukzk9hn_he55p9a8gu4s2qveyqsekev6gjzctn_thumb.jpg",
-      "previewThumbnail": "preview_0ukzk9hn_ncv2fqd4pac6mgnuh6jksj9ngg7h3q_thumb.jpg"
-    },
-    {
-      "id": "4rj8rr1i",
-      "title": {
-        "en": "Video 15",
-        "fr": "Vidéo 15"
-      },
-      "description": {
-        "en": "Description for video 15",
-        "fr": "Description de l'vidéo 15"
-      },
-      "duration": "0:16",
-      "price": 587,
-      "paidFilename": "paid_4rj8rr1i_uptylp5pnh9fcfadhqssms1w0zyw76.mp4",
-      "previewFilename": "preview_4rj8rr1i_mtyzw72jdqpsog1jif7c6ry5rl5vwl.mp4",
-      "type": "paid",
-      "hide": true,
-      "mimetype": "video/mp4",
-      "uploadedAt": "2026-02-06T22:09:17.023Z",
-      "paidThumbnail": "paid_4rj8rr1i_uptylp5pnh9fcfadhqssms1w0zyw76_thumb.jpg",
-      "previewThumbnail": "preview_4rj8rr1i_mtyzw72jdqpsog1jif7c6ry5rl5vwl_thumb.jpg"
-    },
-    {
-      "id": "5ec8ptqk",
-      "title": {
-        "en": "Video 16",
-        "fr": "Vidéo 16"
-      },
-      "description": {
-        "en": "Description for video 16",
-        "fr": "Description de l'vidéo 16"
-      },
-      "duration": "0:06",
-      "price": 0,
-      "paidFilename": "paid_5ec8ptqk_kp60ukor23y8w6ddsuluixb7ngd638.mp4",
-      "previewFilename": "preview_5ec8ptqk_7k2k7cpt000xw4amlh0b4k6hhhgjwn.mp4",
-      "type": "membership",
-      "hide": true,
-      "mimetype": "video/mp4",
-      "uploadedAt": "2026-02-06T22:09:17.127Z",
-      "paidThumbnail": "paid_5ec8ptqk_kp60ukor23y8w6ddsuluixb7ngd638_thumb.jpg",
-      "previewThumbnail": "preview_5ec8ptqk_7k2k7cpt000xw4amlh0b4k6hhhgjwn_thumb.jpg"
-    },
-    {
-      "id": "q7eqd0tl",
-      "title": {
-        "en": "Video 17",
-        "fr": "Vidéo 17"
-      },
-      "description": {
-        "en": "Description for video 17",
-        "fr": "Description de l'vidéo 17"
-      },
-      "duration": "2:22",
-      "price": 1113,
-      "paidFilename": "paid_q7eqd0tl_5fifckeczxfbyc7ilvfddgtsmyor6c.mp4",
-      "previewFilename": "preview_q7eqd0tl_lpx6wqznzv3ycyegaz59cxcn797qrn.mp4",
-      "type": "paid",
-      "hide": true,
-      "mimetype": "video/mp4",
-      "uploadedAt": "2026-02-06T22:09:17.233Z",
-      "paidThumbnail": "paid_q7eqd0tl_5fifckeczxfbyc7ilvfddgtsmyor6c_thumb.jpg",
-      "previewThumbnail": "preview_q7eqd0tl_lpx6wqznzv3ycyegaz59cxcn797qrn_thumb.jpg"
-    },
-    {
-      "id": "uy9shwqr",
-      "title": {
-        "en": "Video 18",
-        "fr": "Vidéo 18"
-      },
-      "description": {
-        "en": "Description for video 18",
-        "fr": "Description de l'vidéo 18"
-      },
-      "duration": "4:14",
-      "price": 0,
-      "paidFilename": "paid_uy9shwqr_3elzmuy8e246nvht59j575s783u713.mp4",
-      "previewFilename": "preview_uy9shwqr_zizykn6cq4s120vh13ak4orgs5atf8.mp4",
-      "type": "membership",
-      "hide": true,
-      "mimetype": "video/mp4",
-      "uploadedAt": "2026-02-06T22:09:17.346Z",
-      "paidThumbnail": "paid_uy9shwqr_3elzmuy8e246nvht59j575s783u713_thumb.jpg",
-      "previewThumbnail": "preview_uy9shwqr_zizykn6cq4s120vh13ak4orgs5atf8_thumb.jpg"
-    },
-    {
-      "id": "xxvzjicf",
-      "title": {
-        "en": "Video 19",
-        "fr": "Vidéo 19"
-      },
-      "description": {
-        "en": "Description for video 19",
-        "fr": "Description de l'vidéo 19"
-      },
-      "duration": "0:17",
-      "price": 564,
-      "paidFilename": "paid_xxvzjicf_jb6gpkxayook9q8jkrzt9021pfa4n6.mp4",
-      "previewFilename": "preview_xxvzjicf_npy5d0v23w00xkmab5ahwp4jsv5i4s.mp4",
-      "type": "paid",
-      "hide": true,
-      "mimetype": "video/mp4",
-      "uploadedAt": "2026-02-06T22:09:17.454Z",
-      "paidThumbnail": "paid_xxvzjicf_jb6gpkxayook9q8jkrzt9021pfa4n6_thumb.jpg",
-      "previewThumbnail": "preview_xxvzjicf_npy5d0v23w00xkmab5ahwp4jsv5i4s_thumb.jpg"
     }
   ]
 }
