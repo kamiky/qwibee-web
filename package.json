@@ -18,8 +18,6 @@
     "deploy:staging": "./bin/deploy.staging.sh",
     "restart:staging": "./bin/restart.staging.sh",
     "translate": "node scripts/generate-translations.js",
-    "prepare:medias": "cd ../uploads && node scripts/prepare-medias.js",
-    "cleanup:medias": "cd ../uploads && node scripts/cleanup-medias.js",
     "generate:datas": "node scripts/generate-datas.js"
   },
   "dependencies": {
