@@ -7,12 +7,17 @@
     "fr": "Meemow"
   },
   "bio": {
-    "en": "Exclusive content creator sharing premium videos",
-    "fr": "Créateur de contenu exclusif partageant des vidéos premium"
+    "en": "🥵 I'm posting 1 video every week",
+    "fr": "🥵 Je poste 1 vidéo par semaine"
+  },
+  "socials": {
+    "instagram": "meemow02",
+    "website": "https://linktr.ee/marion.spirit"
   },
   "avatar": "/uploads/u1q26bqj/paid_p689tr8s_rg5sku206ydt68xjpcplf5tdcjlsdc.jpg",
   "membershipPrice": 1200,
   "promotionPercentage": 40,
+  "showDescription": true,
   "videos": [
     {
       "id": "gpzfrpdb",
