@@ -11,11 +11,12 @@ const t = useTranslations(lang);
 ---
 
 <header
-  class="fixed top-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-sm border-b border-gray-200"
+  class="fixed top-0 left-0 right-0 z-50 backdrop-blur-sm border-b border-gray-200"
+  style={{ backgroundColor: "#0FBCF9" }}
 >
   <div class="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
     <a href={lang === "en" ? "/" : "/fr"} class="flex items-center gap-3">
-      <img src="/logo.svg" alt="Qwibee" class="h-8 w-auto" />
+      <img src="/logo-text.png" alt="Qwibee" class="h-10 w-auto" />
     </a>
 
     <nav class="flex items-center gap-8">
@@ -23,7 +24,7 @@ const t = useTranslations(lang);
       <a
         id="login-link"
         href={lang === "en" ? "/login" : "/fr/login"}
-        class="text-gray-700 hover:text-brand-blue-500 transition-all font-medium"
+        class="text-white hover:white-500 transition-all font-medium"
       >
         {t.nav.login}
       </a>
@@ -32,7 +33,7 @@ const t = useTranslations(lang);
       <a
         id="account-link"
         href="/account"
-        class="hidden text-gray-700 hover:text-brand-blue-500 transition-all font-medium items-center gap-2"
+        class="hidden text-white hover:white-500 transition-all font-medium items-center gap-2"
       >
         <svg
           class="w-5 h-5"
