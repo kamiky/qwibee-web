@@ -970,10 +970,13 @@ export function initProfilePage(data: ProfilePageData) {
       // Check if user is logged in
       const token = getAccessToken();
       if (!token) {
-        // User not logged in - redirect to login with redirect URL in query params
-        const redirectUrl = encodeURIComponent(window.location.pathname);
-        window.location.href = `/login?redirect=${redirectUrl}${isFree ? "" : "&openStripe=true"}`;
-        return;
+        if (isFree || isSubscribed) {
+          // Free memberships and portal management require login
+          const redirectUrl = encodeURIComponent(window.location.pathname);
+          window.location.href = `/login?redirect=${redirectUrl}`;
+          return;
+        }
+        // Paid subscription checkout: continue as guest — Stripe will collect the email
       }
 
       // Handle free membership
@@ -1093,13 +1096,15 @@ export function initProfilePage(data: ProfilePageData) {
       }
 
       try {
-        // Extract user email from token
+        // Extract user email from token if logged in
         let customerEmail = null;
-        try {
-          const payload = JSON.parse(atob(token.split(".")[1]));
-          customerEmail = payload.email;
-        } catch (e) {
-          console.error("Error decoding token:", e);
+        if (token) {
+          try {
+            const payload = JSON.parse(atob(token.split(".")[1]));
+            customerEmail = payload.email;
+          } catch (e) {
+            console.error("Error decoding token:", e);
+          }
         }
 
         if (isSubscribed) {
