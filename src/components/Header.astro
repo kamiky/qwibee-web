@@ -59,7 +59,9 @@ const t = useTranslations(lang);
   // Check if user is logged in and update header
   function updateHeaderAuth() {
     const auth = getAuth();
-    const loginLink = document.getElementById("login-link");
+    const loginLink = document.getElementById(
+      "login-link",
+    ) as HTMLAnchorElement | null;
     const accountLink = document.getElementById("account-link");
     const accountUsername = document.getElementById("account-username");
 
@@ -78,7 +80,27 @@ const t = useTranslations(lang);
       }
     } else {
       // User is not logged in - show login link
-      if (loginLink) loginLink.classList.remove("hidden");
+      if (loginLink) {
+        loginLink.classList.remove("hidden");
+
+        // Append redirect param so user returns to current page after login,
+        // unless we're already on a login/account page (to avoid redirect loops)
+        const currentPath = window.location.pathname;
+        const skipRedirectPaths = [
+          "/login",
+          "/fr/login",
+          "/account",
+          "/fr/account",
+        ];
+        const shouldAddRedirect = !skipRedirectPaths.some(
+          (p) => currentPath === p || currentPath.startsWith(p + "/"),
+        );
+        if (shouldAddRedirect) {
+          const baseHref =
+            loginLink.getAttribute("href")?.split("?")[0] || loginLink.href;
+          loginLink.href = `${baseHref}?redirect=${encodeURIComponent(currentPath)}`;
+        }
+      }
       if (accountLink) accountLink.classList.add("hidden");
     }
   }
